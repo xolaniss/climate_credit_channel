@@ -1,0 +1,163 @@
+---
+format:
+  pdf:
+    tbl-cap-location: top
+    dpi: 500
+    fig-pos: "H"
+    number-sections: true
+    cite-method: natbib
+    include-in-header: 
+      - text: |
+          \usepackage{lscape}
+          \newcommand{\blandscape}{\begin{landscape}}
+          \newcommand{\elandscape}{\end{landscape}}
+          \usepackage{rotating}
+          \newcommand{\bsideways}{\begin{sidewaystable}[htbp]}
+          \newcommand{\esideways}{\end{sidewaystable}}
+      - file: preamble.tex 
+    include-before-body: title.tex
+    keep-tex: TRUE
+    fig-format: png
+    default-image-extension: png
+  docx:
+    reference-doc: new_template_no_numbering.docx
+pdf-engine: lualatex
+# monofont: "DejaVu Sans Mono"
+# mainfont: "Times New Roman"
+execute: 
+  echo: false
+  warning: false
+editor: source
+bibliography: references.bib
+biblio-style: apalike
+natbiboptions: round
+link-citations: true
+linkcolor: blue!000!black
+urlcolor: blue!000!black
+citecolor: blue!000!black
+linestretch: 1.5
+indent: TRUE
+title-block-banner: false
+title-block-style: none
+---
+
+
+```{r setup}
+#| include=FALSE
+options(scipen=999)
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      dpi = 500, 
+                      fig.pos = "H", 
+                      fig.env= 'figure', 
+                      tab.topcaption = TRUE,
+                      ft.align = "left",
+                      ft.arraystretch = 0.5
+                      )
+library(tidyverse)
+library(readr)
+library(readxl)
+library(zoo)
+library(magick)
+library(stringi)
+library(patchwork)
+library(xtable)
+library(scales)
+library(rvest)
+library(rebus)
+library(PNWColors)
+library(lubridate)
+library(here)
+library(flextable)
+library(gt)
+library(officer)
+library(officedown)
+library(modelsummary)
+library(sandwich)
+library(lmtest)
+
+set_flextable_defaults(
+  font.size = 7,
+  digits = 2,
+  font.family = "Arial",
+  border.color = "black",
+  border.width = 0.5,
+  fp_border = fp_border(color = "black", width = 0.5, style = "solid")
+)
+
+
+```
+
+```{r functions}
+source(here("Functions","flextable_word.R" ))
+source(here("Functions","modelsummary_word.R" ))
+source(here("Functions","modelplot_word.R" ))
+source(here("Functions","borderlines.R" ))
+```
+
+# Introduction
+
+@fornero2011effect 
+
+# Literature review
+
+# Data and methodology
+
+# Results
+
+# Conclusion
+
+\newpage 
+# References {.unnumbered}
+::: {#refs}
+:::
+
+
+\setcounter{section}{0}
+\renewcommand{\thesection}{\Alph{section}}
+
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+\newpage
+
+# Appendix
+
+## Data
+
+
+```{r}
+#| label: latex_version
+#| warning: FALSE
+#| message: FALSE
+
+# Packages -----------------------------------------------------------
+library(here)
+library(tidyverse)
+library(fs)
+
+
+# Delete current latex folder ----------------------------------------
+if (dir.exists(here("Latex_version"))) {
+  dir_delete(here("Latex_version"))
+}
+
+# Create folder ------------------------------------------------------
+dir.create(here("Latex_version"), recursive = TRUE)
+
+# Copy text files ---------------------------------------------------------
+list.files(path = ".", pattern = "tex", full.names = TRUE ) %>%
+  file.copy(to = here("Latex_version"), overwrite = TRUE)
+file.copy(here("references.bib"), here("Latex_version"), overwrite = TRUE)
+
+# Copy resources folder ---------------------------------------------
+folder_path <- list.dirs(path = ".", recursive = FALSE) %>%
+  str_subset("files")
+folder_name <- str_remove(folder_path, "./")
+dir_copy(folder_path, here("Latex_version", folder_name), overwrite = TRUE)
+
+```
