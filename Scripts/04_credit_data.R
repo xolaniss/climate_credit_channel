@@ -1,5 +1,5 @@
 # Description
-# Credit data
+# Credit data from bank capital project - March 2026
 
 # Preliminaries -----------------------------------------------------------
 library(here)
@@ -8,26 +8,28 @@ library(here)
 source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
-# Import -------------------------------------------------------------
+# Import and cleaning -------------------------------------------------------------
+credit_data_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |> 
+  pluck(3) |> 
+  relocate(Date, .before = Bank) |> 
+  pivot_longer(-c(Date, Bank), names_to = "Series", values_to = "Value") |> 
+  mutate(Series = str_replace_all(Series, "Non-financial ", "")) |> 
+  mutate(Series = str_replace_all(Series, "Household sector", "Household")) |>
+  mutate(Series = str_replace_all(Series, "corporate", "Corporate")) |> 
+  pivot_wider(names_from = "Series", values_from = "Value")
+  
 
-
-# Cleaning -----------------------------------------------------------------
-
-
-# Transformations --------------------------------------------------------
-
-
-# EDA ---------------------------------------------------------------
-
-
-# Graphing ---------------------------------------------------------------
+lending_data_tbl <- read_rds(here("Data", "artifacts_combined_lending.rds")) |> 
+  pluck(9) |> 
+  pivot_wider(names_from = "Series", values_from = "Value")
 
 
 # Export ---------------------------------------------------------------
-artifacts_ <- list (
-
+artifacts_credit_market <- list (
+  credit_data_tbl = credit_data_tbl,
+  lending_data_tbl = lending_data_tbl
 )
 
-write_rds(artifacts_, file = here("Outputs", "artifacts_.rds"))
+write_rds(artifacts_credit_market, file = here("Outputs", "artifacts_credit_market.rds"))
 
 
