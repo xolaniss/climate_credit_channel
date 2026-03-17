@@ -1,5 +1,5 @@
 # Description
-# Creation of surprises
+# Surprises table from IRFs.mat file - March 2026
 
 # Preliminaries -----------------------------------------------------------
 library(here)
