@@ -9,7 +9,7 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import and cleaning -------------------------------------------------------------
-credit_data_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |> 
+credit_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |> 
   pluck(3) |> 
   relocate(Date, .before = Bank) |> 
   pivot_longer(-c(Date, Bank), names_to = "Series", values_to = "Value") |> 
@@ -19,15 +19,15 @@ credit_data_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")
   pivot_wider(names_from = "Series", values_from = "Value")
   
 
-lending_data_tbl <- read_rds(here("Data", "artifacts_combined_lending.rds")) |> 
+lending_tbl <- read_rds(here("Data", "artifacts_combined_lending.rds")) |> 
   pluck(9) |> 
   pivot_wider(names_from = "Series", values_from = "Value")
 
 
 # Export ---------------------------------------------------------------
 artifacts_credit_market <- list (
-  credit_data_tbl = credit_data_tbl,
-  lending_data_tbl = lending_data_tbl
+  credit_tbl = credit_tbl,
+  lending_tbl = lending_tbl
 )
 
 write_rds(artifacts_credit_market, file = here("Outputs", "artifacts_credit_market.rds"))
