@@ -16,7 +16,7 @@ month_based_shock <-
       relocate(month, .after = date) |>
       filter(variable == variable_filter) |>
       group_by(country, month) |>
-      mutate(long_term_mean = mean(value, na.rm = TRUE)) |>
+      mutate(long_term_mean = mean(value, na.rm = TRUE)) |> # This is based on the long-term mean (entire sample) for each month and country. This may change in the future
       ungroup() |>
       mutate(
         shock = (value - long_term_mean) / sd(value, na.rm = TRUE),
@@ -67,13 +67,8 @@ climate_shocks_tbl <-
     climate_shocks_list[[4]],
     by = c("date", "country")
   ) |>
-  # group_by(country) |>
-  # # remove bottom and top 5% values
-  # mutate(across(.cols = -c(date, ends_with("_value")),
-  #               .fns = ~ DescTools::Winsorize(.x, val = quantile(.x, probs = c(0.05, 0.95))))) |>
   ungroup() |>
-  filter(date >= as.Date("2000-01-01")) |>
-  filter(country %in% inflation_countries)   # keeping only countries with inflation data that are in TIVA
+  filter(date >= as.Date("2000-01-01"))
 
 
 # EDA ---------------------------------------------------------------------

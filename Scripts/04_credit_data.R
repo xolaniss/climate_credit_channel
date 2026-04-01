@@ -1,6 +1,8 @@
 # Description
 # Credit data from bank capital project - March 2026
 
+# Find a way to up to 2024 or 2025
+
 # Preliminaries -----------------------------------------------------------
 library(here)
 
