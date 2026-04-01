@@ -12,7 +12,7 @@ source(here("Functions", "fx_plot.R"))
 
 # Import -------------------------------------------------------------
 
-## Temperature ---------------------
+## Temperature ---------------------  # Change spreadsheets to 2024
 land_weighted_temp_tbl <-
   read_csv(here("Data", "_data_gadm0_era_tmp_cropland_2000_monthly.csv")) |>
   dplyr::select(-1) |>
@@ -49,7 +49,6 @@ population_weighted_precip_tbl <-
     country = 2,
     precip = 3
   )
-
 
 # Graphing ---------------------------------------------------------------
 ## Plotting the temperature -------
