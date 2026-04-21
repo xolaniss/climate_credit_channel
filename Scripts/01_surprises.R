@@ -15,6 +15,12 @@ sa_surprises_tbl <-
   pluck("IRFs") |> 
   as.data.frame() |>
   as_tibble() # Find out the names and the dates of the surprises
+
+announcement_dates_tbl <- 
+  read_excel(here("Data", "monetary_policy_announcement_dates.xlsx")) |> 
+  rename(Date = 1) |> 
+  mutate(Date = parse_date_time(Date, "dmy")) |> 
+  mutate(Date = as.Date(Date)) # When do the factors start? Tina
   
 # Graph -------------------------------------------------------------------
 sa_surprises_gg <- 
