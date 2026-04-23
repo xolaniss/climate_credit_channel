@@ -11,16 +11,17 @@ source(here("Functions", "fx_plot.R"))
 # Import -------------------------------------------------------------
 actuals_tbl <- read_excel(here("Data", "cpi_gdp_repo_actuals.xlsx")) |> 
   dplyr::select(-2) |> 
-  rename(date = 1) |>
-  pivot_longer(-date, names_to = "variable", values_to = "value") 
+  rename(Date = 1) 
+  
 
 # EDA ---------------------------------------------------------------
-actuals_tbl |> group_by(variable) |>  skimr::skim()
+actuals_tbl  |>  skimr::skim()
 
 # Graphing ---------------------------------------------------------------
 actuals_gg <- 
   actuals_tbl |> 
-  ggplot(aes(x = date, y = value, , col = variable)) +
+  pivot_longer(-Date, names_to = "variable", values_to = "value") |> 
+  ggplot(aes(x = Date, y = value, , col = variable)) +
   geom_line() +
   facet_wrap( ~ variable, scales = "free_y", ncol = 2) +
   labs(title = "", x = "date", y = "") +

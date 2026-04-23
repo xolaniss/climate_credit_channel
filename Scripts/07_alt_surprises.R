@@ -1,5 +1,5 @@
 # Description
-# Structural surprises - Xolani April 2026
+# Structural surprises - April 2026
 ## Replicate Romer and Romer and Miyajima structural surprises
 ## Need: Romer : GDP Forecast, Repo Forecast, CPI Forecast, Actual repo.
 ##       Miyajima: Actual and forecasted GDP, Repo, and CPI
@@ -12,12 +12,10 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import Data --------------------------------------------------------
-
-# Forecast data
-forecast <- read_excel(here("Data", "bloomberg_quarterly_forecast.xlsx"))
-
-# Actual data
-actual <- read_excel(here("Data", "cpi_gdp_repo_actuals.xlsx"))
+forecast_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_forecast.rds")) |> 
+  pluck(1)
+actual_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_actuals.rds")) |> 
+  pluck(2)
 
 # Clean Data ---------------------------------------------------------
 
