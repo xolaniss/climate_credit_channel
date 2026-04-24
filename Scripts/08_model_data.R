@@ -26,6 +26,9 @@ surprises_tbl <- read_rds(here("Outputs", "artifacts_surprises.rds")) |>
   pluck(2,1) |> 
   mutate(date = as.Date(date))
 
+market_based_surprises_tbl <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
+  pluck(1)
+
 # Transformations --------------------------------------------------------
 
 ## Climate shocks aggregation -------------
@@ -72,6 +75,20 @@ lending_rates_quarterly_tbl <-
   mutate(date = date %-time% "1 day") |> 
   ungroup()
 
+## Market-based Surprises aggregation ------------------
+market_based_surprises_quarterly_tbl  <- 
+  market_based_surprises_tbl |> 
+  mutate(Quarter = as.yearqtr(Date)) |> 
+  dplyr::select(-Date) |>
+  group_by(Quarter) |>
+  mutate(across(everything(), ~ mean(.x, na.rm = TRUE))) |> 
+  ungroup() |>
+  distinct(Quarter, .keep_all = TRUE) |> 
+  rename(date = Quarter) |>
+  mutate(date = as.Date(date)) |> 
+  relocate(date, .before = everything()) |> 
+  janitor::clean_names() |>
+  mutate(date = date %-time% "1 day")  # check this again
 
 ## Making climate and surprises panel --------------------------
 climate_temp_shocks_quarterly_panel_tbl <-
@@ -104,15 +121,25 @@ suprises_panel_tbl <-
   ) |>
   bind_rows(.id = "bank")
 
+market_based_surprises_panel_tbl <-
+  list(
+    "ABSA BANK" = market_based_surprises_quarterly_tbl,
+    "STANDARD BANK" = market_based_surprises_quarterly_tbl,
+    "FIRSTRAND BANK" = market_based_surprises_quarterly_tbl,
+    "NEDBANK" = market_based_surprises_quarterly_tbl,
+    "CAPITEC BANK" = market_based_surprises_quarterly_tbl 
+  ) |>
+  bind_rows(.id = "bank")
+
 # Combining ---------------------------------------------------------------
 model_data_tbl <- 
   lending_quarterly_tbl |> 
+  left_join(lending_rates_quarterly_tbl, by = c("bank", "date")) |> 
   left_join(climate_temp_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
   left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
   left_join(suprises_panel_tbl, by = c("bank", "date")) |> 
-  left_join(lending_rates_quarterly_tbl, by = c("bank", "date"))
-
-
+  left_join(market_based_surprises_panel_tbl, by = c("bank", "date"))
+ 
 
 # Export ---------------------------------------------------------------
 artifacts <- list (

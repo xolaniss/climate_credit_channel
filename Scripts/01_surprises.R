@@ -10,47 +10,54 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import -------------------------------------------------------------
-sa_surprises_tbl <- 
-  R.matlab::readMat(here("Data", "IRFs", "IRFs.mat")) |> 
-  pluck("IRFs") |> 
-  as.data.frame() |>
-  as_tibble() # Find out the names and the dates of the surprises
-
 announcement_dates_tbl <- 
   read_excel(here("Data", "monetary_policy_announcement_dates.xlsx")) |> 
   rename(Date = 1) |> 
   mutate(Date = parse_date_time(Date, "dmy")) |> 
-  mutate(Date = as.Date(Date)) # When do the factors start? Tina
+  mutate(Date = as.Date(Date)) |> 
+  filter(Date >= "2002-06-01" & Date <= "2025-02-01" )
+
+market_based_surprises_tbl <- 
+  R.matlab::readMat(here("Data", "IRFs", "IRFs.mat")) |> 
+  pluck("IRFs") |> 
+  as.data.frame() |>
+  as_tibble() |> 
+  mutate(date = announcement_dates_tbl |> dplyr::select(Date)) |> 
+  unnest(date) |> 
+  relocate(Date, .before = "V1") |> 
+  rename("Target" = 2, 
+         "Forward Guidance" = 3, 
+         "Central Bank Information" = 4, 
+         "Country Risk" = 5) |> 
+  filter(Date >= "2008-01-01" )
+  
+
   
 # Graph -------------------------------------------------------------------
-sa_surprises_gg <- 
+market_based_surprises_gg <- 
   sa_surprises_tbl |> 
-  rename(F1 = 1, F2 = 2, F3 = 3, F4 = 4) |>
-  mutate(number = row_number()) |> 
-  pivot_longer(-number, names_to = "variable", values_to = "surprise") |> 
-  ggplot(aes(x = number, y = surprise)) + # Change the variable names
+  pivot_longer(-Date, names_to = "variable", values_to = "surprise") |> 
+  ggplot(aes(x = Date, y = surprise, col = variable)) + # Change the variable names
   geom_line() +
   labs(
-    title = "SA MPS",
+    title = "SA Market-Based MPS",
     x = "Date",
     y = ""
   ) +
   facet_wrap(~variable, scales = "free_y", ncol = 2) +
-  theme_minimal(base_size = 6) +
-  theme(legend.position = "bottom") +
-  theme(legend.position = "bottom") +
+  theme_minimal() +
+  theme(legend.position = "none") +
   scale_x_date(date_labels = "%Y", date_breaks = "4 years") +
-  scale_color_manual(values = pnw_palette("Bay",4), labels = scales::label_wrap(20)) +
-  theme_minimal()
+  scale_color_manual(values = pnw_palette("Bay",4), labels = scales::label_wrap(20))
 
 
 # Export ---------------------------------------------------------------
-artifacts_sa_surprises <- list (
-  sa_surprises_tbl = sa_surprises_tbl,
-  sa_surprises_gg = sa_surprises_gg
+artifacts_market_based_surprises <- list (
+  market_based_surprises_tbl = market_based_surprises_tbl,
+  market_based_surprises_gg = market_based_surprises_gg
   
 )
 
-write_rds(artifacts_sa_surprises, file = here("Outputs", "artifacts_sa_surprises.rds"))
+write_rds(artifacts_market_based_surprises, file = here("Outputs", "artifacts_market_based_surprises.rds"))
 
 
