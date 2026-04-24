@@ -11,174 +11,161 @@ library(here)
 source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
-# Import Data --------------------------------------------------------
+# Import and Clean Data --------------------------------------------------------
 forecast_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_forecast.rds")) |> 
-  pluck(1)
-actual_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_actuals.rds")) |> 
-  pluck(2)
-
-# Clean Data ---------------------------------------------------------
-
-clean_dates <- function(df) {
-  df %>%
-    mutate(
-      Reporting_Date = as.Date(Reporting_Date, format = "%b %Y"),
-      Quarter = as.yearqtr(Reporting_Date)
-    )
-}
-
-forecast <- forecast %>%
+  pluck(1) |> 
   rename(
-    Reporting_Date = `Reporting Date`,
+    date = `Forecast Date`,
     repo_forecast = `South Africa Repo Average Rate`,
     gdp_forecast  = `South Africa GDP Forecast YoY%`,
     cpi_forecast  = `South Africa CPI Forecast YoY%`
-  ) %>%
-  clean_dates()
+  ) 
 
-actual <- actual %>%
+actual_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_actuals.rds")) |> 
+  pluck(2) |> 
   rename(
-    Reporting_Date = `Reporting Date`,
+    date =  Date,
     repo_actual = `South Africa Repo Average Rate`,
     gdp_actual  = `South Africa GDP Forecast YoY%`,
     cpi_actual  = `South Africa CPI Forecast YoY%`
-  ) %>%
-  clean_dates()
+  ) 
 
-# Convert to numeric and handle missing values
-forecast <- forecast %>%
-  mutate(across(c(repo_forecast, gdp_forecast, cpi_forecast),
-                ~as.numeric(na_if(as.character(.x), "#N/A"))))
-
-actual <- actual %>%
-  mutate(across(c(repo_actual, gdp_actual, cpi_actual),
-                as.numeric))
 
 # Merge Datasets -----------------------------------------------------
+combined_tbl <- forecast_tbl |> 
+  left_join(actual_tbl, by = "date") 
 
-data <- forecast %>%
-  left_join(actual, by = "Quarter") %>%
-  arrange(Quarter)
+## Construct Variables ------------------------------------------------
 
-# Construct Variables ------------------------------------------------
-
-data <- data %>%
+combined_romer_variables_tbl <- 
+  combined_tbl |> 
   mutate(
-
-# Romer & Romer vars
-   
     # Change in repo rate (dependent variable)
-    d_repo = repo_actual - lag(repo_actual),
+    change_repo = repo_actual - lag(repo_actual, n = 1),
     
     # Forecasted repo rate (level)
     repo_hat = repo_forecast,
     
     # GDP forecast: 2 quarters ahead change
-    gdp_hat_lead2 = lead(gdp_forecast, 2),
-    d_gdp_hat = gdp_hat_lead2 - lag(gdp_forecast),
+    gdp_hat_lead_two = lead(gdp_forecast, n = 2),
+    change_gdp_hat_two = gdp_hat_lead_two - lag(gdp_forecast, n = 1),
     
     # CPI forecast: 2 quarters ahead change
-    cpi_hat_lead2 = lead(cpi_forecast, 2),
-    d_cpi_hat = cpi_hat_lead2 - lag(cpi_forecast),
-
-# Miyajima vars
+    cpi_hat_lead_two = lead(cpi_forecast, 2),
+    change_cpi_hat_two = cpi_hat_lead_two - lag(cpi_forecast, n = 1)
+  ) 
     
+  
+combined_miyajima_variables_tbl <-   
+  combined_tbl |> 
+  mutate(
     # Forecast Errors (FE = actual - forecast)
     fe_repo = repo_actual - repo_forecast,
     fe_gdp  = gdp_actual  - gdp_forecast,
     fe_cpi  = cpi_actual  - cpi_forecast
-  )
+  ) 
 
-# Estimate Romer & Romer Equation ------------------------------------
 
-rr_model_data <- data %>%
-  filter(!is.na(d_repo),
-         !is.na(repo_hat),
-         !is.na(d_gdp_hat),
-         !is.na(d_cpi_hat))
+## Graphing equation variables ---------------------------------------------
+combined_romer_gg <- 
+  combined_romer_variables_tbl |> 
+  pivot_longer(-date, names_to = "variable", values_to = "value") |>
+  ggplot(aes(x = date, y = value, col = variable)) +
+  geom_line() +
+  facet_wrap( ~ variable, scales = "free_y", ncol = 2) +
+  theme_minimal(base_size = 8) +
+  theme(legend.position = "") 
 
-rr_model <- lm(
-  d_repo ~ repo_hat + d_gdp_hat + d_cpi_hat,
-  data = rr_model_data
-)
 
-summary(rr_model)
+combined_miyajima_gg <- 
+  combined_miyajima_variables_tbl |> 
+  pivot_longer(-date, names_to = "variable", values_to = "value") |>
+  ggplot(aes(x = date, y = value, col = variable)) +
+  geom_line() +
+  facet_wrap( ~ variable, scales = "free_y", ncol = 2) +
+  theme_minimal(base_size = 8) +
+  theme(legend.position = "") 
 
-# Extract Romer Surprise ---------------------------------------------
 
-rr_model_data <- rr_model_data %>%
-  mutate(
-    romer_surprise = resid(rr_model)
-  )
+# Estimating surprises -------------------------------------------------------
+## Estimate Romer & Romer Equation ------------------------------------
+romer_suprise_tbl <- lm(
+  change_repo ~ repo_hat + change_gdp_hat_two + change_cpi_hat_two,
+  data = combined_romer_variables_tbl |> drop_na()) |> 
+  resid() |> 
+  tibble() |> 
+  rename( "romer_surprise" = 1) |> 
+  mutate(date = combined_romer_variables_tbl |>  drop_na() |> dplyr::select(date)) |> 
+  relocate(date, .before = 1) |> 
+  unnest(date) |> 
+  rename("date" = 1) # hat is forecast
 
-# Merge back
-data <- data %>%
-  left_join(
-    rr_model_data %>% select(Quarter, romer_surprise),
-    by = "Quarter"
-  )
 
-# Estimate Miyajima Equation ----------------------------------------
+## Estimate Miyajima Equation ----------------------------------------
 # FE(repo) = α + FE(inflation) + FE(gdp) + error
 
-miyajima_model_data <- data %>%
-  filter(!is.na(fe_repo),
-         !is.na(fe_gdp),
-         !is.na(fe_cpi))
-
-miyajima_model <- lm(
+miyajima_surprise_tbl <- lm(
   fe_repo ~ fe_cpi + fe_gdp,
-  data = miyajima_model_data
-)
+  data = combined_miyajima_variables_tbl |> drop_na()) |> 
+  resid() |> 
+  tibble() |> 
+  rename( "miyajima_surprise" = 1) |>
+  mutate(date = combined_miyajima_variables_tbl |>  drop_na() |> dplyr::select(date)) |>
+  relocate(date, .before = 1) |>
+  unnest(date) 
 
-summary(miyajima_model)
-
-# Extract Miyajima Surprise ------------------------------------------
-
-miyajima_model_data <- miyajima_model_data %>%
-  mutate(
-    miyajima_surprise = resid(miyajima_model)
-  )
-
-# Merge back
-data <- data %>%
-  left_join(
-    miyajima_model_data %>% select(Quarter, miyajima_surprise),
-    by = "Quarter"
-  )
-
-# Plots -----------------------------------------------------------
+## Plots -----------------------------------------------------------
 
 # Romer surprise
-ggplot(data, aes(x = Quarter, y = romer_surprise)) +
+romer_surprise_gg <- 
+  romer_suprise_tbl |> 
+  ggplot(aes(x = date, y = romer_surprise)) +
   geom_line() +
   labs(
-    title = "Romer & Romer Monetary Policy Surprise (South Africa)",
-    x = "Quarter",
-    y = "Shock"
+    title = "Romer & Romer Monetary Policy Surprise",
+    x = "Date",
+    y = "Suprise"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  scale_x_date(date_labels = "%Y", date_breaks = "2 years")
 
 # Miyajima surprise
-ggplot(data, aes(x = Quarter, y = miyajima_surprise)) +
+miyajima_suprise_gg <- 
+  miyajima_surprise_tbl |>
+  ggplot(aes(x = date, y = miyajima_surprise)) +
   geom_line() +
   labs(
-    title = "Miyajima Monetary Policy Surprise (South Africa)",
-    x = "Quarter",
-    y = "Shock"
+    title = "Miyajima Monetary Policy Surprise",
+    x = "Date",
+    y = "Surprise"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  scale_x_date(date_labels = "%Y", date_breaks = "2 years")
+
+
+# Combining surprises data ---------------------------------------
+combined_surprises_tbl <- 
+  miyajima_surprise_tbl|> 
+  left_join(romer_suprise_tbl, by = "date")
 
 # Save Outputs ---------------------------------------------------
 
 # Create artifacts object
-artifacts_ <- list(
-  data = data,
-  rr_model = rr_model,
-  miyajima_model = miyajima_model
+artifacts <- list(
+  date  = list(
+    combined_romer_variables_tbl = combined_romer_variables_tbl,
+    combined_miyajima_variables_tbl = combined_miyajima_variables_tbl),
+  surprises = list(
+    combined_surprises_tbl = combined_surprises_tbl,
+    romer_surprise_tbl = romer_suprise_tbl,
+    miyajima_surprise_tbl = miyajima_surprise_tbl),
+  plots = list(
+  romer_surprise_gg = romer_surprise_gg,
+  miyajima_surprise_gg = miyajima_suprise_gg
+  )
 )
 
 # Save as RDS 
-write_rds(artifacts_, file = here("Outputs", "artifacts_surprises.rds"))
+write_rds(artifacts, file = here("Outputs", "artifacts_surprises.rds"))
 
 
