@@ -35,7 +35,7 @@ market_based_surprises_tbl <-
   
 # Graph -------------------------------------------------------------------
 market_based_surprises_gg <- 
-  sa_surprises_tbl |> 
+  market_based_surprises_tbl |> 
   pivot_longer(-Date, names_to = "variable", values_to = "surprise") |> 
   ggplot(aes(x = Date, y = surprise, col = variable)) + # Change the variable names
   geom_line() +
