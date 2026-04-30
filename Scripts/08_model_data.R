@@ -139,7 +139,7 @@ model_data_tbl <-
   left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
   left_join(suprises_panel_tbl, by = c("bank", "date")) |> 
   left_join(market_based_surprises_panel_tbl, by = c("bank", "date"))
- 
+  
 
 # Export ---------------------------------------------------------------
 artifacts <- list (
