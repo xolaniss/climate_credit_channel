@@ -100,7 +100,7 @@ climate_shocks_gg <-
     x = "",
     col = "Shock"
   ) +
-  theme_minimal(base_size = 6) +
+  theme_minimal(base_size = 8) +
   theme(legend.position = "") +
   scale_x_date(date_labels = "%Y", date_breaks = "4 years") +
   scale_color_manual(values = pnw_palette("Bay",4), labels = scales::label_wrap(20))
