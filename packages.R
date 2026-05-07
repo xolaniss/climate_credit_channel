@@ -44,6 +44,7 @@ suppressWarnings(suppressMessages(suppressPackageStartupMessages({
   library(urca)
   library(mFilter)
   library(car)
+  library(fixest)
   
   # Parallel processing
   library(furrr)
