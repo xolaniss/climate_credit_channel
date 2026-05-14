@@ -194,15 +194,10 @@ dir.create(
 all_models <- list()
 
 for(dep in dependent_vars){
-  
   dep_models <- list()
-  
   for(climate in climate_vars){
-    
     for(surprise in surprise_vars){
-      
-      # Construct formula
-      regression_formula <- as.formula(
+      regression_formula <- as.formula(      # Make formula
         paste0(
           dep,
           " ~ ",
@@ -212,28 +207,21 @@ for(dep in dependent_vars){
           " | bank "
         )
       )
-      
-      # Estimate FE model
-      model <- feols(
+      model <- feols(      # Estimate FE model
         regression_formula,
         data = model_data_tbl,
         cluster = ~bank
       )
-      
-      # Model name
-      model_name <- paste(
+      model_name <- paste(          # naming model
         climate,
         "x",
         surprise,
         sep = "_"
       )
-      
       dep_models[[model_name]] <- model
     }
   }
-  
-  # Store models
-  all_models[[dep]] <- dep_models
+  all_models[[dep]] <- dep_models        # Store models
 }
 
 # Export regression tables ---------------------------------------------
@@ -248,36 +236,23 @@ for(dep in names(all_models)){
     seq_along(models_tbl),
     ")"
   )
-  
   names(models_tbl) <- model_names
-  
-  # Create table
-  modelsummary(
+  modelsummary(                 # Create table
     models_tbl,
-    
-    # Robust clustered SEs (estimated in feols)
-    statistic = "std.error",
-    
-    # Significance stars
+    statistic = "std.error",  # Robust clustered SEs (estimated in feols)
     stars = c(
       "*" = .10,
       "**" = .05,
       "***" = .01
     ),
-    
-    # Goodness-of-fit statistics
-    gof_map = c(
+    gof_map = c(         # Goodness-of-fit statistics
       "nobs",
       "r.squared",
       "adj.r.squared",
       "within.r.squared"
     ),
-    
-    # Rename variables
-    coef_map = variable_labels,
-    
-    # Output file
-    output = here(
+    coef_map = variable_labels, # Rename variables
+    output = here(              # Output file
       "Outputs",
       "Fixed Effects Regression Tables",
       paste0(dep, "_fe_regressions.html")
