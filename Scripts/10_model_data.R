@@ -16,7 +16,17 @@ lending_tbl <- credit_market |>
   pluck(1) |> 
   mutate(Date = as.Date(Date)) |> 
   rename(date = 1) |> 
-  janitor::clean_names()
+  janitor::clean_names() |> 
+  dplyr::select(-other_assets) |> 
+  group_by(bank) |> 
+  mutate(across(.cols = c("corporate_unsecured_credit", 
+                          "corporate_secured_credit", 
+                          "corporate_sector_mortgages", 
+                          "household_unsecured_credit", 
+                          "household_secured_credit", 
+                          "households_residential_mortgages"
+                          ), 
+                ~ log(.x) ))
 lending_rates_tbl <- credit_market |>
   pluck(2) |> 
   mutate(Date = as.Date(Date)) |> 
