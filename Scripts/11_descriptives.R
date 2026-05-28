@@ -1,15 +1,6 @@
 # Description ---------------------------------------------------------
 # Descriptive statistics and plots for modelling dataset - May 2026
-#
-# This script:
-# 1. Imports modelling dataset
-# 2. Computes descriptive statistics
-# 3. Produces:
-#    - summary statistics table
-#    - correlation matrix
-#    - time-series plots
-#    - density plots
-#    - boxplots
+# summary statistics table, time-series plots, density plots, boxplots
 # Notes from descriptives: 1. corporate_sector_mortgages, corporate_secured_credit, 
 # household_secured_credit and households_residential_mortgages must have log(0) in the series.
 
@@ -65,7 +56,7 @@ descriptive_stats_tbl <-
   ) |>
   arrange(variable)
 
-# Plots ------------------------------------------------
+# Create all plots ------------------------------------------------
 
 ## Create output folders --------------------
 dir.create(
@@ -227,8 +218,7 @@ artifacts <- list(
 )
 
 write_rds(
-  artifacts,
-  file = here(
+  artifacts, file = here(
     "Outputs",
     "artifacts_descriptive_statistics.rds"
   )
