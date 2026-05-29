@@ -1,0 +1,13 @@
+1. Update climate data to 2025 data
+2. Update pricing and BA900 data
+3. Descriptive stats - only for model data period and add kurtosis, etc.
+4. check for ouliers in mortgage rates (covid?)
+5. Check for NANs
+6. Check corporate sector mortgages - values
+7. Check corporate secured credit for Capitec
+8. Check corporate secured credit rates and corporate secured cred at the end of the series
+9. Might need to exclude Viegi surprises run-in
+10. Household mortage rates should not be the same for all banks
+11. Check all rates - should not be transformed
+12. Miyajima suprise break in 2010
+13. Romer suprise break in 2010
