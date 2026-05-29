@@ -211,11 +211,6 @@ write_csv(
   )
 )
 
-## Save artifacts ---------------------
-artifacts <- list(
-  descriptive_stats_tbl = descriptive_stats_tbl,
-  correlation_tbl = correlation_tbl
-)
 
 write_rds(
   artifacts, file = here(
