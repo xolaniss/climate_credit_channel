@@ -24,7 +24,7 @@ credit_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |>
   
 
 lending_tbl <- read_rds(here("Data", "artifacts_BA930_futher_analysis.rds")) |> 
-  pluck(1,1)
+  pluck(1,2)
 
 
 # Export ---------------------------------------------------------------
