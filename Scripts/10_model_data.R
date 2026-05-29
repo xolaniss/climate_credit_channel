@@ -26,12 +26,27 @@ lending_tbl <- credit_market |>
                           "household_secured_credit", 
                           "households_residential_mortgages"
                           ), 
-                ~ log(.x) ))
+                ~ log(.x) )) |> 
+  filter(!bank == "CAPITEC BANK")
 lending_rates_tbl <- credit_market |>
   pluck(2) |> 
   mutate(Date = as.Date(Date)) |> 
-  rename(date = 1) |> 
-  janitor::clean_names()
+  select(-contains("Total")) |> 
+  rename(
+    # Corporate
+    "corporate_unsecured_credit_rate" = `Non financial corporate unsecured lending rate`,
+    "corporate_secured_credit_rate" = `Leasing and installements to corporate rate`,
+    "corporate_sector_mortgages_rate"= `Commercial mortgages to corporates and households rate`,
+    # Household
+    "households_residential_mortgages_rate" = `Residential mortgages to household rate`,
+    "household_unsecured_credit_rate" = `Household unsecured lending rate`,
+    "household_secured_credit_rate" = `Leasing and installments to households rate`,
+    # Other
+    "Bank" = "Banks"
+  ) |> 
+  janitor::clean_names() |> 
+  mutate(bank = toupper(bank)) |> 
+  filter(!bank == "CAPITEC BANK")
 surprises_tbl <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
   pluck(2,1) |> 
   mutate(date = as.Date(date))
@@ -80,7 +95,7 @@ lending_rates_quarterly_tbl <-
   timetk::summarise_by_time(
     .date_var = date,
     .by = "quarter",
-    across(.cols = everything() ,  .fns = mean) 
+    across(.cols = everything(),  .fns = mean) 
   ) |> 
   mutate(date = date %-time% "1 day") |> 
   ungroup()
@@ -148,7 +163,8 @@ model_data_tbl <-
   left_join(climate_temp_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
   left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
   left_join(suprises_panel_tbl, by = c("bank", "date")) |> 
-  left_join(market_based_surprises_panel_tbl, by = c("bank", "date"))
+  left_join(market_based_surprises_panel_tbl, by = c("bank", "date")) |> 
+  filter(date > "2008-12-31")
   
 
 # Export ---------------------------------------------------------------
