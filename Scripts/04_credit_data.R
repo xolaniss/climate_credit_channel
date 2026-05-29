@@ -18,12 +18,13 @@ credit_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |>
   mutate(Series = str_replace_all(Series, "Non-financial ", "")) |> 
   mutate(Series = str_replace_all(Series, "Household sector", "Household")) |>
   mutate(Series = str_replace_all(Series, "corporate", "Corporate")) |> 
-  pivot_wider(names_from = "Series", values_from = "Value")
+  pivot_wider(names_from = "Series", values_from = "Value") |> 
+  # replace 0s with NA
+  mutate(across(-c(Date, Bank), ~ if_else(.x == 0, NA, .x)))
   
 
-lending_tbl <- read_rds(here("Data", "artifacts_combined_lending.rds")) |> 
-  pluck(9) |> 
-  pivot_wider(names_from = "Series", values_from = "Value")
+lending_tbl <- read_rds(here("Data", "artifacts_BA930_futher_analysis.rds")) |> 
+  pluck(1,1)
 
 
 # Export ---------------------------------------------------------------
