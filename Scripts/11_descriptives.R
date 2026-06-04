@@ -211,9 +211,14 @@ write_csv(
   )
 )
 
+# Create artifacts object -----------------------
+artifacts <- list(
+  descriptive_stats_tbl = descriptive_stats_tbl
+)
 
 write_rds(
-  artifacts, file = here(
+  artifacts,
+  file = here(
     "Outputs",
     "artifacts_descriptive_statistics.rds"
   )
