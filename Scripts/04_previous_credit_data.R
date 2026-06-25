@@ -1,7 +1,6 @@
 # Description
 # Credit data from bank capital project - March 2026
-
-# Find a way to up to 2024 or 2025
+# This goes to the end of 2022. 
 
 # Preliminaries -----------------------------------------------------------
 library(here)
@@ -20,11 +19,33 @@ credit_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |>
   mutate(Series = str_replace_all(Series, "corporate", "Corporate")) |> 
   pivot_wider(names_from = "Series", values_from = "Value") |> 
   # replace 0s with NA
-  mutate(across(-c(Date, Bank), ~ if_else(.x == 0, NA, .x)))
+  mutate(across(-c(Date, Bank), ~ if_else(.x == 0, NA, .x))) |> 
+  rename(
+    "Corporate mortgages" = `Corporate sector mortgages`,
+    "Household mortgages" = `Households residential mortgages`
+  ) |> 
+  dplyr::select(
+    -`Other assets` 
+  )
   
-
+  
 lending_tbl <- read_rds(here("Data", "artifacts_BA930_futher_analysis.rds")) |> 
-  pluck(1,2)
+  pluck(1,2) |> 
+  rename(
+    "Corporate unsecured credit rate" = `Non financial corporate unsecured lending rate`,
+    "Corporate mortgage rate" = `Commercial mortgages to corporates and households rate`,
+    "Corporate secured credit rate" = `Leasing and installements to corporate rate`,
+    "Household secured credit rate" = `Leasing and installments to households rate`,
+    "Household mortgage rate" = `Residential mortgages to household rate`,
+    "Household unsecured credit rate" = `Household unsecured lending rate`,
+    "Banks" = Banks
+  ) |> 
+  dplyr::select(
+    -`Total unsecured lending rate`, 
+    -`Total mortgages lending rate`, 
+    -`Total leasing and installments rate`
+  ) |> 
+  janitor::clean_names()
 
 
 # Export ---------------------------------------------------------------
