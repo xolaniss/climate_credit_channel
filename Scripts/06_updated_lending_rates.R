@@ -49,9 +49,8 @@ updated_lending_rate_data_tbl <-
               ) |> 
   janitor::clean_names() |> 
   mutate(date = parse_datetime(date, "%Y-%m")) |> 
-  mutate(date = as.Date(date))
+  mutate(date = as.Date(date)) 
   
-
 # EDA ---------------------------------------------------------------------
 updated_lending_rate_data_tbl  |> 
   skim()
