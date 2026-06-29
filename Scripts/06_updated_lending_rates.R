@@ -9,13 +9,18 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import and Cleaning -----------------------------------------------------------------
-sheet_names <- c("Absa Bank", "Capitec Bank", "Firstrand Bank", "Nedbank LTD", "The Standard Bank of SA")
-corrected_sheet_names <- c("Absa Bank", "Capitec", "FNB", "Nedbank", "Standard Bank")
-lending_rate_2008_2021_tbl <- read_rds(here("Outputs", "artifacts_credit_market.rds")) |> pluck(2) |> 
+lending_rate_2008_2021_tbl <- read_rds(here("Outputs", "artifacts_credit_market.rds")) |> 
+  pluck(2) |> 
   janitor::clean_names() |> 
   mutate(date = as.Date(date)) |> 
-  filter(date < "2022-01-01")
+  filter(date < "2022-01-01") |> 
+  filter(banks != "TOTAL BANKS") |> 
+  mutate(banks = str_replace(banks, "FNB", "FIRSTRAND BANK")) |> 
+  mutate(banks = str_replace(banks, "CAPITEC", "CAPITEC BANK"))
 
+
+sheet_names <- c("Absa Bank", "Capitec Bank", "Firstrand Bank", "Nedbank LTD", "The Standard Bank of SA")
+corrected_sheet_names <- c("Absa Bank", "Capitec Bank", "FirstRand Bank", "Nedbank", "Standard Bank")
 updated_lending_rate_data_tbl <- 
   sheet_names |>
   set_names(corrected_sheet_names) |> 
@@ -48,6 +53,7 @@ updated_lending_rate_data_tbl <-
               values_from = weighted_average_rate_percent
               ) |> 
   janitor::clean_names() |> 
+  mutate(bank = str_to_upper(bank)) |> 
   mutate(date = parse_datetime(date, "%Y-%m")) |> 
   mutate(date = as.Date(date)) 
   
@@ -69,7 +75,8 @@ lending_rate_2022_2026_tbl <-
     sector_credit_type = paste0(sector, "_", credit_type) |> str_to_lower()
   ) |> 
   dplyr::select(-sector, -credit_type) |> 
-  tidyr::pivot_wider(id_cols = c(date, bank), names_from = sector_credit_type, values_from = rate)
+  tidyr::pivot_wider(id_cols = c(date, bank), names_from = sector_credit_type, values_from = rate) |> 
+  rename("banks" = bank)
 
 
 # Combine -----------------------------------------------------------------
