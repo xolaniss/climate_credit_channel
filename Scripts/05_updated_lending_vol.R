@@ -12,35 +12,32 @@ lending_vol_2008_2021_tbl <-
   read_rds(here("Outputs", "artifacts_credit_market.rds")) |> 
   pluck(1) |> 
   janitor::clean_names() |> 
-  filter(date < "2022-01-01")
+  filter(date < "2022-01-01") |>
+  rename("banks" = bank) |> 
+  filter(date > "2009-12-01")
 
-
-BA900 <- read_excel(here("Data", "BA900_big_banks.xlsx")) 
+BA900_2022_2026 <- read_excel(here("Data", "BA900_big_banks.xlsx")) 
 
 # Cleaning -----------------------------------------------------------------
-lending_vol_tbl <- 
-  BA900 |>
+lending_vol_2022_2026_tbl <- 
+  BA900_2022_2026 |>
   filter(...1 %in%
            c(142, 
              143, # UNSECURED CREDIT: 142 and 143 are instalment sales
-             169, 
-             170, # 169 and 170 are credit cards
+             168, 
+             169, # 169 and 170 are credit cards
              183,  # 183 to  188 are overdrafts
-             184, 
              185, 
-             186, 
              190, # other loans
-             191, 
              192, 
-             193,
              147,  # SECURED CREDIT:  147 and 148 are leasing transactions
              148,
-             156, # MORTGAGES
+             152, # MORTGAGES
+             153,
+             156, 
              157, 
-             158, 
              163, 
-             164, 
-             165 
+             164
              )) |> 
   rename(
      "line_item" = 1,
@@ -50,11 +47,11 @@ lending_vol_tbl <-
   mutate(date = parse_date(date, "%Y-%m")) |>
   mutate(credit_category = case_when(
     line_item %in% c(142, 143)             ~ "Instalment Sales",
-    line_item %in% c(169, 170)             ~ "Credit Cards",
-    line_item %in% c(183, 184, 185, 186)   ~ "Overdrafts",
-    line_item %in% c(190, 191, 192, 193)   ~ "Other Loans",
+    line_item %in% c(168, 169)             ~ "Credit Cards",
+    line_item %in% c(183, 185)            ~ "Overdrafts",
+    line_item %in% c(190, 192)            ~ "Other Loans",
     line_item %in% c(147, 148)             ~ "Leasing Transactions",
-    line_item %in% c(156, 157, 158, 163, 164, 165)  ~ "Mortgages",
+    line_item %in% c(152, 153, 156, 157, 163, 164)  ~ "Mortgages",
     .default = NA_character_
   )) |> 
   mutate(broad_credit_category = case_when(
@@ -68,15 +65,15 @@ lending_vol_tbl <-
                names_to = "variable",
                values_to = "value") |>
   group_by(date, line_item) |>
-  mutate(bank = rep(
+  mutate(banks = rep(
     c(
-      "Absa Bank",
-      "Capitec",
-      "FNB",
-      "Investec",
-      "Nedbank",
-      "Standard Bank",
-      "Total"
+      "ABSA BANK",
+      "CAPITEC BANK",
+      "FIRSTRAND BANK",
+      "INVESTEC",
+      "NEDBANK",
+      "STANDARD BANK",
+      "TOTAL"
     ),
     each = 6
   )) |> 
@@ -95,21 +92,52 @@ lending_vol_tbl <-
     date, .before = line_item
   ) |> 
   relocate(
-    bank, .after = date
+    banks, .after = date
   ) |> 
   relocate(
     value, .after = asset_type
-  ) 
+  ) |> 
+  filter(!banks %in% c("INVESTEC", "TOTAL")) |> 
+  mutate(value = as.numeric(value)) |> 
+  mutate(credit_sector = str_to_lower(credit_sector)) |> 
+  mutate(credit_sector = recode_values(credit_sector,
+    "non-financial corporate sector"                    ~ "corporate",
+    "private non-financial corporate sector"            ~ "corporate",
+    "unincorporated business enterprises of households" ~ "household",
+    "households"                                        ~ "household",
+    "non-profit organisations serving households"        ~ "household",
+    "corporate sector"                                  ~"corporate",
+    "household sector"                                  ~"household"
+  )) |> 
+  filter(str_detect(asset_type, "Domestic assets")) |>
+  mutate(value = as.numeric(value)*1000) |>
+  summarise(total = sum(value, na.rm = TRUE), .by = c(date, banks, credit_sector, broad_credit_category)) |> 
+  arrange(date, banks, credit_sector, broad_credit_category) |> 
+  mutate(broad_credit_category = str_to_lower(broad_credit_category)) |> 
+  mutate(broad_credit_category = str_replace_all(broad_credit_category, " ", "_")) |> 
+  mutate(credit_category = paste0(credit_sector,  "_", broad_credit_category)) |> 
+  relocate(credit_category , .before = credit_sector) |> 
+  select(-credit_sector, -broad_credit_category) |> 
+  pivot_wider(names_from = credit_category, values_from = total)
+  
   
 
-# Transformations --------------------------------------------------------
-
-
+# Combined --------------------------------------------------------
+lending_vol_tbl <- bind_rows(lending_vol_2008_2021_tbl, lending_vol_2022_2026_tbl)
+lending_vol_tbl |> tail()
+  
 
 # Graphing ---------------------------------------------------------------
-
-
-# Export ---------------------------------------------------------------
+  lending_vol_tbl |> 
+  pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
+  ggplot(aes(x = date, y = value, color = credit_category)) + 
+  geom_line() + 
+  scale_y_continuous(labels = scales::label_number(scale = 1e-9, suffix = "B")) +
+  labs(x = "Year", y = "Lending Volume (R Billions)", color = "Credit Category") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_wrap(banks~credit_category, scale = "free_y") 
+  
+# Export --------------------------------------------------------------
 artifacts_ <- list ( )
 
 write_rds(artifacts_, file = here("Outputs", "artifacts_.rds"))

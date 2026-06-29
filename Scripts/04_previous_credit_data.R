@@ -26,7 +26,8 @@ credit_tbl <- read_rds(here("Data", "artifacts_combined_banks_monthly.rds")) |>
   ) |> 
   dplyr::select(
     -`Other assets` 
-  )
+  ) |> 
+  janitor::clean_names()
   
   
 lending_tbl <- read_rds(here("Data", "artifacts_BA930_futher_analysis.rds")) |> 
@@ -45,7 +46,9 @@ lending_tbl <- read_rds(here("Data", "artifacts_BA930_futher_analysis.rds")) |>
     -`Total mortgages lending rate`, 
     -`Total leasing and installments rate`
   ) |> 
-  janitor::clean_names()
+  janitor::clean_names() |> 
+  mutate(banks = str_to_upper(banks))
+  
 
 
 # Export ---------------------------------------------------------------
