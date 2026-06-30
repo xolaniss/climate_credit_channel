@@ -13,8 +13,8 @@ lending_vol_2008_2021_tbl <-
   pluck(1) |> 
   janitor::clean_names() |> 
   filter(date < "2022-01-01") |>
-  rename("banks" = bank) |> 
-  filter(date > "2009-12-01")
+  rename("banks" = bank) 
+  # filter(date > "2009-12-01")
 
 BA900_2022_2026 <- read_excel(here("Data", "BA900_big_banks.xlsx")) 
 
@@ -25,7 +25,7 @@ lending_vol_2022_2026_tbl <-
            c(142, 
              143, # UNSECURED CREDIT: 142 and 143 are instalment sales
              168, 
-             169, # 169 and 170 are credit cards
+             169, # 168 and 169 are credit cards
              183,  # 183 to  188 are overdrafts
              185, 
              190, # other loans
@@ -109,7 +109,8 @@ lending_vol_2022_2026_tbl <-
     "corporate sector"                                  ~"corporate",
     "household sector"                                  ~"household"
   )) |> 
-  filter(str_detect(asset_type, "Domestic assets")) |>
+  filter(asset_type ==  "Domestic assets") |>
+  # filter(str_detect(asset_type, "TOTAL")) |> 
   mutate(value = as.numeric(value)*1000) |>
   summarise(total = sum(value, na.rm = TRUE), .by = c(date, banks, credit_sector, broad_credit_category)) |> 
   arrange(date, banks, credit_sector, broad_credit_category) |> 
@@ -129,6 +130,8 @@ lending_vol_tbl |> tail()
 
 # Graphing ---------------------------------------------------------------
   lending_vol_tbl |> 
+  filter(date < "2022-01-01") |> 
+  mutate(across(-c("date", "banks"), ~ ((.x - lag(.x, 1))/lag(.x, 1))*100)) |>
   pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
   ggplot(aes(x = date, y = value, color = credit_category)) + 
   geom_line() + 
