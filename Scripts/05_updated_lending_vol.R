@@ -97,7 +97,6 @@ lending_vol_2022_2026_tbl <-
   relocate(
     value, .after = asset_type
   ) |> 
-  filter(!banks %in% c("INVESTEC", "TOTAL")) |> 
   mutate(value = as.numeric(value)) |> 
   mutate(credit_sector = str_to_lower(credit_sector)) |> 
   mutate(credit_sector = recode_values(credit_sector,
@@ -109,8 +108,8 @@ lending_vol_2022_2026_tbl <-
     "corporate sector"                                  ~"corporate",
     "household sector"                                  ~"household"
   )) |> 
-  filter(asset_type ==  "Domestic assets") |>
-  # filter(str_detect(asset_type, "TOTAL")) |> 
+  filter(asset_type ==  "TOTAL ASSETS (Col 1 plus col 3)") |>
+  # filter(str_detect(asset_type, "TOTAL")) |>
   mutate(value = as.numeric(value)*1000) |>
   summarise(total = sum(value, na.rm = TRUE), .by = c(date, banks, credit_sector, broad_credit_category)) |> 
   arrange(date, banks, credit_sector, broad_credit_category) |> 
@@ -121,28 +120,51 @@ lending_vol_2022_2026_tbl <-
   select(-credit_sector, -broad_credit_category) |> 
   pivot_wider(names_from = credit_category, values_from = total)
   
-  
-
 # Combined --------------------------------------------------------
-lending_vol_tbl <- bind_rows(lending_vol_2008_2021_tbl, lending_vol_2022_2026_tbl)
-lending_vol_tbl |> tail()
-  
-
-# Graphing ---------------------------------------------------------------
+lending_vol_tbl <- bind_rows(lending_vol_2008_2021_tbl, lending_vol_2022_2026_tbl) |> 
+  filter(!banks %in% c("INVESTEC", "TOTAL", "CAPITEC BANK"))
+lending_growth_tbl <- 
   lending_vol_tbl |> 
-  filter(date < "2022-01-01") |> 
-  mutate(across(-c("date", "banks"), ~ ((.x - lag(.x, 1))/lag(.x, 1))*100)) |>
+  group_by(banks) |> 
+  mutate(across(-c("date"), ~ ((.x - lag(.x, 1))/lag(.x, 1)))*100) |> 
+  filter(date > "2012-12-01") # starting in 2010
+  
+# Graphing ---------------------------------------------------------------
+lending_vol_gg <- 
+  lending_vol_tbl |> 
   pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
   ggplot(aes(x = date, y = value, color = credit_category)) + 
   geom_line() + 
-  scale_y_continuous(labels = scales::label_number(scale = 1e-9, suffix = "B")) +
-  labs(x = "Year", y = "Lending Volume (R Billions)", color = "Credit Category") + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  facet_wrap(banks~credit_category, scale = "free_y") 
+  scale_y_continuous(labels = scales::label_number(scale = 1e-9, suffix = "B"), limits = c(0, NA)) +
+  labs(x = " ", y = "Lending Growth (%)") + 
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    legend.position = "none")  +
+  facet_wrap(banks~credit_category, scales = "free_y") 
+
+lending_growth_gg <- 
+  lending_growth_tbl |> 
+  pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
+  ggplot(aes(x = date, y = value, color = credit_category)) + 
+  geom_line() + 
+  labs(x = " ", y = "Lending Growth (%)") + 
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    legend.position = "none")  +
+  facet_wrap(banks~credit_category, scales = "free_y") 
+
+lending_growth_gg
   
 # Export --------------------------------------------------------------
-artifacts_ <- list ( )
+artifacts_lending_volume <- 
+  list (
+    lending_vol_tbl = lending_vol_tbl,
+    lending_growth_tbl = lending_growth_tbl,
+    lending_growth_gg = lending_growth_gg 
+    )
 
-write_rds(artifacts_, file = here("Outputs", "artifacts_.rds"))
+write_rds(artifacts_lending_volume, file = here("Outputs", "artifacts_lending_volume.rds"))
 
 
