@@ -21,7 +21,7 @@ lending_rate_2008_2021_tbl <- read_rds(here("Outputs", "artifacts_credit_market.
 
 sheet_names <- c("Absa Bank", "Capitec Bank", "Firstrand Bank", "Nedbank LTD", "The Standard Bank of SA")
 corrected_sheet_names <- c("Absa Bank", "Capitec Bank", "FirstRand Bank", "Nedbank", "Standard Bank")
-updated_lending_rate_data_tbl <- 
+lending_rate_2022_2026_tbl <- 
   sheet_names |>
   set_names(corrected_sheet_names) |> 
   map(
@@ -56,14 +56,18 @@ updated_lending_rate_data_tbl <-
   mutate(bank = str_to_upper(bank)) |> 
   mutate(date = parse_datetime(date, "%Y-%m")) |> 
   mutate(date = as.Date(date)) 
-  
+
+lending_vol_tbl <- read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
+  pluck(1)
+
+
 # EDA ---------------------------------------------------------------------
-updated_lending_rate_data_tbl  |> 
+lending_rate_2022_2026_tbl  |> 
   skim()
 
 # Calculating hybrid rates ---------------------------------------------
 lending_rate_2022_2026_tbl <- 
-  updated_lending_rate_data_tbl |> 
+  lending_rate_2022_2026_tbl |> 
   mutate(
     unsecured_credit_rate = (overdrafts + credit_cards + other)/3, # equal share, # change them
     secured_credit_rate = (instalment_sale_agreements + leasing_transactions) / 2,
@@ -80,14 +84,30 @@ lending_rate_2022_2026_tbl <-
 
 
 # Combine -----------------------------------------------------------------
-lending_rate_tbl <- bind_rows(lending_rate_2008_2021_tbl, lending_rate_2022_2026_tbl)
+lending_rate_tbl <- bind_rows(lending_rate_2008_2021_tbl, lending_rate_2022_2026_tbl) |> 
+  filter(!banks == "CAPITEC BANK") |> 
+  filter(date > "2012-12-01")
 
+# Graphing ----------------------------------------------------------------
+lending_rate_gg <- 
+  lending_rate_tbl |> 
+  pivot_longer(cols = - c(date, banks), values_to = "rate", names_to = "credit_category") |> 
+  ggplot(aes(x = date, y = rate, color = credit_category)) + 
+  geom_line() + 
+  labs(title = "Lending Rates Over Time", x = " ", y = "Rate (%)") + 
+  theme_minimal() +
+  theme(legend.position = "none") +
+  facet_wrap(banks~credit_category, scales = "free_y") 
+  
+lending_rate_gg
 
-# Export ---------------------------------------------------------------
-artifacts_ <- list (
+# Export ------------------------------------------------------------------
+artifacts_lending_rates <- 
+  list (
+    lending_rate_tbl = lending_rate_tbl,
+    lending_rate_gg = lending_rate_gg
+  )
 
-)
-
-write_rds(artifacts_, file = here("Outputs", "artifacts_.rds"))
+write_rds(artifacts_lending_rates, file = here("Outputs", "artifacts_lending_rates.rds"))
 
 
