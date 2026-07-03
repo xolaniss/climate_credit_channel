@@ -1,5 +1,5 @@
 # Description ---------------------------------------------------------
-# Orthogonalising monetary policy shocks to climate shocks and storing residuals in model_data_tbl_2 - April 2026
+# Orthogonalising monetary policy shocks to climate shocks and storing residuals in model_data_purge_tbl- April 2026
 
 # Preliminaries -----------------------------------------------------------
 library(here)
@@ -24,22 +24,22 @@ mp_shock_vars<-c(
 )
 
 climate_shock_vars<-c(
-  "population_weighted_precip_shock",
-  "land_weighted_precip_shock",
-  "population_weighted_temp_shock",
-  "land_weighted_temp_shock"
+  "pop_precip_shock",
+  "land_precip_shock",
+  "pop_temp_shock",
+  "land_temp_shock"
 )
 
 # Generate and store residuals from orthogonalisation ---------------------------------------
 
-model_data_tbl_2<-model_data_tbl
+model_data_purge_tbl<- model_data_tbl
 
 ## Loop over all mp and climate shocks -------
 for(mp_var in mp_shock_vars){
   for(climate_var in climate_shock_vars){
     
     temp_tbl<-model_data_tbl|>
-      dplyr::select(bank,date,all_of(mp_var),all_of(climate_var))|>
+      dplyr::select(banks,date,all_of(mp_var),all_of(climate_var))|>
       tidyr::drop_na()
     
     if(nrow(temp_tbl)>5){
@@ -54,10 +54,10 @@ for(mp_var in mp_shock_vars){
       temp_tbl[[resid_name]]<-resid(model)
       
       residual_tbl<-temp_tbl|>
-        dplyr::select(bank,date,all_of(resid_name))
+        dplyr::select(banks,date,all_of(resid_name))
       
-      model_data_tbl_2<-model_data_tbl_2|>
-        left_join(residual_tbl,by=c("bank","date"))
+      model_data_purge_tbl <-model_data_purge_tbl |>
+        left_join(residual_tbl, by=c("date", "banks"))
     }
   }
 }
@@ -65,10 +65,10 @@ for(mp_var in mp_shock_vars){
 # Export --------------------------------------------------------------
 
 artifacts<-list(
-  model_data_tbl_2=model_data_tbl_2
+  model_data_purge_tbl= model_data_purge_tbl
 )
 
 write_rds(
   artifacts,
-  file=here("Outputs","artifacts_model_data_orthogonalised.rds")
+  file=here("Outputs","artifacts_model_data_purged.rds")
 )

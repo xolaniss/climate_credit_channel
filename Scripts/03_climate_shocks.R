@@ -11,11 +11,10 @@ source(here("Functions", "fx_plot.R"))
 month_based_shock <-
   function(data, variable_filter){
     data |>
-      pivot_longer(cols = -c(date, country), names_to = "variable", values_to = "value") |>
+      pivot_longer(cols = -c(date), names_to = "variable", values_to = "value") |>
       mutate(month = month(date)) |>
-      relocate(month, .after = date) |>
       filter(variable == variable_filter) |>
-      group_by(country, month) |>
+      group_by(month) |>
       mutate(long_term_mean = mean(value, na.rm = TRUE)) |> # This is based on the long-term mean (entire sample) for each month and country. This may change in the future
       ungroup() |>
       mutate(
@@ -27,7 +26,6 @@ month_based_shock <-
         names_glue = "{variable}_{.value}"
       ) |>
       dplyr::select(-month, - long_term_mean) |>
-      relocate(date, .before = country) |>
       drop_na()
   }
 
@@ -35,12 +33,18 @@ month_based_shock <-
 climate_data_tbl <- read_rds(here("Outputs", "artifacts_climate_data.rds")) |>
   pluck(1)
 
+
+climate_data_tbl |> 
+  pivot_longer(cols = -c(date), names_to = "variable", values_to = "value") |>
+  mutate(month = month(date)) 
+  
+
 # Climate shocks ---------------------------------------------------------------
 args_list <- list(
-  c("land_weighted_temp"),
-  c("population_weighted_temp"),
-  c("land_weighted_precip"),
-  c("population_weighted_precip")
+  c("land_temp"),
+  c("pop_temp"),
+  c("land_precip"),
+  c("pop_precip")
 )
 
 climate_shocks_list <-
@@ -57,32 +61,30 @@ climate_shocks_tbl <-
   left_join(
     climate_shocks_list[[1]],
     climate_shocks_list[[2]],
-    by = c("date", "country")
+    by = c("date")
   ) |>
   left_join(
     climate_shocks_list[[3]],
-    by = c("date", "country")
+    by = c("date")
   ) |>
   left_join(
     climate_shocks_list[[4]],
-    by = c("date", "country")
+    by = c("date")
   ) |>
-  ungroup() |>
-  filter(date >= as.Date("2000-01-01"))
+  ungroup() |> 
+  filter(date >= "2012-12-01")
 
 
 # EDA ---------------------------------------------------------------------
 climate_shocks_tbl |>
-  group_by(country) |>
   skim()
 
 
 # Example Graphing ---------------------------------------------------------------
 climate_shocks_gg <-
   climate_shocks_tbl |>
-  dplyr::select(date, country, ends_with("_shock")) |>
-  pivot_longer(cols = -c(date, country), names_to = "variable", values_to = "value") |>
-  mutate(country = countrycode::countrycode(country, "iso3c", "country.name")) |>
+  dplyr::select(date, ends_with("_shock")) |>
+  pivot_longer(cols = -c(date), names_to = "variable", values_to = "value") |>
   mutate(
     variable = str_replace_all(
       variable,

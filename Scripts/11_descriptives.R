@@ -17,27 +17,17 @@ model_data_tbl <- read_rds(
   here("Outputs", "artifacts_model_data.rds")
 ) |>
   pluck(1)
-
-# Variable selection --------------------------------------------------
-
-## Variables for descriptive analysis -----------
-variables_tbl <- model_data_tbl |>
-  dplyr::select(
-    -banks,
-    -date
-  )
-
-## Variable names -------------------------
-variable_names <- names(variables_tbl)
-
 # Descriptive statistics ------------------------------------
 
 ## Summary statistics table -------------
 descriptive_stats_tbl <-
-  variables_tbl |>
+  model_data_tbl |>
+  pivot_longer(-c("date", "banks"), names_to = "credit_category", values_to = "value") |> 
+  group_by(credit_category) |> 
+  drop_na() |> 
   summarise(
     across(
-      .cols = everything(),
+      .cols = -c(date, banks),
       .fns = list(
         mean   = ~ mean(.x, na.rm = TRUE),
         median = ~ median(.x, na.rm = TRUE),
@@ -46,170 +36,10 @@ descriptive_stats_tbl <-
         max    = ~ max(.x, na.rm = TRUE),
         n      = ~ n()
       ),
-      .names = "{.col}_{.fn}"
+      .names = "{.fn}"
     )
-  ) |>
-  pivot_longer(
-    cols = everything(),
-    names_to = c("variable", ".value"),
-    names_sep = "_(?=[^_]+$)"
-  ) |>
-  arrange(variable)
+  ) 
 
-# Create all plots ------------------------------------------------
-
-## Create output folders --------------------
-dir.create(
-  here("Outputs", "Figures", "Descriptive"),
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-
-dir.create(
-  here("Outputs", "Tables"),
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-
-# Time-series plots -------------------------------------------
-
-for(var in variable_names){
-  
-  plot_tbl <-
-    model_data_tbl |>
-    dplyr::select(
-      banks,
-      date,
-      all_of(var)
-    )
-  
-  p <-
-    ggplot(
-      plot_tbl,
-      aes(
-        x = date,
-        y = .data[[var]],
-        colour = banks
-      )
-    ) +
-    geom_line(linewidth = 0.8) +
-    labs(
-      title = paste("Time Series:", var),
-      x = NULL,
-      y = var,
-      colour = "Bank"
-    ) +
-    theme_minimal()
-  
-  ggsave(
-    filename = here(
-      "Outputs",
-      "Figures",
-      "Descriptive",
-      paste0(var, "_timeseries.png")
-    ),
-    plot = p,
-    width = 10,
-    height = 6
-  )
-}
-
-# Density plots -------------------------------------------------------
-
-for(var in variable_names){
-  
-  plot_tbl <-
-    model_data_tbl |>
-    dplyr::select(
-      banks,
-      all_of(var)
-    )
-  
-  p <-
-    ggplot(
-      plot_tbl,
-      aes(
-        x = .data[[var]],
-        fill = banks
-      )
-    ) +
-    geom_density(
-      alpha = 0.4
-    ) +
-    labs(
-      title = paste("Density Plot:", var),
-      x = var,
-      y = "Density",
-      fill = "Bank"
-    ) +
-    theme_minimal()
-  
-  ggsave(
-    filename = here(
-      "Outputs",
-      "Figures",
-      "Descriptive",
-      paste0(var, "_density.png")
-    ),
-    plot = p,
-    width = 10,
-    height = 6
-  )
-}
-
-# Boxplots --------------------------------------------
-
-for(var in variable_names){
-  
-  plot_tbl <-
-    model_data_tbl |>
-    dplyr::select(
-      banks,
-      all_of(var)
-    )
-  
-  p <-
-    ggplot(
-      plot_tbl,
-      aes(
-        x = banks,
-        y = .data[[var]],
-        fill = banks
-      )
-    ) +
-    geom_boxplot() +
-    labs(
-      title = paste("Boxplot:", var),
-      x = NULL,
-      y = var,
-      fill = "Bank"
-    ) +
-    theme_minimal()
-  
-  ggsave(
-    filename = here(
-      "Outputs",
-      "Figures",
-      "Descriptive",
-      paste0(var, "_boxplot.png")
-    ),
-    plot = p,
-    width = 10,
-    height = 6
-  )
-}
-
-# Export --------------------------------------------
-
-## Export descriptive statistics ----------------
-write_csv(
-  descriptive_stats_tbl,
-  file = here(
-    "Outputs",
-    "Tables",
-    "descriptive_statistics.csv"
-  )
-)
 
 # Create artifacts object -----------------------
 artifacts <- list(
