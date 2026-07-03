@@ -28,7 +28,7 @@ model_data_tbl <- read_rds(
 # Convert identifiers to factors
 model_data_tbl <- model_data_tbl |>
   mutate(
-    bank = as.factor(bank),
+    banks = as.factor(banks),
     date = as.factor(date)
   )
 
@@ -37,25 +37,25 @@ model_data_tbl <- model_data_tbl |>
 dependent_vars <- c(
   "corporate_unsecured_credit",
   "corporate_secured_credit",
-  "corporate_sector_mortgages",
+  "corporate_mortgages",
   "household_unsecured_credit",
   "household_secured_credit",
-  "households_residential_mortgages",
+  "household_mortgages",
   "corporate_unsecured_credit_rate",
   "corporate_secured_credit_rate",
-  "corporate_mortage_rate",
+  "corporate_mortgage_rate",
   "household_unsecured_credit_rate",
   "household_secured_credit_rate",
-  "household_mortage_rate"
+  "household_mortgage_rate"
 )
 
 # Climate shock variables ----------------------------------------------
 
 climate_vars <- c(
-  "land_weighted_temp_shock",
-  "population_weighted_temp_shock",
-  "land_weighted_precip_shock",
-  "population_weighted_precip_shock"
+  "land_temp_shock",
+  "pop_temp_shock",
+  "land_precip_shock",
+  "pop_precip_shock"
 )
 
 # Monetary policy surprises --------------------------------------------
@@ -74,16 +74,16 @@ surprise_vars <- c(
 variable_labels <- c(
   
   # Climate variables
-  "land_weighted_temp_shock" =
+  "land_temp_shock" =
     "Land-weighted temperature shock",
   
-  "population_weighted_temp_shock" =
+  "pop_temp_shock" =
     "Population-weighted temperature shock",
   
-  "land_weighted_precip_shock" =
+  "land_precip_shock" =
     "Land-weighted precipitation shock",
   
-  "population_weighted_precip_shock" =
+  "pop_precip_shock" =
     "Population-weighted precipitation shock",
   
   # Surprise variables
@@ -107,76 +107,76 @@ variable_labels <- c(
   
   # Interaction terms --------------------------------------------------
   
-  "land_weighted_temp_shock:miyajima_surprise" =
+  "land_temp_shock:miyajima_surprise" =
     "Land temp shock × Miyajima surprise",
   
-  "land_weighted_temp_shock:romer_surprise" =
+  "land_temp_shock:romer_surprise" =
     "Land temp shock × Romer surprise",
   
-  "land_weighted_temp_shock:target" =
+  "land_temp_shock:target" =
     "Land temp shock × Target factor",
   
-  "land_weighted_temp_shock:forward_guidance" =
+  "land_temp_shock:forward_guidance" =
     "Land temp shock × Forward guidance",
   
-  "land_weighted_temp_shock:central_bank_information" =
+  "land_temp_shock:central_bank_information" =
     "Land temp shock × Central bank information",
   
-  "land_weighted_temp_shock:country_risk" =
+  "land_temp_shock:country_risk" =
     "Land temp shock × Country risk",
   
-  "population_weighted_temp_shock:miyajima_surprise" =
+  "pop_temp_shock:miyajima_surprise" =
     "Population temp shock × Miyajima surprise",
   
-  "population_weighted_temp_shock:romer_surprise" =
+  "pop_temp_shock:romer_surprise" =
     "Population temp shock × Romer surprise",
   
-  "population_weighted_temp_shock:target" =
+  "pop_temp_shock:target" =
     "Population temp shock × Target factor",
   
-  "population_weighted_temp_shock:forward_guidance" =
+  "pop_temp_shock:forward_guidance" =
     "Population temp shock × Forward guidance",
   
-  "population_weighted_temp_shock:central_bank_information" =
+  "pop_temp_shock:central_bank_information" =
     "Population temp shock × Central bank information",
   
-  "population_weighted_temp_shock:country_risk" =
+  "pop_temp_shock:country_risk" =
     "Population temp shock × Country risk",
   
-  "land_weighted_precip_shock:miyajima_surprise" =
+  "land_precip_shock:miyajima_surprise" =
     "Land precip shock × Miyajima surprise",
   
-  "land_weighted_precip_shock:romer_surprise" =
+  "land_precip_shock:romer_surprise" =
     "Land precip shock × Romer surprise",
   
-  "land_weighted_precip_shock:target" =
+  "land_precip_shock:target" =
     "Land precip shock × Target factor",
   
-  "land_weighted_precip_shock:forward_guidance" =
+  "land_precip_shock:forward_guidance" =
     "Land precip shock × Forward guidance",
   
-  "land_weighted_precip_shock:central_bank_information" =
+  "land_precip_shock:central_bank_information" =
     "Land precip shock × Central bank information",
   
-  "land_weighted_precip_shock:country_risk" =
+  "land_precip_shock:country_risk" =
     "Land precip shock × Country risk",
   
-  "population_weighted_precip_shock:miyajima_surprise" =
+  "pop_precip_shock:miyajima_surprise" =
     "Population precip shock × Miyajima surprise",
   
-  "population_weighted_precip_shock:romer_surprise" =
+  "pop_precip_shock:romer_surprise" =
     "Population precip shock × Romer surprise",
   
-  "population_weighted_precip_shock:target" =
+  "pop_precip_shock:target" =
     "Population precip shock × Target factor",
   
-  "population_weighted_precip_shock:forward_guidance" =
+  "pop_precip_shock:forward_guidance" =
     "Population precip shock × Forward guidance",
   
-  "population_weighted_precip_shock:central_bank_information" =
+  "pop_precip_shock:central_bank_information" =
     "Population precip shock × Central bank information",
   
-  "population_weighted_precip_shock:country_risk" =
+  "pop_precip_shock:country_risk" =
     "Population precip shock × Country risk"
 )
 
@@ -204,13 +204,13 @@ for(dep in dependent_vars){
           climate,
           " * ",
           surprise,
-          " | bank "
+          " | banks "
         )
       )
       model <- feols(      # Estimate FE model
         regression_formula,
         data = model_data_tbl,
-        cluster = ~bank
+        cluster = ~banks
       )
       model_name <- paste(          # naming model
         climate,
