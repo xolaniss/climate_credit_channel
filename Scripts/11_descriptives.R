@@ -23,7 +23,7 @@ model_data_tbl <- read_rds(
 ## Variables for descriptive analysis -----------
 variables_tbl <- model_data_tbl |>
   dplyr::select(
-    -bank,
+    -banks,
     -date
   )
 
@@ -44,7 +44,7 @@ descriptive_stats_tbl <-
         sd     = ~ sd(.x, na.rm = TRUE),
         min    = ~ min(.x, na.rm = TRUE),
         max    = ~ max(.x, na.rm = TRUE),
-        n      = ~ sum(!is.na(.x))
+        n      = ~ n()
       ),
       .names = "{.col}_{.fn}"
     )
@@ -78,7 +78,7 @@ for(var in variable_names){
   plot_tbl <-
     model_data_tbl |>
     dplyr::select(
-      bank,
+      banks,
       date,
       all_of(var)
     )
@@ -89,7 +89,7 @@ for(var in variable_names){
       aes(
         x = date,
         y = .data[[var]],
-        colour = bank
+        colour = banks
       )
     ) +
     geom_line(linewidth = 0.8) +
@@ -121,7 +121,7 @@ for(var in variable_names){
   plot_tbl <-
     model_data_tbl |>
     dplyr::select(
-      bank,
+      banks,
       all_of(var)
     )
   
@@ -130,7 +130,7 @@ for(var in variable_names){
       plot_tbl,
       aes(
         x = .data[[var]],
-        fill = bank
+        fill = banks
       )
     ) +
     geom_density(
@@ -164,7 +164,7 @@ for(var in variable_names){
   plot_tbl <-
     model_data_tbl |>
     dplyr::select(
-      bank,
+      banks,
       all_of(var)
     )
   
@@ -172,9 +172,9 @@ for(var in variable_names){
     ggplot(
       plot_tbl,
       aes(
-        x = bank,
+        x = banks,
         y = .data[[var]],
-        fill = bank
+        fill = banks
       )
     ) +
     geom_boxplot() +

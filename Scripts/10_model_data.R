@@ -11,42 +11,12 @@ source(here("Functions", "fx_plot.R"))
 # Import -------------------------------------------------------------
 climate_shocks_tbl <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
   pluck(1)
-credit_market <- read_rds(here("Outputs", "artifacts_credit_market.rds")) 
-lending_tbl <- credit_market |>
+lending_vol_tbl <- read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
   pluck(1) |> 
-  mutate(Date = as.Date(Date)) |> 
-  rename(date = 1) |> 
-  janitor::clean_names() |> 
-  dplyr::select(-other_assets) |> 
-  group_by(bank) |> 
-  mutate(across(.cols = c("corporate_unsecured_credit", 
-                          "corporate_secured_credit", 
-                          "corporate_sector_mortgages", 
-                          "household_unsecured_credit", 
-                          "household_secured_credit", 
-                          "households_residential_mortgages"
-                          ), 
-                ~ log(.x) )) |> 
-  filter(!bank == "CAPITEC BANK")
-lending_rates_tbl <- credit_market |>
-  pluck(2) |> 
-  mutate(Date = as.Date(Date)) |> 
-  select(-contains("Total")) |> 
-  rename(
-    # Corporate
-    "corporate_unsecured_credit_rate" = `Non financial corporate unsecured lending rate`,
-    "corporate_secured_credit_rate" = `Leasing and installements to corporate rate`,
-    "corporate_sector_mortgages_rate"= `Commercial mortgages to corporates and households rate`,
-    # Household
-    "households_residential_mortgages_rate" = `Residential mortgages to household rate`,
-    "household_unsecured_credit_rate" = `Household unsecured lending rate`,
-    "household_secured_credit_rate" = `Leasing and installments to households rate`,
-    # Other
-    "Bank" = "Banks"
-  ) |> 
-  janitor::clean_names() |> 
-  mutate(bank = toupper(bank)) |> 
-  filter(!bank == "CAPITEC BANK")
+  mutate(across(-c(date, banks), ~ log(.x)))
+lending_rates_tbl <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
+  pluck(1)
+
 surprises_tbl <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
   pluck(2,1) |> 
   mutate(date = as.Date(date))
@@ -79,8 +49,8 @@ climate_shocks_tbl |>
 
 ## Lending aggregation ------------------
 lending_quarterly_tbl <- 
-  lending_tbl |>
-  group_by(bank) |> 
+  lending_vol_tbl |>
+  group_by(banks) |> 
   timetk::summarise_by_time(
     .date_var = date,
     .by = "quarter",
@@ -91,7 +61,7 @@ lending_quarterly_tbl <-
 
 lending_rates_quarterly_tbl <- 
   lending_rates_tbl |>
-  group_by(bank) |> 
+  group_by(banks) |> 
   timetk::summarise_by_time(
     .date_var = date,
     .by = "quarter",
@@ -121,50 +91,46 @@ list(
   "ABSA BANK" = climate_temp_shocks_quarterly_tbl,
   "STANDARD BANK" = climate_temp_shocks_quarterly_tbl,
   "FIRSTRAND BANK" = climate_temp_shocks_quarterly_tbl,
-  "NEDBANK" = climate_temp_shocks_quarterly_tbl,
-  "CAPITEC BANK" = climate_temp_shocks_quarterly_tbl
+  "NEDBANK" = climate_temp_shocks_quarterly_tbl
 ) |> 
-  bind_rows(.id = "bank") 
+  bind_rows(.id = "banks") 
 
 climate_precip_shocks_quarterly_panel_tbl <-
   list(
     "ABSA BANK" = climate_precip_shocks_quarterly_tbl,
     "STANDARD BANK" = climate_precip_shocks_quarterly_tbl,
     "FIRSTRAND BANK" = climate_precip_shocks_quarterly_tbl,
-    "NEDBANK" = climate_precip_shocks_quarterly_tbl,
-    "CAPITEC BANK" = climate_precip_shocks_quarterly_tbl 
+    "NEDBANK" = climate_precip_shocks_quarterly_tbl
   ) |>
-  bind_rows(.id = "bank")
+  bind_rows(.id = "banks")
 
 suprises_panel_tbl <-
   list(
     "ABSA BANK" = surprises_tbl,
     "STANDARD BANK" = surprises_tbl,
     "FIRSTRAND BANK" = surprises_tbl,
-    "NEDBANK" = surprises_tbl,
-    "CAPITEC BANK" = surprises_tbl 
+    "NEDBANK" = surprises_tbl
   ) |>
-  bind_rows(.id = "bank")
+  bind_rows(.id = "banks")
 
 market_based_surprises_panel_tbl <-
   list(
     "ABSA BANK" = market_based_surprises_quarterly_tbl,
     "STANDARD BANK" = market_based_surprises_quarterly_tbl,
     "FIRSTRAND BANK" = market_based_surprises_quarterly_tbl,
-    "NEDBANK" = market_based_surprises_quarterly_tbl,
-    "CAPITEC BANK" = market_based_surprises_quarterly_tbl 
+    "NEDBANK" = market_based_surprises_quarterly_tbl
   ) |>
-  bind_rows(.id = "bank")
+  bind_rows(.id = "banks")
 
 # Combining ---------------------------------------------------------------
 model_data_tbl <- 
   lending_quarterly_tbl |> 
-  left_join(lending_rates_quarterly_tbl, by = c("bank", "date")) |> 
-  left_join(climate_temp_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
-  left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("bank", "date")) |> 
-  left_join(suprises_panel_tbl, by = c("bank", "date")) |> 
-  left_join(market_based_surprises_panel_tbl, by = c("bank", "date")) |> 
-  filter(date > "2008-12-31")
+  left_join(lending_rates_quarterly_tbl, by = c("banks", "date")) |> 
+  left_join(climate_temp_shocks_quarterly_panel_tbl, by = c("banks", "date")) |> 
+  left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("banks", "date")) |> 
+  left_join(suprises_panel_tbl, by = c("banks", "date")) |> 
+  left_join(market_based_surprises_panel_tbl, by = c("banks", "date")) |> 
+  filter(date > "2012-12-31")
   
 
 # Export ---------------------------------------------------------------
