@@ -94,10 +94,11 @@ lending_rate_gg <-
   pivot_longer(cols = - c(date, banks), values_to = "rate", names_to = "credit_category") |> 
   ggplot(aes(x = date, y = rate, color = credit_category)) + 
   geom_line() + 
-  labs(title = "Lending Rates Over Time", x = " ", y = "Rate (%)") + 
-  theme_minimal() +
+  labs(x = " ", y = "Rate (%)") + 
+  theme_minimal(base_size = 8) +
   theme(legend.position = "none") +
-  facet_wrap(banks~credit_category, scales = "free_y") 
+  facet_wrap(credit_category ~ banks, scales = "free_y", ncol = 4) +
+  scale_color_manual(values = pnw_palette("Bay",6), labels = scales::label_wrap(20))
   
 lending_rate_gg
 

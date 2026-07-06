@@ -149,11 +149,12 @@ lending_growth_gg <-
   ggplot(aes(x = date, y = value, color = credit_category)) + 
   geom_line() + 
   labs(x = " ", y = "Lending Growth (%)") + 
-  theme_minimal() +
+  theme_minimal(base_size = 8) +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1),
     legend.position = "none")  +
-  facet_wrap(banks~credit_category, scales = "free_y") 
+  facet_wrap(credit_category ~ banks, scales = "free_y", ncol = 4) +
+  scale_color_manual(values = pnw_palette("Bay",6), labels = scales::label_wrap(20))
 
 lending_growth_gg
   

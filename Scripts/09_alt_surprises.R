@@ -120,33 +120,40 @@ miyajima_surprise_tbl <- lm(
 romer_surprise_gg <- 
   romer_suprise_tbl |> 
   ggplot(aes(x = date, y = romer_surprise)) +
-  geom_line() +
+  geom_line(color = "#0f85a0") +
   labs(
     title = "Romer & Romer Monetary Policy Surprise",
-    x = "Date",
+    x = " ",
     y = "Suprise"
   ) +
-  theme_minimal() +
-  scale_x_date(date_labels = "%Y", date_breaks = "2 years")
+  theme_minimal(base_size = 8) +
+  scale_x_date(date_labels = "%Y", date_breaks = "2 years") +
+  scale_color_manual(labels = scales::label_wrap(20))
 
 # Miyajima surprise
 miyajima_suprise_gg <- 
   miyajima_surprise_tbl |>
   ggplot(aes(x = date, y = miyajima_surprise)) +
-  geom_line() +
+  geom_line(color = "#dd4124") +
   labs(
     title = "Miyajima Monetary Policy Surprise",
-    x = "Date",
+    x = " ",
     y = "Surprise"
   ) +
-  theme_minimal() +
-  scale_x_date(date_labels = "%Y", date_breaks = "2 years")
+  theme_minimal(base_size = 8) +
+  scale_x_date(date_labels = "%Y", date_breaks = "2 years") +
+  scale_color_manual(labels = scales::label_wrap(20))
 
 
 # Combining surprises data ---------------------------------------
 combined_surprises_tbl <- 
   miyajima_surprise_tbl|> 
   left_join(romer_suprise_tbl, by = "date")
+
+
+# Combining suprises ggs --------------------------------------------------
+combined_gg <- romer_surprise_gg + miyajima_suprise_gg
+
 
 # Save Outputs ---------------------------------------------------
 
@@ -160,8 +167,9 @@ artifacts <- list(
     romer_surprise_tbl = romer_suprise_tbl,
     miyajima_surprise_tbl = miyajima_surprise_tbl),
   plots = list(
-  romer_surprise_gg = romer_surprise_gg,
-  miyajima_surprise_gg = miyajima_suprise_gg
+    romer_surprise_gg = romer_surprise_gg,
+    miyajima_surprise_gg = miyajima_suprise_gg,
+    combined_gg = combined_gg
   )
 )
 

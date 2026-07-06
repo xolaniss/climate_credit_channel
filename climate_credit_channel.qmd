@@ -53,7 +53,9 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.env= 'figure', 
                       tab.topcaption = TRUE,
                       ft.align = "left",
-                      ft.arraystretch = 0.5
+                      ft.arraystretch = 0.5,
+                      fig.height = 4,
+                      fig.width = 6
                       )
 library(tidyverse)
 library(readr)
@@ -131,33 +133,64 @@ source(here("Functions","borderlines.R" ))
 
 
 ```{r}
-#| label: latex_version
-#| warning: FALSE
-#| message: FALSE
+#| label: fig-lending_volume_growth_data
+#| fig-cap: "Lending volume growth over time"
+#| fig-height: 7
+#| fig-width: 6
+#
+lending_volume_growth_gg <- 
+  read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
+  pluck(3)
 
-# Packages -----------------------------------------------------------
-library(here)
-library(tidyverse)
-library(fs)
-
-
-# Delete current latex folder ----------------------------------------
-if (dir.exists(here("Latex_version"))) {
-  dir_delete(here("Latex_version"))
-}
-
-# Create folder ------------------------------------------------------
-dir.create(here("Latex_version"), recursive = TRUE)
-
-# Copy text files ---------------------------------------------------------
-list.files(path = ".", pattern = "tex", full.names = TRUE ) %>%
-  file.copy(to = here("Latex_version"), overwrite = TRUE)
-file.copy(here("references.bib"), here("Latex_version"), overwrite = TRUE)
-
-# Copy resources folder ---------------------------------------------
-folder_path <- list.dirs(path = ".", recursive = FALSE) %>%
-  str_subset("files")
-folder_name <- str_remove(folder_path, "./")
-dir_copy(folder_path, here("Latex_version", folder_name), overwrite = TRUE)
-
+lending_volume_growth_gg
 ```
+
+
+```{r}
+#| label: fig-lending_rates_o
+#| fig-cap: "Lending rates overtime"
+#| fig-height: 7
+#| fig-width: 6
+
+lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
+  pluck(2)
+
+lending_rates_gg
+```
+
+
+```{r}
+#| label: fig-climate_shocks_data
+#| fig-cap: Climate Shocks Data
+
+climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
+  pluck(2)
+
+climate_shocks_gg
+```
+
+
+```{r}
+#| label: fig-market_based_surprises_data
+#| fig-cap: "Market-Based Surprises Data"
+
+market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
+  pluck(2)
+
+market_based_surprises_gg
+```
+
+```{r}
+#| label: fig-theory_based_surprises_datas
+#| fig-cap: "Theory-based surprises data"
+#| fig.height: 2
+
+theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
+  pluck(3, 3)
+
+theory_based_surprises_gg
+```
+
+
+
+
