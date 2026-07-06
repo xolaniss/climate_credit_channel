@@ -92,6 +92,9 @@ lending_rate_tbl <- bind_rows(lending_rate_2008_2021_tbl, lending_rate_2022_2026
 lending_rate_gg <- 
   lending_rate_tbl |> 
   pivot_longer(cols = - c(date, banks), values_to = "rate", names_to = "credit_category") |> 
+  mutate(
+    credit_category = str_replace_all(credit_category, "_", " ") |> str_to_title()
+  ) |> 
   ggplot(aes(x = date, y = rate, color = credit_category)) + 
   geom_line() + 
   labs(x = " ", y = "Rate (%)") + 

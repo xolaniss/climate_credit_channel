@@ -55,7 +55,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       ft.align = "left",
                       ft.arraystretch = 0.5,
                       fig.height = 4,
-                      fig.width = 6
+                      fig.width = 7
                       )
 library(tidyverse)
 library(readr)
@@ -106,6 +106,52 @@ source(here("Functions","borderlines.R" ))
 
 # Data and methodology
 
+```{r}
+#| label: tbl-descriptives
+#| tbl-cap: "Descriptive statistics"
+#| ft.arraystretch: 0.4
+
+
+descriptives_table <- 
+  read_rds(here("Outputs", "artifacts_descriptive_statistics.rds")) |> 
+  pluck(1) |>
+   mutate(
+    credit_category = str_replace_all(credit_category, "pop", "Population"),
+    credit_category = str_replace_all(credit_category, "temp", "Temperature"),
+    credit_category = str_replace_all(credit_category, "precip", "Precipitation")
+  ) |>
+  filter(!str_detect(credit_category, "value")) |> 
+  mutate(group = factor(
+    case_when(
+      credit_category %in% c(
+        "central_bank_information", "forward_guidance",
+        "miyajima_surprise", "romer_surprise", "target",
+        "country_risk"
+      ) ~ "Monetary Policy",
+      str_starts(credit_category, "corporate") ~ "Corporate Credit",
+      str_starts(credit_category, "household") ~ "Household Credit",
+      str_starts(credit_category, "land_") |
+        str_starts(credit_category, "pop_") ~ "Climate"
+    ),
+    levels = c("Monetary Policy", "Corporate Credit", "Household Credit", "Climate")
+  )) |>
+  arrange(group, credit_category) |>
+  mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |> 
+  as_grouped_data(groups = "group") |>
+  flextable() |>
+  colformat_double(digits = 2) |>
+  set_header_labels(group = "", credit_category = "Variable",
+                    mean = "Mean", median = "Median", sd = "SD",
+                    min = "Min", max = "Max", n = "N") |>
+  width(j = "credit_category", width = 1.5) |>
+  width(j = c("mean", "median", "sd", "min", "max"), width = 0.65) |>
+  width(j = "n", width = 0.5)
+  
+descriptives_table
+
+```
+
+
 # Results
 
 # Conclusion
@@ -136,7 +182,6 @@ source(here("Functions","borderlines.R" ))
 #| label: fig-lending_volume_growth_data
 #| fig-cap: "Lending volume growth over time"
 #| fig-height: 7
-#| fig-width: 6
 #
 lending_volume_growth_gg <- 
   read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
@@ -150,7 +195,6 @@ lending_volume_growth_gg
 #| label: fig-lending_rates_o
 #| fig-cap: "Lending rates overtime"
 #| fig-height: 7
-#| fig-width: 6
 
 lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
   pluck(2)

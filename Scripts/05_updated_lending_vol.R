@@ -145,7 +145,11 @@ lending_vol_gg <-
 
 lending_growth_gg <- 
   lending_growth_tbl |> 
+  ungroup() |> 
   pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
+  mutate(
+    credit_category = str_replace_all(credit_category, "_", " ") |> str_to_title()
+  ) |> 
   ggplot(aes(x = date, y = value, color = credit_category)) + 
   geom_line() + 
   labs(x = " ", y = "Lending Growth (%)") + 
