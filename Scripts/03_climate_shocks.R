@@ -111,10 +111,10 @@ climate_shocks_gg <-
   mutate(
     variable = str_replace_all(
       variable,
-      c("population_weighted_temp_shock" = "Population weighted temperature shock",
-        "land_weighted_temp_shock" = "Land weighted temperature shock",
-        "population_weighted_precip_shock" = "Population weighted precipitation shock",
-        "land_weighted_precip_shock" = "Land weighted precipitation shock"
+      c("pop_temp_shock" = "Population Temperature Shock",
+        "land_temp_shock" = "Land Temperature Shock",
+        "pop_precip_shock" = "Population Precipitation Shock",
+        "land_precip_shock" = "Land Precipitation Shock"
     ))) |>
   ggplot(aes(x = date, y = value, col = variable)) +
   geom_line() +

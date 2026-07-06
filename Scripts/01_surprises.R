@@ -45,7 +45,7 @@ market_based_surprises_gg <-
     y = "Surprise"
   ) +
   facet_wrap(~variable, scales = "free_y", ncol = 2) +
-  theme_minimal() +
+  theme_minimal(base_size = 8) +
   theme(legend.position = "none") +
   scale_x_date(date_labels = "%Y", date_breaks = "4 years") +
   scale_color_manual(values = pnw_palette("Bay",4), labels = scales::label_wrap(20))
