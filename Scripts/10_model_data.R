@@ -133,6 +133,7 @@ model_data_tbl <-
   filter(date > "2012-12-31")
   
 
+
 # Export ---------------------------------------------------------------
 artifacts <- list (
   model_data_tbl = model_data_tbl

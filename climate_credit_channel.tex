@@ -186,7 +186,7 @@
 
 \begin{document}
 
-\title{Climate Credit Channel}
+\title{Climate Shocks and the Credit Market: A Monetary Policy Transmission Lens}
 
 
 
@@ -210,11 +210,92 @@ AAAAAA
 \setstretch{1.5}
 \section{Introduction}\label{introduction}
 
-\citet{fornero2011effect}
+According to \citet{bernanke1995}, the credit channel is one of the key
+monetary policy transmission channels. Monetary policy affects the
+credit channel through its impact on the external finance premium
+\footnote{The external finance premium is governed by credit-market frictions which cause departures from lenders expected return and potential borrowers’ expected costs.}.
+Two linkages underscore monetary policy impacts on this premium: the
+balance sheet and the bank lending channel. The balance sheet channel
+stems from dynamics in the balance sheet and the incomes of borrowers,
+while the lending channel deals with how interest rates could impact
+lenders' loan supply volumes \citep{hall2001}. The balance sheet channel
+has been well established as a significant monetary policy transmission
+channel \citep{aysun2013, altavilla2024, ashcraft2007}. Notwithstanding,
+there remains room to provide empirical estimations of the credit
+channel's strength due to recent developments in the identification of
+monetary policy shocks. This is especially true for emerging economies
+where this work is scant \citep{pirozhkova2025}. This paper hones in on
+the balance sheet channel by estimating how climate shocks can reduce
+(or indeed enhance) the effectiveness of unanticipated monetary policy
+decisions on the behaviour of borrowers.
+
+The main motivation of this paper is that like monetary policy shocks,
+climate shocks -- because of their impacts on capital and labour inputs
+and, in turn, their erosion of firm profitability -- can cause frictions
+within the credit market and have consequential financial stability
+ramifications \citep{dafermos2018, aglietta2016}. In so doing, climate
+shocks could widen the external finance premium and, in turn, stymie the
+efficacy of monetary policy pass-through. While this seems a likely
+course, there is also the potential for monetary policy to mute the
+deleterious climate shock effects on the credit market, in line with the
+literature that that studies how monetary policy can be used as a tool
+to tackle climate change \citep{roy2024, monasterolo2018}. In either
+case, climate shocks play a role in the functioning of the credit market
+and, consequently, the credit market monetary transmission channel.
+
+I will investigate to what extent the manifestation of climate shocks
+act as a credit market friction and how this (potential) friction
+impacts monetary policy transmission. This involves three parts. First,
+I will compute the monetary policy shock variable. Second, I will
+estimate the causal relationships of interest in this work using a panel
+regression. Finally, I will use a quantile regression procedure to
+nuance these results.
 
 \section{Literature review}\label{literature-review}
 
 \section{Data and methodology}\label{data-and-methodology}
+
+We use a monetary policy shock, rather than the monetary policy rate
+itself, as an indicator for monetary policy to ensure exogeneity within
+the regression framework (Miyajima, 2024). To this end, I replicate a
+shock variable devised by Merrino (2021) for the South African case
+based on a simplification of the work of Romer and Romer (2004) as
+follows:
+
+\begin{equation}\phantomsection\label{eq-mp-shock}{
+\Delta r_t = \alpha + \tilde{r_t} + \sum_{t=0}^{2} \beta_t \Delta \tilde{y_t} + \sum_{t=0}^{2} \delta_t \tilde{\pi_t} + \varepsilon_t,
+}\end{equation}
+
+where \(\Delta r_t\) is the change in the forecast of the repurchase
+rate, \(\tilde{r_t}\) is the forecasted repo rate in levels,
+\(\tilde{y_t}\) is the forecasted real GDP growth rate, and
+\(\tilde{\pi_t}\) is the forecasted consumer price index inflation rate.
+The residuals from Equation~\ref{eq-mp-shock}, \(\varepsilon_t\), are
+used as the \(\text{MPShock}_{t}\) explanatory variable that follows in
+the panel regression estimation. We use a panel regression to primarily
+test whether monetary policy shocks, when augmented with climate shocks,
+yield heightened or muted impacts on the credit market as follows:
+
+\begin{equation}\phantomsection\label{eq-credit}{
+\text{Credit}_{i,t} = \beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
+\beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{i,t}, 
+}\end{equation}
+
+where \(\text{Credit}_{i,t}\) is the growth rate of credit extended to
+agent \((s)\) (households or corporates) at time \((t)\),
+\(\text{Climate}_{t}^k\) is the climate shock variable, including
+temperature and precipitation shocks, as well as extreme wet and dry
+events, which are each denoted by \(k\). The
+\(\text{Climate}_{t}^k\times\text{MPShock}_t\) term tests whether the
+frictions introduced by climate change shocks are significant enough to
+modify the pass-through of monetary policy through the credit channel.
+\(X_t\) is a vector of control variables that includes GDP growth, the
+US Dollar-Rand exchange rate, the loan-to-deposit ratio and the
+unemployment rate. \(\gamma_s\) are agent, time-invariant fixed effects,
+\(\delta_t\) are time fixed effects, and \(\varepsilon_{i,t}\) is the
+error term.
+
+\section{Results}\label{results}
 
 \global\setlength{\Oldarrayrulewidth}{\arrayrulewidth}
 
@@ -418,8 +499,6 @@ AAAAAA
 \global\setlength{\tabcolsep}{\Oldtabcolsep}
 
 \renewcommand*{\arraystretch}{1}
-
-\section{Results}\label{results}
 
 \section{Conclusion}\label{conclusion}
 
