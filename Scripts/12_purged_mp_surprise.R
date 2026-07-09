@@ -72,3 +72,4 @@ write_rds(
   artifacts,
   file=here("Outputs","artifacts_model_data_purged.rds")
 )
+
