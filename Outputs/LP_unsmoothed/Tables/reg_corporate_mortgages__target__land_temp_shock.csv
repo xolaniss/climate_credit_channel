@@ -1,0 +1,131 @@
+model,dep,mp_shock,climate_shock,h,term,estimate,std.error,statistic,p.value
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,land_temp_shock,0.03913859387008949,0.022725692802443388,1.7222178531728392,0.09189770644254411
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,target_land_temp_shock_resid,-6.087254081590385e-4,8.079866355444996e-4,-0.7533854910221632,0.4551421104537886
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(corporate_mortgages, 1)",0.24380100005898966,0.09938363067613291,2.4531303435017167,0.018101086409350306
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(corporate_mortgages, 2)",-0.2618816579436835,0.10602844064190477,-2.4699189798343797,0.01737201672569224
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(land_temp_shock, 1)",0.08045165875515967,0.06780086014427295,1.1865875828708836,0.2416172367232543
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(land_temp_shock, 2)",-0.0021392062968608487,0.048826647105838665,-0.0438122710376532,0.9652478824772586
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(target_land_temp_shock_resid, 1)",3.1556090109277255e-4,1.8870504517750155e-4,1.6722441140667257,0.10141624221356516
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,"l(target_land_temp_shock_resid, 2)",3.1287463511896213e-4,3.4135202615154876e-4,0.9165747121713476,0.3642517160256816
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,as.numeric(date),3.66371029932829e-6,9.69472331886408e-6,0.3779076698557668,0.7072759548608971
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,0,land_temp_shock:target_land_temp_shock_resid,-3.726291185211445e-4,0.0027575767939043943,-0.13512918999929166,0.8931123659957948
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,land_temp_shock,0.12945595872844584,0.09005085594856217,1.4375872096362106,0.1574690642640359
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,target_land_temp_shock_resid,-3.0000715971242626e-4,0.0011134679424504516,-0.26943493231802346,0.7888266535562966
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(corporate_mortgages, 1)",0.3172792244604533,0.15967689443365082,1.9870077357515845,0.053029622156336234
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(corporate_mortgages, 2)",-0.36624653648907163,0.1639852669452225,-2.2334112284087833,0.030538334558939437
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(land_temp_shock, 1)",0.13903516123396475,0.041173325338460715,3.3768261390364214,0.0015205994727519063
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(land_temp_shock, 2)",-0.0037246899139674037,0.08168168872514137,-0.04560006008814257,0.9638307837992557
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(target_land_temp_shock_resid, 1)",0.001069827757307916,3.5091003287374785e-4,3.0487237670198617,0.0038409603011483823
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,"l(target_land_temp_shock_resid, 2)",-0.0011691382536634174,4.1048198784818696e-4,-2.8482084190642065,0.006605221691679155
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,as.numeric(date),1.0542609357504485e-5,1.7876432473122946e-5,0.5897490661716314,0.5583086116410356
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,1,land_temp_shock:target_land_temp_shock_resid,-7.164116701426892e-4,0.004185798156534289,-0.17115294224694672,0.8648708062679303
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,land_temp_shock,0.23387399092152533,0.09273303513428925,2.5220137633028616,0.015276012071483654
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,target_land_temp_shock_resid,0.0026714370760959035,0.0010572529812014108,2.5267718546040063,0.015096525353155019
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(corporate_mortgages, 1)",0.36388788743616535,0.17147791294311757,2.1220685579306866,0.0393706174243752
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(corporate_mortgages, 2)",-0.44850272704237676,0.17841363772678703,-2.513836569652761,0.015589016410836433
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(land_temp_shock, 1)",0.16857323235441252,0.03505158962042576,4.809289227104814,1.7310429128768943e-5
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(land_temp_shock, 2)",-0.008646819198641503,0.05372271346864187,-0.16095276355853994,0.87285102369056
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(target_land_temp_shock_resid, 1)",-7.131285819370938e-4,5.513224955047534e-4,-1.293487183547992,0.2024430889225552
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,"l(target_land_temp_shock_resid, 2)",-6.178212051775803e-4,6.585567067421672e-4,-0.9381442764950303,0.35317850308487075
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,as.numeric(date),1.7631578156371978e-5,2.4372871409478643e-5,0.7234099692297655,0.4731717955177439
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,2,land_temp_shock:target_land_temp_shock_resid,-0.011294350952615292,0.004579185647566363,-2.466454042678472,0.01752027046479251
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,land_temp_shock,0.27606971080895154,0.07890801209206223,3.4986271164309666,0.0010657730387805943
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,target_land_temp_shock_resid,0.002844399663810903,0.0011891085376402458,2.392043765370265,0.020993288714891183
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(corporate_mortgages, 1)",0.4568794019818909,0.18671609132825914,2.446920341636045,0.01837770539356523
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(corporate_mortgages, 2)",-0.5856466940639284,0.19463041876728424,-3.009019339182405,0.004282759114746986
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(land_temp_shock, 1)",0.19930687399879377,0.059381773987912875,3.3563644299236084,0.0016132171002385188
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(land_temp_shock, 2)",-0.0567644789828778,0.062317483424356855,-0.9108917090944553,0.3672061663552173
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(target_land_temp_shock_resid, 1)",-3.000298062520346e-4,4.1915525021102637e-4,-0.7157963692473914,0.47781512547753835
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,"l(target_land_temp_shock_resid, 2)",-4.3796018003646587e-4,9.060015870865603e-4,-0.4833989104200352,0.631156379500552
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,as.numeric(date),2.8872305464457267e-5,2.9881178943440663e-5,0.9662371594878167,0.3390898873663094
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,3,land_temp_shock:target_land_temp_shock_resid,-0.01872328863153867,0.008366461741649171,-2.237898075638363,0.030222530990579737
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,land_temp_shock,0.30687390489884214,0.10949000223496416,2.802757316967577,0.007448468711273946
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,target_land_temp_shock_resid,0.003954879356333835,0.0014275742307315314,2.77034935991191,0.008109517595084366
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(corporate_mortgages, 1)",0.6020544965619523,0.22647268386263514,2.658397853081137,0.010832884154916416
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(corporate_mortgages, 2)",-0.7798928992366118,0.23623135061488307,-3.301394574456947,0.001889325730675439
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(land_temp_shock, 1)",0.18025337797290164,0.07531831753358513,2.393220983627588,0.0209338285312302
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(land_temp_shock, 2)",-0.02917649477366807,0.05509040195432633,-0.5296112160854691,0.5989848470118272
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(target_land_temp_shock_resid, 1)",-2.884185305240914e-4,3.693326731165301e-4,-0.7809179948536287,0.4389397222839332
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,"l(target_land_temp_shock_resid, 2)",2.4306521918621637e-4,7.824160013932698e-4,0.31065982642658563,0.7574936577001552
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,as.numeric(date),4.529594316620426e-5,3.353416970987389e-5,1.3507399633892592,0.18353220519308022
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,4,land_temp_shock:target_land_temp_shock_resid,-0.022403658085694864,0.011649710749630815,-1.923108527514715,0.06080807266581327
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,land_temp_shock,0.3795924880442833,2.310066324391637,0.16432103443793986,0.8702142995418595
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,target_land_temp_shock_resid,-0.03715863351974123,0.07746778250732787,-0.4796656405677587,0.6337883395676163
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(corporate_mortgages, 1)",-3.6056353796332523,7.447321327394892,-0.4841519817830286,0.6306260472260414
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(corporate_mortgages, 2)",6.868809699492138,8.858486151541166,0.7753931746336961,0.4421632504074814
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(land_temp_shock, 1)",-9.510925260812723,8.472754328006205,-1.122530512819769,0.2675906701277205
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(land_temp_shock, 2)",5.760917413352216,6.409882388751833,0.8987555564922015,0.37356695791926187
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(target_land_temp_shock_resid, 1)",0.09735428201321197,0.08314489398483149,1.1708991057342952,0.2478025108723398
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,"l(target_land_temp_shock_resid, 2)",0.06391222173285367,0.0639697966971944,0.9990999664323891,0.3230886145759493
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,as.numeric(date),-0.0026924703464435767,0.001424211323858629,-1.8904991845935066,0.06514112843827159
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,5,land_temp_shock:target_land_temp_shock_resid,0.32303311446634925,0.4018201934229168,0.8039245407618328,0.42566713714039206
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,land_temp_shock,-9.206411326544828,8.411359449457791,-1.09452121049687,0.279682060769837
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,target_land_temp_shock_resid,-0.08832466276604065,0.10582835342135341,-0.8346030143205367,0.4084499495806567
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(corporate_mortgages, 1)",5.036748558155565,2.481210322363974,2.029956313158008,0.04843426591997845
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(corporate_mortgages, 2)",-2.1849274762373665,1.4197314130458925,-1.5389724113730934,0.1309723649457573
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(land_temp_shock, 1)",5.3516314097256785,5.513262558813466,0.9706832120974531,0.33701206744438894
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(land_temp_shock, 2)",-7.242651503082613,6.411121602330882,-1.1297011587565915,0.2647233511166479
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(target_land_temp_shock_resid, 1)",0.1099158061744231,0.08928992567886784,1.2309989658826288,0.22486304066453103
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,"l(target_land_temp_shock_resid, 2)",-0.05232462201523966,0.0458795690620084,-1.1404776262070044,0.2602573172360756
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,as.numeric(date),-0.0025962242685767314,0.0011609322015515386,-2.2363272076586242,0.03044912007367793
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,6,land_temp_shock:target_land_temp_shock_resid,0.7943635040456769,0.9106770581887935,0.8722779353040389,0.38779200411710224
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,land_temp_shock,4.857432749916818,5.71251261911046,0.8503145767533038,0.3998602664480265
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,target_land_temp_shock_resid,0.005939100048922793,0.04783052119768368,0.12416967033197224,0.9017595781382259
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(corporate_mortgages, 1)",1.957442642447318,1.512613872803934,1.294079525278189,0.20254536010555882
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(corporate_mortgages, 2)",1.414486182060018,2.4814435886338755,0.5700255240695372,0.5716268526597814
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(land_temp_shock, 1)",-9.607641698212717,9.030670137294274,-1.0638902265442853,0.29331657082732376
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(land_temp_shock, 2)",-5.816617330684433,7.654039013492793,-0.7599409044598162,0.45143653151912655
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(target_land_temp_shock_resid, 1)",-0.021090299495761935,0.02833127068958731,-0.7444177046218166,0.4606729017041483
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,"l(target_land_temp_shock_resid, 2)",-0.0060537526808801204,0.017346118481752996,-0.34899754012681744,0.7287943914395654
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,as.numeric(date),-0.003103771729090195,0.0016373817827477976,-1.8955699652902893,0.06475114612056736
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,7,land_temp_shock:target_land_temp_shock_resid,0.2601353429051261,0.4423707218735917,0.5880482817745345,0.5595758670837518
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,land_temp_shock,-7.985411719848982,6.869187784548,-1.1624972224244459,0.2515966334402402
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,target_land_temp_shock_resid,0.00531858313867384,0.04835733938911564,0.10998502411137524,0.9129451132791051
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(corporate_mortgages, 1)",5.031433835666466,2.9366484435363054,1.7133252183252907,0.09402615861306751
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(corporate_mortgages, 2)",-2.255542775019433,2.2719203160199655,-0.9927913224398541,0.3264971709719985
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(land_temp_shock, 1)",-6.745678332084031,7.946198124347699,-0.8489189706225431,0.4007391736390623
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(land_temp_shock, 2)",0.056600626581582485,2.9725301156458115,0.019041228979873745,0.9848983873245254
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(target_land_temp_shock_resid, 1)",0.02999001958255947,0.030449930319604954,0.9848961645488766,0.33031506027365753
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,"l(target_land_temp_shock_resid, 2)",-0.008826702895318022,0.024888932738351785,-0.35464368794395124,0.7246311265682577
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,as.numeric(date),-0.00316954863895247,0.0015652472067651693,-2.0249508354037205,0.04925992040561259
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,8,land_temp_shock:target_land_temp_shock_resid,-0.12192322508518114,0.18143477746553954,-0.6719947894682892,0.505267002031158
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,land_temp_shock,-9.45713757569258,8.773793219092887,-1.0778847118385064,0.2873863327711817
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,target_land_temp_shock_resid,0.028761842991433174,0.04299997471550358,0.6688804628776475,0.5073206749506658
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(corporate_mortgages, 1)",4.5745929622503745,2.091937185483339,2.186773577139421,0.034520334886523216
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(corporate_mortgages, 2)",-0.664963715909529,1.9234319682491028,-0.3457173047377623,0.7313228479062213
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(land_temp_shock, 1)",-3.443622321705284,4.371774935473777,-0.7876943283980132,0.43540589384717243
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(land_temp_shock, 2)",3.5106305956462682,4.295213808173399,0.8173354697654072,0.4184611434075285
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(target_land_temp_shock_resid, 1)",0.013060568515725703,0.031673409449416504,0.41235120382552654,0.6822302429713689
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,"l(target_land_temp_shock_resid, 2)",0.08010245200620582,0.09057982320598759,0.8843299663330632,0.3816748035988057
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,as.numeric(date),-0.003692566595280849,0.002060345195517931,-1.792207734564891,0.08048122990901167
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,9,land_temp_shock:target_land_temp_shock_resid,-0.1991092369288663,0.194693938471769,-1.0226781505975726,0.31245658248692165
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,land_temp_shock,-6.863707808133413,5.992274749952877,-1.145426085175315,0.2588397400797293
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,target_land_temp_shock_resid,-0.022863679959220354,0.05993835102139769,-0.38145326939438384,0.7048857502922127
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(corporate_mortgages, 1)",8.062675960125334,5.269643685284665,1.5300229847874032,0.1338818572629762
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(corporate_mortgages, 2)",-3.245751697235286,2.2581263907458595,-1.4373649369392532,0.15839149416265505
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(land_temp_shock, 1)",2.2699523572713143,3.2276849312392706,0.7032756931451067,0.4859575067717983
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(land_temp_shock, 2)",-3.758785288403371,3.933469691530632,-0.9555902506371452,0.34501916294041435
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(target_land_temp_shock_resid, 1)",0.13255505416873894,0.12078354864029932,1.0974595105124447,0.27900337652996243
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,"l(target_land_temp_shock_resid, 2)",-0.01340386090750028,0.022368488451687117,-0.5992296232465949,0.5523988604439211
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,as.numeric(date),-0.0043058723224796095,0.00267428812797696,-1.6101003767821034,0.11524058682708012
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,10,land_temp_shock:target_land_temp_shock_resid,-0.08317999395172156,0.11090330552031417,-0.750022675712632,0.4576301143938193
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,land_temp_shock,-0.32862186954959643,1.7323641214905494,-0.18969561045102099,0.8505315321179211
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,target_land_temp_shock_resid,0.15813171734342865,0.11441703520722932,1.382064454449675,0.17481708025530882
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(corporate_mortgages, 1)",8.98785092870933,5.511988043230973,1.630600585163988,0.11102558345186686
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(corporate_mortgages, 2)",-3.397298172752847,3.281686774019064,-1.0352292606500633,0.3069385698427367
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(land_temp_shock, 1)",-7.7601159142107266,7.114267628166794,-1.0907821183851576,0.28206225587683265
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(land_temp_shock, 2)",7.938127371688559,6.99648332083253,1.134588193478889,0.2634734908507059
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(target_land_temp_shock_resid, 1)",-0.0011868946570541361,0.02950096812761924,-0.04023239684608682,0.9681131085803111
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,"l(target_land_temp_shock_resid, 2)",0.09756693346486393,0.10742239853082106,0.9082550268775702,0.36932202189260177
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,as.numeric(date),-0.004566566148675679,0.0030213328427633143,-1.5114409389265078,0.13873740186998937
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,11,land_temp_shock:target_land_temp_shock_resid,-0.2763662034261713,0.29780559483743496,-0.9280087688649137,0.3591111248041373
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,land_temp_shock,-12.079170672022451,11.421078990748404,-1.057620797632792,0.29690562135599435
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,target_land_temp_shock_resid,0.02999155345888662,0.03084888866745386,0.9722085544860569,0.33709499646640373
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(corporate_mortgages, 1)",11.366389863915817,9.339928572932205,1.2169675362246821,0.23112093261595965
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(corporate_mortgages, 2)",-6.62506561926694,5.9835964513561155,-1.1072046173443804,0.27516514656332414
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(land_temp_shock, 1)",5.417484930457236,3.512096038772739,1.542521864621422,0.13123441776980135
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(land_temp_shock, 2)",3.3547857414265536,4.108196656372423,0.8166078749474622,0.4192426650370421
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(target_land_temp_shock_resid, 1)",0.19018960708234134,0.19266145074503108,0.9871700142756582,0.3298035573301238
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,"l(target_land_temp_shock_resid, 2)",-0.08391133331245994,0.060433319347640554,-1.3884945294790598,0.17307249786307888
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,as.numeric(date),-0.00464890989616517,0.0030015172161567344,-1.5488533169627543,0.12970612792879418
+corporate_mortgages__target__land_temp_shock,corporate_mortgages,target,land_temp_shock,12,land_temp_shock:target_land_temp_shock_resid,-0.03231323117109683,0.20529255968606824,-0.1574008878865847,0.8757623079106632

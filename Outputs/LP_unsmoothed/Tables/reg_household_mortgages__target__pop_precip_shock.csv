@@ -1,0 +1,131 @@
+model,dep,mp_shock,climate_shock,h,term,estimate,std.error,statistic,p.value
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,pop_precip_shock,-0.0013465207374554772,9.50283784074208e-4,-1.416966973468135,0.1633789689917005
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,target_pop_precip_shock_resid,5.395967157887731e-4,4.744484770677539e-4,1.137313621752264,0.2614269565851315
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(household_mortgages, 1)",0.18438385607094737,0.12330439359156604,1.4953551183399123,0.14180230815393796
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(household_mortgages, 2)",-0.2511212062594683,0.10863005863552819,-2.3117101234569106,0.02542803731915492
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(pop_precip_shock, 1)",0.005278555868041513,0.0015587420106857486,3.3864204800121347,0.001478935606987063
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(pop_precip_shock, 2)",0.0025985192481916557,0.001304114501635547,1.9925545225766135,0.05239682690132031
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(target_pop_precip_shock_resid, 1)",5.072507760790764e-4,1.4472967788428236e-4,3.5048152078708097,0.00104654041602126
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,"l(target_pop_precip_shock_resid, 2)",7.548991337940437e-5,8.176087536009305e-5,0.9233011883364756,0.36077469580655575
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,as.numeric(date),3.0793697925432584e-5,8.570008040577965e-6,3.5931935862403046,8.056010779916203e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,0,pop_precip_shock:target_pop_precip_shock_resid,-4.078608729173827e-4,1.4357830695313476e-4,-2.840685905639716,0.006738366953624885
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,pop_precip_shock,0.0022675424553183026,0.0023191640045428304,0.9777413114711119,0.33342956020254455
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,target_pop_precip_shock_resid,0.0010777938399665662,6.546116851780709e-4,1.646462879246311,0.10663574770746753
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(household_mortgages, 1)",0.23048863838198594,0.22160564173014743,1.0400847044438313,0.3038567494422216
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(household_mortgages, 2)",-0.3737638468948538,0.18653117332048075,-2.0037607668541657,0.05113826818250954
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(pop_precip_shock, 1)",0.009015223559513962,0.0015643462047739418,5.762933762361587,7.012296239290624e-7
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(pop_precip_shock, 2)",0.0021379009186012787,0.0017029290650171888,1.255425702995855,0.215804365252665
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(target_pop_precip_shock_resid, 1)",4.2927938041165895e-4,1.7498205009464348e-4,2.4532766656892653,0.018094614297328962
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,"l(target_pop_precip_shock_resid, 2)",5.005463991974368e-4,2.2679003833611335e-4,2.207091646836815,0.03245046804634161
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,as.numeric(date),6.484613599859492e-5,1.850997598869814e-5,3.5033074077561643,0.0010511958615965712
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,1,pop_precip_shock:target_pop_precip_shock_resid,-3.0110641347028805e-4,1.2009197451388215e-4,-2.507298382669871,0.015843466415529153
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,pop_precip_shock,0.0031677934512974234,0.0023607602406261834,1.3418531017182742,0.18637561650402917
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,target_pop_precip_shock_resid,0.0010282467508649197,5.330078560294326e-4,1.9291399540049934,0.06003427155014967
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(household_mortgages, 1)",0.3307989038547874,0.30316149997995656,1.091163963355037,0.2810088557613262
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(household_mortgages, 2)",-0.5533690297891382,0.24834943551439817,-2.228187185700514,0.03090971281174503
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(pop_precip_shock, 1)",0.01247119289286535,0.0025014463715173738,4.985592749406154,9.651017990870563e-6
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(pop_precip_shock, 2)",0.007848426554824442,0.003150724680585919,2.490990914942439,0.016494640710180947
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(target_pop_precip_shock_resid, 1)",0.0011618268673265239,2.864503519876227e-4,4.0559449805693575,1.959118083415283e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,"l(target_pop_precip_shock_resid, 2)",2.0297053052723276e-4,2.2613973782061869e-4,0.8975447326654085,0.37420541968700305
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,as.numeric(date),9.731399622386589e-5,2.796191864648692e-5,3.480233150456298,0.0011249561802925358
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,2,pop_precip_shock:target_pop_precip_shock_resid,-4.546493059926659e-4,1.726315427340065e-4,-2.633639824983763,0.011538935254041427
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,pop_precip_shock,0.005031007301833725,0.0038586084827252724,1.3038397972629776,0.19891888763168356
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,target_pop_precip_shock_resid,0.0017091571389108088,8.08782550603647e-4,2.113246802413274,0.0401580052269565
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(household_mortgages, 1)",0.4080275061296715,0.39769419516818055,1.0259830570499553,0.3103832848478924
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(household_mortgages, 2)",-0.7054552239260645,0.3281185783983375,-2.1500008544765743,0.03696617718702107
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(pop_precip_shock, 1)",0.01874403492434366,0.005297548310740268,3.5382470956125003,9.482414541908318e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(pop_precip_shock, 2)",0.009980588220940102,0.003905821389219118,2.555310964420597,0.014059664783263882
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(target_pop_precip_shock_resid, 1)",7.514423692129834e-4,1.918342831291105e-4,3.9171432600878697,3.015613352448386e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,"l(target_pop_precip_shock_resid, 2)",-8.337725905535034e-5,4.021570309450073e-4,-0.20732513083117454,0.8366913218291834
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,as.numeric(date),1.277952406826219e-4,3.531701094810804e-5,3.6185180243705757,7.470111564539226e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,3,pop_precip_shock:target_pop_precip_shock_resid,-5.019550276876025e-4,1.845711258142119e-4,-2.719575044434996,0.00925506610091177
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,pop_precip_shock,0.008250243784163804,0.007356435717700446,1.1215001531669408,0.2680240894544209
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,target_pop_precip_shock_resid,0.0014096060613715392,8.813869462190971e-4,1.59930444558812,0.11675151665796037
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(household_mortgages, 1)",0.5447559494726325,0.46457114182441417,1.172599630991553,0.24712658394811646
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(household_mortgages, 2)",-0.9222172811821584,0.37974080139013355,-2.4285440958837126,0.019218798606467323
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(pop_precip_shock, 1)",0.024522993260264157,0.006483590050531578,3.782317060322708,4.55874200394252e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(pop_precip_shock, 2)",0.013871838336979385,0.005522305569978172,2.511965004688108,0.015661470852818538
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(target_pop_precip_shock_resid, 1)",6.561264604956272e-4,3.2220285899997364e-4,2.03637690407856,0.047622995151932135
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,"l(target_pop_precip_shock_resid, 2)",-3.244226124491916e-4,4.8320524702815624e-4,-0.6713971225363942,0.5053996984391653
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,as.numeric(date),1.5781968378625818e-4,4.4795784865937556e-5,3.523092278851069,9.91653438792113e-4
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,4,pop_precip_shock:target_pop_precip_shock_resid,-7.859597681851588e-4,3.826929603029611e-4,-2.0537607160658227,0.045836624377238
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,pop_precip_shock,-2.5608750517923693,1.4527581110856378,-1.7627676846206985,0.08473022368786387
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,target_pop_precip_shock_resid,0.12782335208936366,0.0978151904757071,1.3067842680438193,0.19792505503923793
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(household_mortgages, 1)",-0.4990739908525178,10.66071422836837,-0.04681431095155633,0.9628683696862589
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(household_mortgages, 2)",-1.6940104618184548,12.78607379354785,-0.13248871304600884,0.8951884081743203
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(pop_precip_shock, 1)",0.7162398109902631,0.34914668154320483,2.0514008835041233,0.04607564899798914
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(pop_precip_shock, 2)",-0.9042011223668683,0.7746848690525504,-1.1671857273690114,0.2492831557315792
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(target_pop_precip_shock_resid, 1)",-0.03424069619022281,0.022496656902176882,-1.522034866741001,0.13499707656359602
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,"l(target_pop_precip_shock_resid, 2)",9.426919321444403e-4,0.04205556308604699,0.022415391995005824,0.9822157041021007
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,as.numeric(date),-3.721730033249955e-5,9.076597281788392e-4,-0.041003582264439196,0.9674744290850932
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,5,pop_precip_shock:target_pop_precip_shock_resid,0.22021675665993404,0.1062629634779937,2.0723754490955764,0.04398871929727499
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,pop_precip_shock,1.8000950016106654,1.4935884529259724,1.2052148622897023,0.23456239799120657
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,target_pop_precip_shock_resid,0.020653464627372706,0.06136286670661916,0.33657920067715535,0.7380342061780777
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(household_mortgages, 1)",16.35706363221034,17.620085837706693,0.9283191797628191,0.3583068311676926
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(household_mortgages, 2)",-24.05375907213044,19.237506255791306,-1.250357439904106,0.21777797526681275
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(pop_precip_shock, 1)",-0.5692958484345758,0.9102682988066201,-0.6254154398004786,0.5349289756555056
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(pop_precip_shock, 2)",0.005738743492106877,0.37581396138431306,0.015270171099999,0.9878856718513089
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(target_pop_precip_shock_resid, 1)",0.13499318437278415,0.12407008971792927,1.0880397094875027,0.28250166336511134
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,"l(target_pop_precip_shock_resid, 2)",0.02554970214308786,0.019220318904808596,1.329306879330486,0.19059835110434847
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,as.numeric(date),0.0013256126652248321,7.354948509821398e-4,1.802341190362762,0.07834447504149017
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,6,pop_precip_shock:target_pop_precip_shock_resid,-0.16092790419203726,0.14407048450920634,-1.1170081418151523,0.27005339227127895
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,pop_precip_shock,-1.0910578445133872,1.2558569412885452,-0.8687755815514548,0.3897932583629967
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,target_pop_precip_shock_resid,0.043344677134201016,0.037546478715565386,1.1544272223917476,0.25470072131689775
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(household_mortgages, 1)",14.15283974030347,11.191871899542575,1.2645641289802392,0.21283884693739277
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(household_mortgages, 2)",-22.2871296807177,12.388328225841066,-1.799042556382105,0.07903268534104535
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(pop_precip_shock, 1)",0.36331377360129863,0.32280141718692223,1.125502411877322,0.26661914211577625
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(pop_precip_shock, 2)",2.5751252941932696,2.009806300131071,1.281280337326702,0.20696204394802525
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(target_pop_precip_shock_resid, 1)",0.024871939613866224,0.03409612715154449,0.7294652411201948,0.46967223948528125
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,"l(target_pop_precip_shock_resid, 2)",-0.04757491977086356,0.039397934951129226,-1.207548563900047,0.23382116990574756
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,as.numeric(date),8.353160060352702e-4,7.599057733198929e-4,1.0992362939761906,0.27778153131641764
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,7,pop_precip_shock:target_pop_precip_shock_resid,0.036882635487843686,0.03984611829341388,0.9256268130373937,0.35980594126517973
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,pop_precip_shock,-0.10079762988352847,0.5428667731329765,-0.18567655062366076,0.8535922544870671
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,target_pop_precip_shock_resid,0.00840280151823743,0.04292765548544766,0.19574331333063258,0.8457550532039398
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(household_mortgages, 1)",21.147343676580224,17.25833019517428,1.2253412373865333,0.22727397332536511
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(household_mortgages, 2)",-30.387239532394716,18.30524205720038,-1.6600293750522612,0.10435788757748336
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(pop_precip_shock, 1)",3.102598096418574,2.4213012850772353,1.2813763060137335,0.2070911187591803
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(pop_precip_shock, 2)",1.490579331681025,1.4533761187532448,1.0255977874190574,0.31095208115613315
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(target_pop_precip_shock_resid, 1)",-0.031369938856330874,0.05550113140808659,-0.5652126012652822,0.5749361754010311
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,"l(target_pop_precip_shock_resid, 2)",-0.062076999798901154,0.061677356429024686,-1.0064795800763018,0.3199485510060916
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,as.numeric(date),4.0498612376900755e-4,0.0014585785445934039,0.2776580838037092,0.7826370544455954
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,8,pop_precip_shock:target_pop_precip_shock_resid,0.02844531267253098,0.0469567990289507,0.6057762296572501,0.5479232950204331
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,pop_precip_shock,2.858295186478154,2.23140083241869,1.2809420633674105,0.20741246863620869
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,target_pop_precip_shock_resid,-0.04715776864644436,0.06257871075081906,-0.7535752667424063,0.45541025395412604
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(household_mortgages, 1)",4.257833585883999,11.921156384599296,0.35716615473517394,0.7227993283058196
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(household_mortgages, 2)",-18.142276449521226,12.984996933093848,-1.3971721782454505,0.16987795043570114
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(pop_precip_shock, 1)",1.6886463818937703,1.5064185479031844,1.1209675984434955,0.26882466593722315
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(pop_precip_shock, 2)",0.7429027557382566,0.6519443855616165,1.13951860341321,0.26110073651749344
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(target_pop_precip_shock_resid, 1)",-0.033262472446151534,0.04309622050238183,-0.7718187826775481,0.44464781150248767
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,"l(target_pop_precip_shock_resid, 2)",0.06094576440476327,0.05181747904910941,1.1761622819783,0.24631422469277856
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,as.numeric(date),0.0020305984271786256,7.620828802199809e-4,2.6645375193213607,0.010973446953101571
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,9,pop_precip_shock:target_pop_precip_shock_resid,-0.01951994880334538,0.04154013792699948,-0.46990572919254,0.6409122319461431
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,pop_precip_shock,1.2970011433814252,1.279391826531914,1.0137638184677522,0.3167885905862244
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,target_pop_precip_shock_resid,-0.04815407166610502,0.07350817807823512,-0.6550845487539414,0.5161631407043632
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(household_mortgages, 1)",5.509627119226561,9.581807070544247,0.575009189671945,0.5685055330496038
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(household_mortgages, 2)",-22.852551830011283,14.150253142418201,-1.614992438651589,0.11417402084369743
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(pop_precip_shock, 1)",0.954886206523079,0.8311819009208151,1.1488294024030354,0.2574499316869914
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(pop_precip_shock, 2)",0.021082105964482706,0.2661615867115163,0.07920792111647915,0.9372621881778272
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(target_pop_precip_shock_resid, 1)",0.10762740611584351,0.10734765710486469,1.0026060094698253,0.32207788009125765
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,"l(target_pop_precip_shock_resid, 2)",0.033821019378631564,0.03906716936829223,0.8657146121797461,0.3918096106800363
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,as.numeric(date),0.00341431447791761,0.001572614459316095,2.1711071379837374,0.03591377854220256
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,10,pop_precip_shock:target_pop_precip_shock_resid,-0.026237769193976385,0.04227170592296476,-0.620693407590213,0.5383221917985992
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,pop_precip_shock,0.5898661150010894,0.46311551694569403,1.2736911060362042,0.2103117518924487
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,target_pop_precip_shock_resid,0.05229000733502662,0.03199771156584558,1.6341795952320877,0.11026901675247511
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(household_mortgages, 1)",0.6919936574167378,6.389186332370149,0.10830700834483788,0.9143074794243498
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(household_mortgages, 2)",-23.05996782529385,16.953889779945012,-1.3601579416053418,0.18159074162102942
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(pop_precip_shock, 1)",-0.02641851443006654,0.2655704745070542,-0.099478356843335,0.9212680651515133
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(pop_precip_shock, 2)",0.8356168572087046,0.7717182482360976,1.0828004380078595,0.2855464587076512
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(target_pop_precip_shock_resid, 1)",0.032359410873887946,0.03530751023392154,0.9165022019252657,0.3650363732306747
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,"l(target_pop_precip_shock_resid, 2)",0.105677080212494,0.12238474746510317,0.863482438795135,0.39315174050526824
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,as.numeric(date),0.005211284492841981,0.0033334208800446957,1.5633442881572477,0.12605071069146043
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,11,pop_precip_shock:target_pop_precip_shock_resid,-0.019308472780302587,0.05627991709495946,-0.3430792683600433,0.7333813230338658
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,pop_precip_shock,-0.2867789560073486,0.39316977940119324,-0.7294023371890882,0.4702279162789177
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,target_pop_precip_shock_resid,0.043467183547454415,0.0371084352686309,1.1713558718601857,0.24874838171111036
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(household_mortgages, 1)",-10.894005124687707,7.02168617639056,-1.5514799224888858,0.12907634712424312
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(household_mortgages, 2)",-11.37441602282082,11.381657636299314,-0.9993637470296596,0.3239400823712023
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(pop_precip_shock, 1)",1.3102029763395064,1.1361611165178511,1.1531841367314746,0.25603711733537204
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(pop_precip_shock, 2)",-0.08849186706968155,0.44956839548087274,-0.19683738438736964,0.8450038128256603
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(target_pop_precip_shock_resid, 1)",0.12826397065823245,0.14244666736365863,0.9004350402300496,0.3735601148023342
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,"l(target_pop_precip_shock_resid, 2)",-0.03569203109996698,0.016709642260026504,-2.1360140776532917,0.03918126427045585
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,as.numeric(date),0.00474666859698552,0.0031397286748478235,1.5118085314220924,0.13885509507684138
+household_mortgages__target__pop_precip_shock,household_mortgages,target,pop_precip_shock,12,pop_precip_shock:target_pop_precip_shock_resid,0.04274229615567558,0.031197413098108903,1.3700589860210717,0.17870943550949697
