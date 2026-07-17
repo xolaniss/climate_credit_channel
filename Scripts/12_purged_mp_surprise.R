@@ -27,7 +27,15 @@ climate_shock_vars<-c(
   "pop_precip_shock",
   "land_precip_shock",
   "pop_temp_shock",
-  "land_temp_shock"
+  "land_temp_shock",
+  "pop_precip_shock_pos",
+  "land_precip_shock_pos",
+  "pop_temp_shock_pos",
+  "land_temp_shock_pos",
+  "pop_precip_shock_abs_neg",
+  "land_precip_shock_abs_neg",
+  "pop_temp_shock_abs_neg",
+  "land_temp_shock_abs_neg"
 )
 
 # Generate and store residuals from orthogonalisation ---------------------------------------
