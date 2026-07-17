@@ -8,26 +8,30 @@ source(here("packages.R"))
 
 # Functions ---------------------------------------------------------------
 source(here("Functions", "fx_plot.R"))
-month_based_shock <-
-  function(data, variable_filter){
-    data |>
-      pivot_longer(cols = -c(date), names_to = "variable", values_to = "value") |>
-      mutate(month = month(date)) |>
-      filter(variable == variable_filter) |>
-      group_by(month) |>
-      mutate(long_term_mean = mean(value, na.rm = TRUE)) |> # This is based on the long-term mean (entire sample) for each month and country. This may change in the future
-      ungroup() |>
-      mutate(
-        shock = (value - long_term_mean) / sd(value, na.rm = TRUE),
-      ) |>
-      pivot_wider(
-        names_from = variable,
-        values_from = c(value, shock),
-        names_glue = "{variable}_{.value}"
-      ) |>
-      dplyr::select(-month, - long_term_mean) |>
-      drop_na()
-  }
+month_based_shock <- function(data, variable_filter){
+  
+  data |>
+    pivot_longer(
+      cols = -c(date),
+      names_to = "variable",
+      values_to = "value"
+    ) |>
+    mutate(month = month(date)) |>
+    filter(variable == variable_filter) |>
+    group_by(month) |>
+    mutate(long_term_mean = mean(value, na.rm = TRUE), # This is based on the long-term mean (entire sample) for each month and country. This may change in the future
+      long_term_sd   = sd(value, na.rm = TRUE), #month specifc standard deviation
+      shock = (value - long_term_mean) / long_term_sd
+    ) |>
+    ungroup() |>
+    pivot_wider(
+      names_from = variable,
+      values_from = c(value, shock),
+      names_glue = "{variable}_{.value}"
+    ) |>
+    dplyr::select(-month, -long_term_mean, -long_term_sd) |>
+    drop_na()
+}
 
 # Import -------------------------------------------------------------
 climate_data_tbl <- read_rds(here("Outputs", "artifacts_climate_data.rds")) |>
@@ -61,18 +65,37 @@ climate_shocks_tbl <-
   left_join(
     climate_shocks_list[[1]],
     climate_shocks_list[[2]],
-    by = c("date")
+    by = "date"
   ) |>
   left_join(
     climate_shocks_list[[3]],
-    by = c("date")
+    by = "date"
   ) |>
   left_join(
     climate_shocks_list[[4]],
-    by = c("date")
+    by = "date"
   ) |>
-  ungroup() |> 
-  filter(date >= "2012-12-01")
+  ungroup() |>
+  filter(date >= "2012-12-01") |>
+  
+ 
+# Create positive and negative climate shock variables -----------------
+
+mutate(
+  
+  across(
+    ends_with("_shock"),
+    ~ if_else(. > 0, ., 0),
+    .names = "{.col}_pos"
+  ),
+  
+  across(
+    ends_with("_shock"),
+    ~ if_else(. < 0, abs(.), 0),
+    .names = "{.col}_abs_neg"
+  )
+  
+)
 
 
 # EDA ---------------------------------------------------------------------
