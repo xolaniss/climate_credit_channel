@@ -109,6 +109,24 @@ I will investigate to what extent the manifestation of climate shocks act as a c
 
 # Data and methodology
 
+## Data
+
+The analysis draws on three main data sources spanning the South African context (climate shocks, monetary policy shocks, and credit extension volumes and rates). We focus on the period 2011 to 2025 at a quarterly frequency. The quarterly frequency is a limitation of the monetary policy shocks data, which is only available at that frequency. Therefore, all the other data sets are adjusted to a quarterly frequency by calculating averages or sums where appropriate.
+
+**Climate data.** Temperature and precipitation data are sourced from the ERA5 reanalysis dataset produced by the European Centre for Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly atmospheric estimates at a horizontal resolution of 31 km, which are aggregated to monthly averages over South Africa's land area. From these series, We construct climate shock variables that capture deviations from long-run historical norms in temperature and precipitation, as well as indicators for extreme wet and dry events.
+
+The climate shocks are calculated as follows:
+
+$$ W_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, $$ {#eq-weather_shock}
+
+where $W_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For temperature, $\overline{T}_{t}$ is the mean of all observations in the same calendar month computed over the full sample (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. For precipitation, $\overline{T}_{t}$ and $\sigma(T_{t})$, without seasonal adjustment. The shocks are shown in @fig-climate_shocks_data in the Appendix. 
+
+**Monetary policy data.** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises are used as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we distinguish between market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data), and the policy rate derived or theory based shock as discussed in @sec-methodology below (see @fig-theory_based_surprises_data). The frequency of the monetary policy surprise shocks coincides with policy rate announcement dates, which are are aggregated quartely.
+
+**Credit extension data.** Private sector credit extension data — disaggregated by borrower type at a bank level (households and corporates) — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at a bank level is not publicly available] These series include both credit volumes and lending rates. This data was constructed in line with @sibande2025 and @sibande2025a. This process involved sorting and aggregating the data into the broad credit categories (unsecured, secured, mortgages) used in the study. See @fig-lending_volume_growth_data and @fig-lending_rates. 
+
+## Methodology {#sec-methodology}
+
 We use a monetary policy shock, rather than the monetary policy rate itself, as an indicator for monetary policy to ensure exogeneity within the regression framework (Miyajima, 2024). To this end, I replicate a shock variable devised by Merrino (2021) for the South African case based on a simplification of the work of Romer and Romer (2004) as follows:
 
 $$
@@ -125,6 +143,93 @@ $$ {#eq-credit}
 where $\text{Credit}_{i,t}$ is the growth rate of credit extended to agent $(s)$ (households or corporates) at time $(t)$, $\text{Climate}_{t}^k$ is the climate shock variable, including temperature and precipitation shocks, as well as extreme wet and dry events, which are each denoted by $k$. The $\text{Climate}_{t}^k\times\text{MPShock}_t$ term tests whether the frictions introduced by climate change shocks are significant enough to modify the pass-through of monetary policy through the credit channel. $X_t$ is a vector of control variables that includes GDP growth, the US Dollar-Rand exchange rate, the loan-to-deposit ratio and the unemployment rate. $\gamma_s$ are agent, time-invariant fixed effects, $\delta_t$ are time fixed effects, and  $\varepsilon_{i,t}$ is the error term.
 
 # Results
+
+
+# Conclusion
+
+\newpage 
+
+# References {.unnumbered}
+::: {#refs}
+:::
+
+
+\setcounter{section}{0}
+\renewcommand{\thesection}{\Alph{section}}
+
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+\newpage
+
+# Appendix
+
+## Data
+
+
+```{r}
+#| label: fig-lending_volume_growth_data
+#| fig-cap: "Lending volume growth over time"
+#| fig-height: 7
+#
+lending_volume_growth_gg <- 
+  read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
+  pluck(3)
+
+lending_volume_growth_gg
+```
+
+
+```{r}
+#| label: fig-lending_rates
+#| fig-cap: "Lending rates overtime"
+#| fig-height: 7
+
+lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
+  pluck(2)
+
+lending_rates_gg
+```
+
+
+```{r}
+#| label: fig-climate_shocks_data
+#| fig-cap: Climate Shocks Data
+
+climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
+  pluck(2)
+
+climate_shocks_gg
+```
+
+
+```{r}
+#| label: fig-market_based_surprises_data
+#| fig-cap: "Market-Based Surprises Data"
+
+market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
+  pluck(2)
+
+market_based_surprises_gg
+```
+
+```{r}
+#| label: fig-theory_based_surprises_data
+#| fig-cap: "Theory-based surprises data"
+#| fig.height: 2
+
+theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
+  pluck(3, 3)
+
+theory_based_surprises_gg
+```
+
+
+## Descriptive Statistics
+
 
 ```{r}
 #| label: tbl-descriptives
@@ -169,89 +274,6 @@ descriptives_table <-
   
 descriptives_table
 
-```
-
-
-# Conclusion
-
-\newpage 
-
-# References {.unnumbered}
-::: {#refs}
-:::
-
-
-\setcounter{section}{0}
-\renewcommand{\thesection}{\Alph{section}}
-
-\setcounter{table}{0}
-\renewcommand{\thetable}{A\arabic{table}}
-
-\setcounter{figure}{0}
-\renewcommand{\thefigure}{A\arabic{figure}}
-
-\newpage
-
-# Appendix
-
-## Data
-
-
-```{r}
-#| label: fig-lending_volume_growth_data
-#| fig-cap: "Lending volume growth over time"
-#| fig-height: 7
-#
-lending_volume_growth_gg <- 
-  read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
-  pluck(3)
-
-lending_volume_growth_gg
-```
-
-
-```{r}
-#| label: fig-lending_rates_o
-#| fig-cap: "Lending rates overtime"
-#| fig-height: 7
-
-lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
-  pluck(2)
-
-lending_rates_gg
-```
-
-
-```{r}
-#| label: fig-climate_shocks_data
-#| fig-cap: Climate Shocks Data
-
-climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
-  pluck(2)
-
-climate_shocks_gg
-```
-
-
-```{r}
-#| label: fig-market_based_surprises_data
-#| fig-cap: "Market-Based Surprises Data"
-
-market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
-  pluck(2)
-
-market_based_surprises_gg
-```
-
-```{r}
-#| label: fig-theory_based_surprises_datas
-#| fig-cap: "Theory-based surprises data"
-#| fig.height: 2
-
-theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
-  pluck(3, 3)
-
-theory_based_surprises_gg
 ```
 
 

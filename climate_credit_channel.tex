@@ -255,6 +255,68 @@ nuance these results.
 
 \section{Data and methodology}\label{data-and-methodology}
 
+\subsection{Data}\label{data}
+
+The analysis draws on three main data sources spanning the South African
+context (climate shocks, monetary policy shocks, and credit extension
+volumes and rates). We focus on the period 2011 to 2025 at a quarterly
+frequency. The quarterly frequency is a limitation of the monetary
+policy shocks data, which is only available at that frequency.
+Therefore, all the other data sets are adjusted to a quarterly frequency
+by calculating averages or sums where appropriate.
+
+\textbf{Climate data.} Temperature and precipitation data are sourced
+from the ERA5 reanalysis dataset produced by the European Centre for
+Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly
+atmospheric estimates at a horizontal resolution of 31 km, which are
+aggregated to monthly averages over South Africa's land area. From these
+series, We construct climate shock variables that capture deviations
+from long-run historical norms in temperature and precipitation, as well
+as indicators for extreme wet and dry events.
+
+The climate shocks are calculated as follows:
+
+\begin{equation}\phantomsection\label{eq-weather_shock}{ W_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, }\end{equation}
+
+where \(W_{t}\) is the temperature or precipitation shock at time \(t\)
+and \(T_{t}\) is the observed population-weighted climate variable. For
+temperature, \(\overline{T}_{t}\) is the mean of all observations in the
+same calendar month computed over the full sample (e.g., the mean of all
+January values from 2011 to 2025), and \(\sigma(T_{t})\) is the
+corresponding within-month standard deviation. For precipitation,
+\(\overline{T}_{t}\) and \(\sigma(T_{t})\), without seasonal adjustment.
+The shocks are shown in Figure~\ref{fig-climate_shocks_data} in the
+Appendix.
+
+\textbf{Monetary policy data.} The monetary policy shock series is
+constructed using high-frequency policy surprises for South Africa from
+\citet{pirozhkova2025}, alongside the repurchase (repo) rate from the
+South African Reserve Bank (SARB). The high-frequency surprises are used
+as an instrument to purge the endogenous component of policy rate
+changes, yielding a shock series that satisfies the exogeneity
+requirement of the regression framework described in
+Section~\ref{sec-methodology}. For robustness, we distinguish between
+market-based shocks from \citet{pirozhkova2025} (see
+Figure~\ref{fig-market_based_surprises_data}), and the policy rate
+derived or theory based shock as discussed in
+Section~\ref{sec-methodology} below (see
+Figure~\ref{fig-theory_based_surprises_data}). The frequency of the
+monetary policy surprise shocks coincides with policy rate announcement
+dates, which are are aggregated quartely.
+
+\textbf{Credit extension data.} Private sector credit extension data ---
+disaggregated by borrower type at a bank level (households and
+corporates) --- are obtained from the SARB's BA900 and BA930 bank
+compliance reports.\footnote{BA930 data at a bank level is not publicly
+  available} These series include both credit volumes and lending rates.
+This data was constructed in line with \citet{sibande2025} and
+\citet{sibande2025a}. This process involved sorting and aggregating the
+data into the broad credit categories (unsecured, secured, mortgages)
+used in the study. See Figure~\ref{fig-lending_volume_growth_data} and
+Figure~\ref{fig-lending_rates}.
+
+\subsection{Methodology}\label{sec-methodology}
+
 We use a monetary policy shock, rather than the monetary policy rate
 itself, as an indicator for monetary policy to ensure exogeneity within
 the regression framework (Miyajima, 2024). To this end, I replicate a
@@ -296,6 +358,96 @@ unemployment rate. \(\gamma_s\) are agent, time-invariant fixed effects,
 error term.
 
 \section{Results}\label{results}
+
+\section{Conclusion}\label{conclusion}
+
+\newpage
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\renewcommand{\bibsection}{}
+\bibliography{references.bib}
+
+\setcounter{section}{0}
+\renewcommand{\thesection}{\Alph{section}}
+
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+\newpage
+
+\section{Appendix}\label{appendix}
+
+\subsection{Data}\label{data-1}
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_volume_growth_data-1.png}
+
+}
+
+\caption{\label{fig-lending_volume_growth_data}Lending volume growth
+over time}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_rates-1.png}
+
+}
+
+\caption{\label{fig-lending_rates}Lending rates overtime}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-climate_shocks_data-1.png}
+
+}
+
+\caption{\label{fig-climate_shocks_data}Climate Shocks Data}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-market_based_surprises_data-1.png}
+
+}
+
+\caption{\label{fig-market_based_surprises_data}Market-Based Surprises
+Data}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-theory_based_surprises_data-1.png}
+
+}
+
+\caption{\label{fig-theory_based_surprises_data}Theory-based surprises
+data}
+
+\end{figure}%
+
+\subsection{Descriptive Statistics}\label{descriptive-statistics}
 
 \global\setlength{\Oldarrayrulewidth}{\arrayrulewidth}
 
@@ -499,94 +651,6 @@ error term.
 \global\setlength{\tabcolsep}{\Oldtabcolsep}
 
 \renewcommand*{\arraystretch}{1}
-
-\section{Conclusion}\label{conclusion}
-
-\newpage
-
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
-
-\renewcommand{\bibsection}{}
-\bibliography{references.bib}
-
-\setcounter{section}{0}
-\renewcommand{\thesection}{\Alph{section}}
-
-\setcounter{table}{0}
-\renewcommand{\thetable}{A\arabic{table}}
-
-\setcounter{figure}{0}
-\renewcommand{\thefigure}{A\arabic{figure}}
-
-\newpage
-
-\section{Appendix}\label{appendix}
-
-\subsection{Data}\label{data}
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_volume_growth_data-1.png}
-
-}
-
-\caption{\label{fig-lending_volume_growth_data}Lending volume growth
-over time}
-
-\end{figure}%
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_rates_o-1.png}
-
-}
-
-\caption{\label{fig-lending_rates_o}Lending rates overtime}
-
-\end{figure}%
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-climate_shocks_data-1.png}
-
-}
-
-\caption{\label{fig-climate_shocks_data}Climate Shocks Data}
-
-\end{figure}%
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-market_based_surprises_data-1.png}
-
-}
-
-\caption{\label{fig-market_based_surprises_data}Market-Based Surprises
-Data}
-
-\end{figure}%
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-theory_based_surprises_datas-1.png}
-
-}
-
-\caption{\label{fig-theory_based_surprises_datas}Theory-based surprises
-data}
-
-\end{figure}%
 
 
 
