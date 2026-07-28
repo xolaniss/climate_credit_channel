@@ -116,6 +116,9 @@ climate_shocks_gg <-
         "pop_precip_shock" = "Population Precipitation Shock",
         "land_precip_shock" = "Land Precipitation Shock"
     ))) |>
+  filter(
+    !variable %in% c("Land Temperature Shock", "Land Precipitation Shock")
+  ) |> 
   ggplot(aes(x = date, y = value, col = variable)) +
   geom_line() +
   facet_wrap(~variable, scales = "free_y", ncol = 2) +

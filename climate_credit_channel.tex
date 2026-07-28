@@ -251,28 +251,29 @@ estimate the causal relationships of interest in this work using a panel
 regression. Finally, I will use a quantile regression procedure to
 nuance these results.
 
+Only physical shocks, not transition
+
 \section{Literature review}\label{literature-review}
 
 \section{Data and methodology}\label{data-and-methodology}
 
 \subsection{Data}\label{data}
 
-The analysis draws on three main data sources spanning the South African
-context (climate shocks, monetary policy shocks, and credit extension
-volumes and rates). We focus on the period 2011 to 2025 at a quarterly
-frequency. The quarterly frequency is a limitation of the monetary
-policy shocks data, which is only available at that frequency.
-Therefore, all the other data sets are adjusted to a quarterly frequency
-by calculating averages or sums where appropriate.
+The analysis draws on three main data sources: climate shocks, monetary
+policy shocks, and credit extension data. The sample covers South Africa
+over the period 2011--2025. All series are observed at a quarterly
+frequency, determined by the availability of the monetary policy shock
+data; higher-frequency series are aggregated to quarterly values by
+taking averages or sums where appropriate.
 
-\textbf{Climate data.} Temperature and precipitation data are sourced
+\textbf{Climate data:} Temperature and precipitation data are sourced
 from the ERA5 reanalysis dataset produced by the European Centre for
 Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly
-atmospheric estimates at a horizontal resolution of 31 km, which are
-aggregated to monthly averages over South Africa's land area. From these
-series, We construct climate shock variables that capture deviations
-from long-run historical norms in temperature and precipitation, as well
-as indicators for extreme wet and dry events.
+atmospheric estimates at a 31 km horizontal resolution. Grid-level
+values are weighted by population and aggregated to monthly averages
+over South Africa's land area, from which we construct climate shock
+variables that capture deviations from long-run historical norms in
+temperature and precipitation.
 
 The climate shocks are calculated as follows:
 
@@ -280,39 +281,39 @@ The climate shocks are calculated as follows:
 
 where \(W_{t}\) is the temperature or precipitation shock at time \(t\)
 and \(T_{t}\) is the observed population-weighted climate variable. For
-temperature, \(\overline{T}_{t}\) is the mean of all observations in the
-same calendar month computed over the full sample (e.g., the mean of all
-January values from 2011 to 2025), and \(\sigma(T_{t})\) is the
-corresponding within-month standard deviation. For precipitation,
-\(\overline{T}_{t}\) and \(\sigma(T_{t})\), without seasonal adjustment.
-The shocks are shown in Figure~\ref{fig-climate_shocks_data} in the
+both temperature and precipitation, \(\overline{T}_{t}\) is the
+calendar-month mean computed over the full sample period (e.g., the mean
+of all January values from 2011 to 2025), and \(\sigma(T_{t})\) is the
+corresponding within-month standard deviation. The resulting shock
+series are shown in Figure~\ref{fig-climate_shocks_data} in the
 Appendix.
 
-\textbf{Monetary policy data.} The monetary policy shock series is
+\textbf{Monetary policy data:} The monetary policy shock series is
 constructed using high-frequency policy surprises for South Africa from
 \citet{pirozhkova2025}, alongside the repurchase (repo) rate from the
-South African Reserve Bank (SARB). The high-frequency surprises are used
-as an instrument to purge the endogenous component of policy rate
-changes, yielding a shock series that satisfies the exogeneity
-requirement of the regression framework described in
-Section~\ref{sec-methodology}. For robustness, we distinguish between
-market-based shocks from \citet{pirozhkova2025} (see
-Figure~\ref{fig-market_based_surprises_data}), and the policy rate
-derived or theory based shock as discussed in
+South African Reserve Bank (SARB). The high-frequency surprises serve as
+an instrument to purge the endogenous component of policy rate changes,
+yielding a shock series that satisfies the exogeneity requirement of the
+regression framework described in Section~\ref{sec-methodology}. For
+robustness, we consider both market-based shocks from
+\citet{pirozhkova2025} (see
+Figure~\ref{fig-market_based_surprises_data}) and a theory-based shock
+derived from the policy rate, as described in
 Section~\ref{sec-methodology} below (see
-Figure~\ref{fig-theory_based_surprises_data}). The frequency of the
-monetary policy surprise shocks coincides with policy rate announcement
-dates, which are are aggregated quartely.
+Figure~\ref{fig-theory_based_surprises_data}). Surprises are timed to
+coincide with policy rate announcement dates and aggregated to a
+quarterly frequency.
 
-\textbf{Credit extension data.} Private sector credit extension data ---
-disaggregated by borrower type at a bank level (households and
-corporates) --- are obtained from the SARB's BA900 and BA930 bank
-compliance reports.\footnote{BA930 data at a bank level is not publicly
-  available} These series include both credit volumes and lending rates.
-This data was constructed in line with \citet{sibande2025} and
-\citet{sibande2025a}. This process involved sorting and aggregating the
-data into the broad credit categories (unsecured, secured, mortgages)
-used in the study. See Figure~\ref{fig-lending_volume_growth_data} and
+\textbf{Credit extension data:} Private sector credit extension data ---
+disaggregated by borrower type (households and corporates) at the bank
+level --- are obtained from the SARB's BA900 and BA930 bank compliance
+reports.\footnote{BA930 data at the bank level are not publicly
+  available.} These series include both credit volumes and lending
+rates, and are constructed following \citet{sibande2025} and
+\citet{sibande2025a} by sorting and aggregating individual bank records
+into the broad credit categories used in the study: unsecured, secured,
+and mortgage credit. Summary charts are provided in
+Figure~\ref{fig-lending_volume_growth_data} and
 Figure~\ref{fig-lending_rates}.
 
 \subsection{Methodology}\label{sec-methodology}
@@ -357,7 +358,23 @@ unemployment rate. \(\gamma_s\) are agent, time-invariant fixed effects,
 \(\delta_t\) are time fixed effects, and \(\varepsilon_{i,t}\) is the
 error term.
 
+\begin{itemize}
+\tightlist
+\item
+  robustness specification
+\item
+  local projections specification
+\end{itemize}
+
 \section{Results}\label{results}
+
+\section{Drivers}\label{drivers}
+
+\subsection{Timing sensivity}\label{timing-sensivity}
+
+\subsection{Sectoral sensitivity}\label{sectoral-sensitivity}
+
+\subsection{Type of shock}\label{type-of-shock}
 
 \section{Conclusion}\label{conclusion}
 
@@ -607,24 +624,6 @@ data}
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Climate}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
-
-
-
-
-
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Land\ Precipitation\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.25}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.10}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-3.20}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{2.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
-
-
-
-
-
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Land\ Temperature\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.21}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.24}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.15}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.10}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.60}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
-
-
-
-
-
 \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
 
 
@@ -651,6 +650,20 @@ data}
 \global\setlength{\tabcolsep}{\Oldtabcolsep}
 
 \renewcommand*{\arraystretch}{1}
+
+\subsection{Sector Credit Exposure}\label{sector-credit-exposure}
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-sector_credit_exposure-1.png}
+
+}
+
+\caption{\label{fig-sector_credit_exposure}Sector credit exposure}
+
+\end{figure}%
 
 
 
