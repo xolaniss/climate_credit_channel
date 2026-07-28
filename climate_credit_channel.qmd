@@ -105,25 +105,28 @@ The main motivation of this paper is that like monetary policy shocks, climate s
 
 I will investigate to what extent the manifestation of climate shocks act as a credit market friction and how this (potential) friction impacts monetary policy transmission. This involves three parts. First, I will compute the monetary policy shock variable. Second, I will estimate the causal relationships of interest in this work using a panel regression. Finally, I will use a quantile regression procedure to nuance these results.
 
+Only physical shocks, not transition
+
+
 # Literature review
 
 # Data and methodology
 
 ## Data
 
-The analysis draws on three main data sources spanning the South African context (climate shocks, monetary policy shocks, and credit extension volumes and rates). We focus on the period 2011 to 2025 at a quarterly frequency. The quarterly frequency is a limitation of the monetary policy shocks data, which is only available at that frequency. Therefore, all the other data sets are adjusted to a quarterly frequency by calculating averages or sums where appropriate.
+The analysis draws on three main data sources: climate shocks, monetary policy shocks, and credit extension data. The sample covers South Africa over the period 2011–2025. All series are observed at a quarterly frequency, determined by the availability of the monetary policy shock data; higher-frequency series are aggregated to quarterly values by taking averages or sums where appropriate.
 
-**Climate data.** Temperature and precipitation data are sourced from the ERA5 reanalysis dataset produced by the European Centre for Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly atmospheric estimates at a horizontal resolution of 31 km, which are aggregated to monthly averages over South Africa's land area. From these series, We construct climate shock variables that capture deviations from long-run historical norms in temperature and precipitation, as well as indicators for extreme wet and dry events.
+**Climate data:** Temperature and precipitation data are sourced from the ERA5 reanalysis dataset produced by the European Centre for Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly atmospheric estimates at a 31 km horizontal resolution. Grid-level values are weighted by population and aggregated to monthly averages over South Africa's land area, from which we construct climate shock variables that capture deviations from long-run historical norms in temperature and precipitation.
 
 The climate shocks are calculated as follows:
 
 $$ W_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, $$ {#eq-weather_shock}
 
-where $W_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For temperature, $\overline{T}_{t}$ is the mean of all observations in the same calendar month computed over the full sample (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. For precipitation, $\overline{T}_{t}$ and $\sigma(T_{t})$, without seasonal adjustment. The shocks are shown in @fig-climate_shocks_data in the Appendix. 
+where $W_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For both temperature and precipitation, $\overline{T}_{t}$ is the calendar-month mean computed over the full sample period (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. The resulting shock series are shown in @fig-climate_shocks_data in the Appendix.
 
-**Monetary policy data.** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises are used as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we distinguish between market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data), and the policy rate derived or theory based shock as discussed in @sec-methodology below (see @fig-theory_based_surprises_data). The frequency of the monetary policy surprise shocks coincides with policy rate announcement dates, which are are aggregated quartely.
+**Monetary policy data:** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises serve as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we consider both market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data) and a theory-based shock derived from the policy rate, as described in @sec-methodology below (see @fig-theory_based_surprises_data). Surprises are timed to coincide with policy rate announcement dates and aggregated to a quarterly frequency.
 
-**Credit extension data.** Private sector credit extension data — disaggregated by borrower type at a bank level (households and corporates) — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at a bank level is not publicly available] These series include both credit volumes and lending rates. This data was constructed in line with @sibande2025 and @sibande2025a. This process involved sorting and aggregating the data into the broad credit categories (unsecured, secured, mortgages) used in the study. See @fig-lending_volume_growth_data and @fig-lending_rates. 
+**Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. Summary charts are provided in @fig-lending_volume_growth_data and @fig-lending_rates.
 
 ## Methodology {#sec-methodology}
 
@@ -142,8 +145,21 @@ $$ {#eq-credit}
 
 where $\text{Credit}_{i,t}$ is the growth rate of credit extended to agent $(s)$ (households or corporates) at time $(t)$, $\text{Climate}_{t}^k$ is the climate shock variable, including temperature and precipitation shocks, as well as extreme wet and dry events, which are each denoted by $k$. The $\text{Climate}_{t}^k\times\text{MPShock}_t$ term tests whether the frictions introduced by climate change shocks are significant enough to modify the pass-through of monetary policy through the credit channel. $X_t$ is a vector of control variables that includes GDP growth, the US Dollar-Rand exchange rate, the loan-to-deposit ratio and the unemployment rate. $\gamma_s$ are agent, time-invariant fixed effects, $\delta_t$ are time fixed effects, and  $\varepsilon_{i,t}$ is the error term.
 
+
+- robustness specification
+- local projections specification
+
+
 # Results
 
+
+# Drivers
+
+## Timing sensivity
+
+## Sectoral sensitivity
+
+## Type of shock
 
 # Conclusion
 
@@ -198,6 +214,7 @@ lending_rates_gg
 ```{r}
 #| label: fig-climate_shocks_data
 #| fig-cap: Climate Shocks Data
+#| fig-height: 2
 
 climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
   pluck(2)
@@ -259,7 +276,8 @@ descriptives_table <-
         str_starts(credit_category, "pop_") ~ "Climate"
     ),
     levels = c("Monetary Policy", "Corporate Credit", "Household Credit", "Climate")
-  )) |>
+  )) |> 
+  filter(!str_starts(credit_category, "land_")) |>
   arrange(group, credit_category) |>
   mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |> 
   as_grouped_data(groups = "group") |>
@@ -274,6 +292,22 @@ descriptives_table <-
   
 descriptives_table
 
+```
+
+
+## Sector Credit Exposure 
+
+```{r}
+#| label: fig-sector_credit_exposure
+#| fig-cap: "Sector credit exposure"
+#| fig.height: 8
+
+
+sector_credit_exposure_gg <- 
+  read_rds(here("Outputs", "artifacts_sector_credit_exposure.rds")) |> 
+  pluck(2)
+
+sector_credit_exposure_gg
 ```
 
 
