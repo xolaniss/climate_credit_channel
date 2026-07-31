@@ -429,7 +429,7 @@ for (dep in dep_vars) {
         y = "Interaction coefficient"
       ) +
       theme_minimal(base_size = 11) +
-      theme(strip.text = element_text(face = "bold"))
+      theme(strip.text = element_text(face = "bold")) 
     
     ggsave(
       filename = here(

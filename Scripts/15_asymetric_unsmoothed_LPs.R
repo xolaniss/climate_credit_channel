@@ -286,7 +286,7 @@ for (mp_base in mp_base_vars) {
       p <- ggplot(
         irf_tbl,
         aes(x = h, y = irf, colour = component, fill = component)
-      ) +
+      ) + 
         geom_hline(yintercept = 0, linewidth = 0.4, colour = "grey40") +
         geom_ribbon(aes(ymin = lo90, ymax = hi90), alpha = 0.12, colour = NA) +
         geom_ribbon(aes(ymin = lo68, ymax = hi68), alpha = 0.25, colour = NA) +
