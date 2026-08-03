@@ -268,12 +268,13 @@ taking averages or sums where appropriate.
 
 \textbf{Climate data:} Temperature and precipitation data are sourced
 from the ERA5 reanalysis dataset produced by the European Centre for
-Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly
-atmospheric estimates at a 31 km horizontal resolution. Grid-level
-values are weighted by population and aggregated to monthly averages
-over South Africa's land area, from which we construct climate shock
-variables that capture deviations from long-run historical norms in
-temperature and precipitation.
+Medium-Range Weather Forecasts\footnote{see
+  \url{https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels?tab=overview}}.
+ERA5 provides globally gridded, hourly atmospheric estimates at a 31 km
+horizontal resolution. Grid-level values are weighted by population and
+aggregated to monthly averages over South Africa's land area, from which
+we construct climate shock variables that capture deviations from
+long-run historical norms in temperature and precipitation.
 
 The climate shocks are calculated as follows:
 
@@ -302,7 +303,9 @@ derived from the policy rate, as described in
 Section~\ref{sec-methodology} below (see
 Figure~\ref{fig-theory_based_surprises_data}). Surprises are timed to
 coincide with policy rate announcement dates and aggregated to a
-quarterly frequency.
+quarterly frequency. Underlying the calculation of the are the forecasts
+of the real GDP growth, the policy rate (repo-rate), and the inflation
+rate from Bloomberg Consensus.
 
 \textbf{Credit extension data:} Private sector credit extension data ---
 disaggregated by borrower type (households and corporates) at the bank
@@ -318,55 +321,404 @@ Figure~\ref{fig-lending_rates}.
 
 \subsection{Methodology}\label{sec-methodology}
 
-We use a monetary policy shock, rather than the monetary policy rate
-itself, as an indicator for monetary policy to ensure exogeneity within
-the regression framework (Miyajima, 2024). To this end, I replicate a
-shock variable devised by Merrino (2021) for the South African case
-based on a simplification of the work of Romer and Romer (2004) as
-follows:
+\textbf{Structural shocks}: Rather than using the policy interest rate
+directly --- which responds to prevailing economic conditions and is
+therefore endogenous --- we use an unexpected change in monetary policy,
+commonly called a monetary policy shock, to isolate the causal effect of
+policy on credit markets \citep{miyajima2024}. We construct this shock
+following \citet{merrino2022}, who adapts the approach of
+\citet{romer2004} to the South African context. The idea is to regress
+the change in the repo rate forecast on variables that policymakers were
+already tracking, and treat whatever is left over --- the part of the
+rate change that cannot be explained by those forecasts --- as the true
+policy surprise. Formally:
 
 \begin{equation}\phantomsection\label{eq-mp-shock}{
 \Delta r_t = \alpha + \tilde{r_t} + \sum_{t=0}^{2} \beta_t \Delta \tilde{y_t} + \sum_{t=0}^{2} \delta_t \tilde{\pi_t} + \varepsilon_t,
 }\end{equation}
 
-where \(\Delta r_t\) is the change in the forecast of the repurchase
-rate, \(\tilde{r_t}\) is the forecasted repo rate in levels,
-\(\tilde{y_t}\) is the forecasted real GDP growth rate, and
-\(\tilde{\pi_t}\) is the forecasted consumer price index inflation rate.
-The residuals from Equation~\ref{eq-mp-shock}, \(\varepsilon_t\), are
-used as the \(\text{MPShock}_{t}\) explanatory variable that follows in
-the panel regression estimation. We use a panel regression to primarily
-test whether monetary policy shocks, when augmented with climate shocks,
-yield heightened or muted impacts on the credit market as follows:
+where \(\Delta r_t\) is the change in the repo rate forecast,
+\(\tilde{r_t}\) is the forecasted repo rate, \(\tilde{y_t}\) is the
+forecasted real GDP growth rate, and \(\tilde{\pi_t}\) is the forecasted
+inflation rate. The residual \(\varepsilon_t\) --- the unexplained part
+of the forecast revision --- is our monetary policy shock,
+\(\text{MPShock}_{t}\).\footnote{We include forecasts up to two quarters
+  ahead to account for the common assumption among forecasters that
+  policy is unchanged in the very near term. See \citet{romer2004} for
+  details.}
 
-\begin{equation}\phantomsection\label{eq-credit}{
-\text{Credit}_{i,t} = \beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
-\beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{i,t}, 
+As an alternative, we construct a second measure of the monetary policy
+surprise following \citet{miyajima2024}. This approach uses forecast
+errors --- the gap between what forecasters expected and what actually
+occurred --- rather than SARB forecasts. The construction proceeds in
+two steps. First, for each variable \(i\), the forecast error is:
+
+\begin{equation}\phantomsection\label{eq-forecast_error}{
+FE^i_{t} = ACT^i_{t} - EXP^i_{t},
 }\end{equation}
 
-where \(\text{Credit}_{i,t}\) is the growth rate of credit extended to
-agent \((s)\) (households or corporates) at time \((t)\),
-\(\text{Climate}_{t}^k\) is the climate shock variable, including
-temperature and precipitation shocks, as well as extreme wet and dry
-events, which are each denoted by \(k\). The
-\(\text{Climate}_{t}^k\times\text{MPShock}_t\) term tests whether the
-frictions introduced by climate change shocks are significant enough to
-modify the pass-through of monetary policy through the credit channel.
-\(X_t\) is a vector of control variables that includes GDP growth, the
-US Dollar-Rand exchange rate, the loan-to-deposit ratio and the
-unemployment rate. \(\gamma_s\) are agent, time-invariant fixed effects,
-\(\delta_t\) are time fixed effects, and \(\varepsilon_{i,t}\) is the
-error term.
+where
+\(i \in \{\text{policy rate}, \text{inflation}, \text{GDP growth}\}\),
+\(ACT^i_{t}\) is what was actually observed, and \(EXP^i_{t}\) is the
+Bloomberg consensus forecast made beforehand. In the second step, the
+policy rate forecast error is regressed on the inflation and output
+growth forecast errors:
 
-\begin{itemize}
-\tightlist
-\item
-  robustness specification
-\item
-  local projections specification
-\end{itemize}
+\begin{equation}\phantomsection\label{eq-m_surprise}{
+FE^{r}_{t} = \alpha + \beta FE^{\pi}_{t} + \gamma FE^{y}_t + \epsilon_t,
+}\end{equation}
+
+where \(FE^{\pi}_{t}\) is the inflation forecast error and \(FE^{y}_t\)
+is the GDP growth forecast error. The residual \(\epsilon_t\) is the
+monetary policy surprise --- the part of the policy rate miss that has
+nothing to do with inflation or growth news, and is therefore not
+anticipated by market participants.
+
+\textbf{Market-based shocks}: As a further robustness check, we use
+market-based monetary policy surprises built from a high-frequency
+identification approach \citep{gurkaynak2005}. The core idea is to
+measure how financial market prices move in a narrow window around each
+MPC announcement: since little else happens in that window, any price
+change can be attributed to the policy news itself \citep{nakamura2018}.
+Following \citet{pirozhkova2025}, we decompose the overall surprise into
+four components: a target factor (the surprise in the level of the
+policy rate), a forward guidance factor (the surprise in the expected
+future path of policy), a central bank information factor (what the
+central bank's communication revealed about the economic outlook that
+markets did not already know), and a country risk factor (shifts in
+sovereign risk perceptions around MPC dates). Each component is used in
+turn as an alternative measure of \(\text{MPShock}_t\) in
+Equation~\ref{eq-credit} and Equation~\ref{eq-panel_credit}.
+
+\textbf{Shock purging}: Policymakers are aware of climate conditions and
+may already adjust rates in response to them. If so, our monetary policy
+shocks would partly reflect climate events rather than pure policy
+decisions, which would confound our estimates. To address this, we
+regress each monetary policy shock on the climate shock measures:
+
+\begin{equation}\phantomsection\label{eq-purge}{
+\text{MPShock}^i_{t} = \text{ClimateShock}^i_t + \varepsilon^i_t,
+}\end{equation}
+
+where \(\text{MPShock}^i_{t}\) is each of the monetary policy shocks
+described above and \(\text{ClimateShock}^i_t\) are the temperature and
+precipitation shocks. The residual \(\varepsilon^i_t\) --- the part of
+the policy shock that cannot be explained by climate conditions --- is
+retained as a ``purged'' shock. We use these purged shocks in all
+subsequent estimations.
+
+\textbf{Panel estimation}: Our first estimating equation tests whether
+the effect of a monetary policy shock on credit is amplified or dampened
+when a climate shock occurs at the same time:
+
+\begin{equation}\phantomsection\label{eq-credit}{
+\begin{aligned}
+\text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
+                       \beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \\
+                       &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t}, 
+\end{aligned}
+}\end{equation}
+
+where \(\text{Credit}_{s,t}\) is credit growth for agent \(s\)
+(households or corporates) at time \(t\), and \(\text{Climate}_{t}^k\)
+captures climate shocks --- temperature, precipitation, and extreme wet
+and dry events, indexed by \(k\). The interaction term
+\(\text{Climate}_{t}^k\times\text{MPShock}_t\) is the key coefficient of
+interest: a significant estimate would indicate that climate shocks
+alter how monetary policy transmits through credit markets. \(\gamma_s\)
+are agent fixed effects (absorbing time-invariant differences across
+borrower types), \(\delta_t\) are time fixed effects, and
+\(\varepsilon_{s,t}\) is the error term. \(X_t\) is a vector of controls
+added as a robustness check, including \textbf{GDP growth, the USD/ZAR
+exchange rate, the loan-to-deposit ratio, and the unemployment rate}.
+
+\textbf{Panel local projections}: The panel regression above captures
+the contemporaneous relationship but cannot tell us how long any effect
+lasts. To trace the full dynamic response of credit over time, we use
+the local projections method of \citet{jorda2005}, estimating a separate
+regression for each future horizon \(h = 0, 1, \ldots, H\):
+
+\begin{equation}\phantomsection\label{eq-panel_credit}{
+\begin{aligned}
+{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{Climate}_t^k\times\text{MPShock}_t) + \\
+                                      &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+\end{aligned}
+}\end{equation}
+
+where \(\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}\) is the
+cumulative change in credit growth from period \(t-1\) to \(t+h\), and
+\(h\) is the horizon in quarters. Plotting the estimated
+\(\hat{\beta}_1\), and \(\hat{\beta}_2 + \hat{\beta}_3\) across horizons
+gives the impulse response functions, showing the differential impact of
+climate on credit in the quarters following a shock. \textbf{All
+regressions use Driscoll-Kraay standard errors to account for
+correlation across agents and over time \citep{driscoll1998}}.
 
 \section{Results}\label{results}
+
+\bsideways
+
+\global\setlength{\Oldarrayrulewidth}{\arrayrulewidth}
+
+\global\setlength{\Oldtabcolsep}{\tabcolsep}
+
+\setlength{\tabcolsep}{2pt}
+
+\renewcommand*{\arraystretch}{0.5}
+
+
+
+\providecommand{\ascline}[3]{\noalign{\global\arrayrulewidth #1}\arrayrulecolor[HTML]{#2}\cline{#3}}
+
+\begin{longtable}[l]{|p{1.51in}|p{0.43in}|p{0.40in}|p{0.43in}|p{0.43in}|p{0.43in}|p{0.43in}|p{0.43in}|p{0.43in}|p{0.43in}|p{0.40in}|p{0.43in}|p{0.43in}}
+\caption{Estimated coefficients from the fixed effects models}\tabularnewline
+
+
+
+
+\ascline{1pt}{000000}{1-13}
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{term}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(1)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(2)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(3)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(4)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(5)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(6)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(7)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(8)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(9)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(10)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(11)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(12)}}}} \\
+
+\ascline{1pt}{000000}{1-13}\endfirsthead 
+
+\ascline{1pt}{000000}{1-13}
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{term}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(1)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(2)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(3)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(4)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(5)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(6)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(7)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(8)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(9)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(10)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(11)}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{(12)}}}} \\
+
+\ascline{1pt}{000000}{1-13}\endhead
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.052***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{miyajima\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.764***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:miyajima\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.361***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.025***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{romer\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.107*}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:romer\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.533***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.09***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{target}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.013***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:target}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.016***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.172***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{forward\_guidance}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.024***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:forward\_guidance}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.032***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.01***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{central\_bank\_information}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.063***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:central\_bank\_information}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.041***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.58***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{country\_risk}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.023***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_temp\_shock:country\_risk}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.18***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.078***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{miyajima\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{1.142***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:miyajima\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.413***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.054***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{romer\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.551***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:romer\_surprise}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.104***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.028***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{target}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.037***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:target}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.014**}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{forward\_guidance}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.034***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:forward\_guidance}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.005***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.032***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{central\_bank\_information}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.044***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:central\_bank\_information}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.004***}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{-0.063***}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{country\_risk}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.018***}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 1.51in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{pop\_precip\_shock:country\_risk}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.4in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.43in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{5}{5}\selectfont{\global\setmainfont{Arial}{0.037***}}}} \\
+
+\ascline{1pt}{000000}{1-13}
+
+
+
+\end{longtable}
+
+
+
+\arrayrulecolor[HTML]{000000}
+
+\global\setlength{\arrayrulewidth}{\Oldarrayrulewidth}
+
+\global\setlength{\tabcolsep}{\Oldtabcolsep}
+
+\renewcommand*{\arraystretch}{1}
+
+\esideways
 
 \section{Drivers}\label{drivers}
 
@@ -630,13 +982,37 @@ data}
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Precipitation\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.16}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.16}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.16}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-2.99}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{3.37}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Precipitation\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.48}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.88}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-4.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{6.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Temperature\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.23}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.25}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.15}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.07}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.61}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Precipitation\ Shock\ Abs\ Neg}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.36}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.90}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{4.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Precipitation\ Shock\ Pos}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.10}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.76}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.29}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{6.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Temperature\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.60}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{2.43}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Temperature\ Shock\ Abs\ Neg}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.09}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.42}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Temperature\ Shock\ Pos}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.99}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.55}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.05}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.65in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{2.43}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
 
 \ascline{1pt}{000000}{1-8}
 

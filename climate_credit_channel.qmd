@@ -116,7 +116,7 @@ Only physical shocks, not transition
 
 The analysis draws on three main data sources: climate shocks, monetary policy shocks, and credit extension data. The sample covers South Africa over the period 2011–2025. All series are observed at a quarterly frequency, determined by the availability of the monetary policy shock data; higher-frequency series are aggregated to quarterly values by taking averages or sums where appropriate.
 
-**Climate data:** Temperature and precipitation data are sourced from the ERA5 reanalysis dataset produced by the European Centre for Medium-Range Weather Forecasts. ERA5 provides globally gridded, hourly atmospheric estimates at a 31 km horizontal resolution. Grid-level values are weighted by population and aggregated to monthly averages over South Africa's land area, from which we construct climate shock variables that capture deviations from long-run historical norms in temperature and precipitation.
+**Climate data:** Temperature and precipitation data are sourced from the ERA5 reanalysis dataset produced by the European Centre for Medium-Range Weather Forecasts^[see \url{https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels?tab=overview}]. ERA5 provides globally gridded, hourly atmospheric estimates at a 31 km horizontal resolution. Grid-level values are weighted by population and aggregated to monthly averages over South Africa's land area, from which we construct climate shock variables that capture deviations from long-run historical norms in temperature and precipitation.
 
 The climate shocks are calculated as follows:
 
@@ -124,38 +124,97 @@ $$ W_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, $$ {#eq-weather_sho
 
 where $W_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For both temperature and precipitation, $\overline{T}_{t}$ is the calendar-month mean computed over the full sample period (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. The resulting shock series are shown in @fig-climate_shocks_data in the Appendix.
 
-**Monetary policy data:** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises serve as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we consider both market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data) and a theory-based shock derived from the policy rate, as described in @sec-methodology below (see @fig-theory_based_surprises_data). Surprises are timed to coincide with policy rate announcement dates and aggregated to a quarterly frequency.
+**Monetary policy data:** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises serve as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we consider both market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data) and a theory-based shock derived from the policy rate, as described in @sec-methodology below (see @fig-theory_based_surprises_data). Surprises are timed to coincide with policy rate announcement dates and aggregated to a quarterly frequency. Underlying the calculation of the are the forecasts of the real GDP growth, the policy rate (repo-rate), and the inflation rate from Bloomberg Consensus.
 
 **Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. Summary charts are provided in @fig-lending_volume_growth_data and @fig-lending_rates.
 
+
 ## Methodology {#sec-methodology}
 
-We use a monetary policy shock, rather than the monetary policy rate itself, as an indicator for monetary policy to ensure exogeneity within the regression framework (Miyajima, 2024). To this end, I replicate a shock variable devised by Merrino (2021) for the South African case based on a simplification of the work of Romer and Romer (2004) as follows:
+**Structural shocks**: Rather than using the policy interest rate directly — which responds to prevailing economic conditions and is therefore endogenous — we use an unexpected change in monetary policy, commonly called a monetary policy shock, to isolate the causal effect of policy on credit markets [@miyajima2024]. We construct this shock following @merrino2022, who adapts the approach of @romer2004 to the South African context. The idea is to regress the change in the repo rate forecast on variables that policymakers were already tracking, and treat whatever is left over — the part of the rate change that cannot be explained by those forecasts — as the true policy surprise. Formally:
 
 $$
 \Delta r_t = \alpha + \tilde{r_t} + \sum_{t=0}^{2} \beta_t \Delta \tilde{y_t} + \sum_{t=0}^{2} \delta_t \tilde{\pi_t} + \varepsilon_t,
 $$ {#eq-mp-shock}
 
-where $\Delta r_t$ is the change in the forecast of the repurchase rate, $\tilde{r_t}$ is the forecasted repo rate in levels, $\tilde{y_t}$ is the forecasted real GDP growth rate, and $\tilde{\pi_t}$ is the forecasted consumer price index inflation rate. The residuals from @eq-mp-shock, $\varepsilon_t$, are used as the $\text{MPShock}_{t}$ explanatory variable that follows in the panel regression estimation. We use a panel regression to primarily test whether monetary policy shocks, when augmented with climate shocks, yield heightened or muted impacts on the credit market as follows:
+where $\Delta r_t$ is the change in the repo rate forecast, $\tilde{r_t}$ is the forecasted repo rate, $\tilde{y_t}$ is the forecasted real GDP growth rate, and $\tilde{\pi_t}$ is the forecasted inflation rate. The residual $\varepsilon_t$ — the unexplained part of the forecast revision — is our monetary policy shock, $\text{MPShock}_{t}$.^[We include forecasts up to two quarters ahead to account for the common assumption among forecasters that policy is unchanged in the very near term. See @romer2004 for details.] 
+
+As an alternative, we construct a second measure of the monetary policy surprise following @miyajima2024. This approach uses forecast errors — the gap between what forecasters expected and what actually occurred — rather than SARB forecasts. The construction proceeds in two steps. First, for each variable $i$, the forecast error is:
 
 $$
-\text{Credit}_{i,t} = \beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
-\beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{i,t}, 
+FE^i_{t} = ACT^i_{t} - EXP^i_{t},
+$$ {#eq-forecast_error}
+
+where $i \in \{\text{policy rate}, \text{inflation}, \text{GDP growth}\}$, $ACT^i_{t}$ is what was actually observed, and $EXP^i_{t}$ is the Bloomberg consensus forecast made beforehand. In the second step, the policy rate forecast error is regressed on the inflation and output growth forecast errors:
+
+$$
+FE^{r}_{t} = \alpha + \beta FE^{\pi}_{t} + \gamma FE^{y}_t + \epsilon_t,
+$$ {#eq-m_surprise}
+
+where $FE^{\pi}_{t}$ is the inflation forecast error and $FE^{y}_t$ is the GDP growth forecast error. The residual $\epsilon_t$ is the monetary policy surprise — the part of the policy rate miss that has nothing to do with inflation or growth news, and is therefore not anticipated by market participants.
+
+**Market-based shocks**: As a further robustness check, we use market-based monetary policy surprises built from a high-frequency identification approach [@gurkaynak2005]. The core idea is to measure how financial market prices move in a narrow window around each MPC announcement: since little else happens in that window, any price change can be attributed to the policy news itself [@nakamura2018]. Following @pirozhkova2025, we decompose the overall surprise into four components: a target factor (the surprise in the level of the policy rate), a forward guidance factor (the surprise in the expected future path of policy), a central bank information factor (what the central bank's communication revealed about the economic outlook that markets did not already know), and a country risk factor (shifts in sovereign risk perceptions around MPC dates). Each component is used in turn as an alternative measure of $\text{MPShock}_t$ in @eq-credit and @eq-panel_credit.
+
+**Shock purging**: Policymakers are aware of climate conditions and may already adjust rates in response to them. If so, our monetary policy shocks would partly reflect climate events rather than pure policy decisions, which would confound our estimates. To address this, we regress each monetary policy shock on the climate shock measures:
+
+$$
+\text{MPShock}^i_{t} = \text{ClimateShock}^i_t + \varepsilon^i_t,
+$$ {#eq-purge}
+
+where $\text{MPShock}^i_{t}$ is each of the monetary policy shocks described above and $\text{ClimateShock}^i_t$ are the temperature and precipitation shocks. The residual $\varepsilon^i_t$ — the part of the policy shock that cannot be explained by climate conditions — is retained as a "purged" shock. We use these purged shocks in all subsequent estimations.
+
+**Panel estimation**: Our first estimating equation tests whether the effect of a monetary policy shock on credit is amplified or dampened when a climate shock occurs at the same time:
+
+$$
+\begin{aligned}
+\text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
+                       \beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \\
+                       &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t}, 
+\end{aligned}
 $$ {#eq-credit}
 
-where $\text{Credit}_{i,t}$ is the growth rate of credit extended to agent $(s)$ (households or corporates) at time $(t)$, $\text{Climate}_{t}^k$ is the climate shock variable, including temperature and precipitation shocks, as well as extreme wet and dry events, which are each denoted by $k$. The $\text{Climate}_{t}^k\times\text{MPShock}_t$ term tests whether the frictions introduced by climate change shocks are significant enough to modify the pass-through of monetary policy through the credit channel. $X_t$ is a vector of control variables that includes GDP growth, the US Dollar-Rand exchange rate, the loan-to-deposit ratio and the unemployment rate. $\gamma_s$ are agent, time-invariant fixed effects, $\delta_t$ are time fixed effects, and  $\varepsilon_{i,t}$ is the error term.
+where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corporates) at time $t$, and $\text{Climate}_{t}^k$ captures climate shocks — temperature, precipitation, and extreme wet and dry events, indexed by $k$. The interaction term $\text{Climate}_{t}^k\times\text{MPShock}_t$ is the key coefficient of interest: a significant estimate would indicate that climate shocks alter how monetary policy transmits through credit markets. $\gamma_s$ are agent fixed effects (absorbing time-invariant differences across borrower types), $\delta_t$ are time fixed effects, and $\varepsilon_{s,t}$ is the error term. $X_t$ is a vector of controls added as a robustness check, including **GDP growth, the USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment rate**.
 
+**Panel local projections**: The panel regression above captures the contemporaneous relationship but cannot tell us how long any effect lasts. To trace the full dynamic response of credit over time, we use the local projections method of @jorda2005, estimating a separate regression for each future horizon $h = 0, 1, \ldots, H$:
 
-- robustness specification
-- local projections specification
+$$
+\begin{aligned}
+{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{Climate}_t^k\times\text{MPShock}_t) + \\
+                                      &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+\end{aligned}
+$$ {#eq-panel_credit}
 
+where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change in credit growth from period $t-1$ to $t+h$, and $h$ is the horizon in quarters. Plotting the estimated $\hat{\beta}_1$, and $\hat{\beta}_2 + \hat{\beta}_3$ across horizons gives the impulse response functions, showing the differential impact of climate on credit in the quarters following a shock. **All regressions use Driscoll-Kraay standard errors to account for correlation across agents and over time [@driscoll1998]**.
 
 # Results
+
+```{=latex}
+\bsideways
+```
+
+```{r}
+#| label: "fixed_effects"
+#| tbl-cap: "Estimated coefficients from the fixed effects models"
+
+read_rds(here("Outputs", "all_fe_models.rds")) |> 
+  pluck(2) |>
+  flextable() |>
+  fontsize(size = 6, part = "all") |>
+  padding(padding = 4, part = "all") |>
+  fit_to_width(max_width = 9.5)
+```
+
+```{=latex}
+\esideways
+```
+
 
 
 # Drivers
 
 ## Timing sensivity
+
+
 
 ## Sectoral sensitivity
 
@@ -190,7 +249,8 @@ where $\text{Credit}_{i,t}$ is the growth rate of credit extended to agent $(s)$
 #| label: fig-lending_volume_growth_data
 #| fig-cap: "Lending volume growth over time"
 #| fig-height: 7
-#
+#| cache: true
+
 lending_volume_growth_gg <- 
   read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
   pluck(3)
@@ -203,6 +263,7 @@ lending_volume_growth_gg
 #| label: fig-lending_rates
 #| fig-cap: "Lending rates overtime"
 #| fig-height: 7
+#| cache: true
 
 lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
   pluck(2)
@@ -215,6 +276,7 @@ lending_rates_gg
 #| label: fig-climate_shocks_data
 #| fig-cap: Climate Shocks Data
 #| fig-height: 2
+#| cache: true
 
 climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
   pluck(2)
@@ -226,6 +288,7 @@ climate_shocks_gg
 ```{r}
 #| label: fig-market_based_surprises_data
 #| fig-cap: "Market-Based Surprises Data"
+#| cache: true
 
 market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
   pluck(2)
@@ -237,6 +300,7 @@ market_based_surprises_gg
 #| label: fig-theory_based_surprises_data
 #| fig-cap: "Theory-based surprises data"
 #| fig.height: 2
+#| cache: true
 
 theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
   pluck(3, 3)
@@ -301,6 +365,7 @@ descriptives_table
 #| label: fig-sector_credit_exposure
 #| fig-cap: "Sector credit exposure"
 #| fig.height: 8
+#| cache: true
 
 
 sector_credit_exposure_gg <- 
