@@ -52,9 +52,9 @@ dependent_vars <- c(
 # Climate shock variables ----------------------------------------------
 
 climate_vars <- c(
-  "land_temp_shock",
+  # "land_temp_shock",
   "pop_temp_shock",
-  "land_precip_shock",
+  # "land_precip_shock",
   "pop_precip_shock"
 )
 
@@ -74,14 +74,14 @@ surprise_vars <- c(
 variable_labels <- c(
   
   # Climate variables
-  "land_temp_shock" =
-    "Land-weighted temperature shock",
+  # "land_temp_shock" =
+  #   "Land-weighted temperature shock",
   
   "pop_temp_shock" =
     "Population-weighted temperature shock",
   
-  "land_precip_shock" =
-    "Land-weighted precipitation shock",
+  # "land_precip_shock" =
+  #   "Land-weighted precipitation shock",
   
   "pop_precip_shock" =
     "Population-weighted precipitation shock",
@@ -107,24 +107,24 @@ variable_labels <- c(
   
   # Interaction terms --------------------------------------------------
   
-  "land_temp_shock:miyajima_surprise" =
-    "Land temp shock × Miyajima surprise",
+  # "land_temp_shock:miyajima_surprise" =
+  #   "Land temp shock × Miyajima surprise",
+  # 
+  # "land_temp_shock:romer_surprise" =
+  #   "Land temp shock × Romer surprise",
+  # 
+  # "land_temp_shock:target" =
+  #   "Land temp shock × Target factor",
   
-  "land_temp_shock:romer_surprise" =
-    "Land temp shock × Romer surprise",
-  
-  "land_temp_shock:target" =
-    "Land temp shock × Target factor",
-  
-  "land_temp_shock:forward_guidance" =
-    "Land temp shock × Forward guidance",
-  
-  "land_temp_shock:central_bank_information" =
-    "Land temp shock × Central bank information",
-  
-  "land_temp_shock:country_risk" =
-    "Land temp shock × Country risk",
-  
+  # "land_temp_shock:forward_guidance" =
+  #   "Land temp shock × Forward guidance",
+  # 
+  # "land_temp_shock:central_bank_information" =
+  #   "Land temp shock × Central bank information",
+  # 
+  # "land_temp_shock:country_risk" =
+  #   "Land temp shock × Country risk",
+  # 
   "pop_temp_shock:miyajima_surprise" =
     "Population temp shock × Miyajima surprise",
   
@@ -143,23 +143,23 @@ variable_labels <- c(
   "pop_temp_shock:country_risk" =
     "Population temp shock × Country risk",
   
-  "land_precip_shock:miyajima_surprise" =
-    "Land precip shock × Miyajima surprise",
-  
-  "land_precip_shock:romer_surprise" =
-    "Land precip shock × Romer surprise",
-  
-  "land_precip_shock:target" =
-    "Land precip shock × Target factor",
-  
-  "land_precip_shock:forward_guidance" =
-    "Land precip shock × Forward guidance",
-  
-  "land_precip_shock:central_bank_information" =
-    "Land precip shock × Central bank information",
-  
-  "land_precip_shock:country_risk" =
-    "Land precip shock × Country risk",
+  # "land_precip_shock:miyajima_surprise" =
+  #   "Land precip shock × Miyajima surprise",
+  # 
+  # "land_precip_shock:romer_surprise" =
+  #   "Land precip shock × Romer surprise",
+  # 
+  # "land_precip_shock:target" =
+  #   "Land precip shock × Target factor",
+  # 
+  # "land_precip_shock:forward_guidance" =
+  #   "Land precip shock × Forward guidance",
+  # 
+  # "land_precip_shock:central_bank_information" =
+  #   "Land precip shock × Central bank information",
+  # 
+  # "land_precip_shock:country_risk" =
+  #   "Land precip shock × Country risk",
   
   "pop_precip_shock:miyajima_surprise" =
     "Population precip shock × Miyajima surprise",
@@ -251,18 +251,37 @@ for(dep in names(all_models)){
       "adj.r.squared",
       "within.r.squared"
     ),
-    coef_map = variable_labels, # Rename variables
-    output = here(              # Output file
-      "Outputs",
-      "Fixed Effects Regression Tables",
-      paste0(dep, "_fe_regressions.html")
-    )
+    coef_map = variable_labels # Rename variables
+    # output = here(              # Output file
+    #   "Outputs",
+    #   "Fixed Effects Regression Tables",
+    #   paste0(dep, "_fe_regressions.html")
+    # )
   )
+  
+ 
 }
+
+
+# Extracting coeficients -----------------------------------------
+
+estimates_tbl <- 
+  map_dfr(models_tbl, modelsummary::get_estimates, .id = "model") |> 
+  mutate(estimate = round(estimate, 3)) |> 
+  select(-starts_with("conf"), -statistic, -df.error, -starts_with("s."), -group, -std.error) |> 
+  mutate(
+    stars = ifelse(p.value < 0.01, "***", 
+                   ifelse(p.value < 0.05, "**", 
+                          ifelse(p.value < 0.1, "*", "")))
+  ) |> 
+  mutate(estimate = paste0(estimate, stars)) |> 
+  pivot_wider(names_from = model, values_from = estimate) |> 
+  select(-p.value, -stars) 
+
 
 # Save all models ------------------------------------------------------
 
-saveRDS(
-  all_models,
+write_rds(
+  list(all_models = all_models, estimates_tbl = estimates_tbl),
   here("Outputs", "all_fe_models.rds")
 )
