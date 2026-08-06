@@ -14,6 +14,8 @@ format:
           \usepackage{rotating}
           \newcommand{\bsideways}{\begin{sidewaystable}[htbp]}
           \newcommand{\esideways}{\end{sidewaystable}}
+          \let\oldsection\section
+          \renewcommand\section{\oldsection}
       - file: preamble.tex 
     include-before-body: title.tex
     keep-tex: TRUE
@@ -86,6 +88,8 @@ set_flextable_defaults(
   border.width = 0.5,
   fp_border = fp_border(color = "black", width = 0.5, style = "solid")
 )
+
+
 
 
 ```
@@ -188,30 +192,151 @@ where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change i
 
 # Results
 
-```{=latex}
-\bsideways
+## Fixed effects
+\newpage
+
+```{r}
+#| label: "fig-all_fe_temp_models"
+#| fig.cap: "Credit growth panel regression estimates"
+#| fig.height: 6
+
+fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
+
+fixed_effects |> 
+  pluck(4)
+```
+
+\newpage
+
+```{r}
+#| label: "fig-all_fe_credit_growth_models"
+#| fig.cap: "Lending rates panel regression estimates"
+#| fig.height: 6
+
+fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
+
+fixed_effects |> 
+  pluck(3)
+```
+
+## Corporate credit growth effects
+
+```{r}
+#| label: "fig-corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 6
+
+
+plot_function <- function(n){
+  n <- n
+  
+  (plots[[n]] + plots[[n+1]] + plots[[n+2]] ) 
+}
+
+plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
+  pluck(4)
+
+corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(50)/ plot_function(79) / plot_function(97)/ plot_function(121)
+
+corporate_temp_gg
 ```
 
 ```{r}
-#| label: "fixed_effects"
-#| tbl-cap: "Estimated coefficients from the fixed effects models"
+#| label: "fig-corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x precipitation shock"
+#| fig.height: 8
+#| fig.width: 6
 
-read_rds(here("Outputs", "all_fe_models.rds")) |> 
-  pluck(2) |>
-  flextable() |>
-  fontsize(size = 6, part = "all") |>
-  padding(padding = 4, part = "all") |>
-  fit_to_width(max_width = 9.5)
+corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) / plot_function(109) /  plot_function(133) 
+
+corporate_precip_gg
+
 ```
 
-```{=latex}
-\esideways
+## Household credit growth effects
+
+```{r}
+#| label: "fig-household_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 6
+
+household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)/ plot_function(100) / plot_function(124)
+
+household_temp_gg
+```
+
+```{r}
+#| label: "fig-household_precip"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 6
+
+household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)/ plot_function(112) / plot_function(136)
+
+household_precip_gg
 ```
 
 
+## Corporate credit rate effects
+
+```{r}
+#| label: "fig-rate_corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 6
 
 
+odd_plot_function <- function(n){
+  n <- n
+  (plots[[n]] + plots[[n+2]] + plots[[n+4]] ) 
+}
 
+corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) / odd_plot_function(103) / odd_plot_function(127)
+
+corporate_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-rate_corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x preciptation shock"
+#| fig.height: 8
+#| fig.width: 6
+
+corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) / odd_plot_function(109) / odd_plot_function(133)
+
+corporate_rate_precip_gg
+
+```
+
+
+## Household credit rate effects
+
+```{r}
+#| label: "fig-rate_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 6
+
+household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) / odd_plot_function(104) / odd_plot_function(128)
+
+household_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-rate_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x precipitation shock"
+#| fig.height: 8
+#| fig.width: 6
+
+household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) / odd_plot_function(116) / odd_plot_function(140)
+
+household_rate_precip_gg
+```
+
+
+## Discussion
 
 # Drivers
 
@@ -252,7 +377,7 @@ read_rds(here("Outputs", "all_fe_models.rds")) |>
 #| label: fig-lending_volume_growth_data
 #| fig-cap: "Lending volume growth over time"
 #| fig-height: 7
-#| cache: true
+#| cache: false
 
 lending_volume_growth_gg <- 
   read_rds(here("Outputs", "artifacts_lending_volume.rds")) |> 
@@ -266,7 +391,7 @@ lending_volume_growth_gg
 #| label: fig-lending_rates
 #| fig-cap: "Lending rates overtime"
 #| fig-height: 7
-#| cache: true
+#| cache: false
 
 lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
   pluck(2)
@@ -279,7 +404,7 @@ lending_rates_gg
 #| label: fig-climate_shocks_data
 #| fig-cap: Climate Shocks Data
 #| fig-height: 2
-#| cache: true
+#| cache: false
 
 climate_shocks_gg <- read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> 
   pluck(2)
@@ -291,7 +416,7 @@ climate_shocks_gg
 ```{r}
 #| label: fig-market_based_surprises_data
 #| fig-cap: "Market-Based Surprises Data"
-#| cache: true
+#| cache: false
 
 market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
   pluck(2)
@@ -303,7 +428,7 @@ market_based_surprises_gg
 #| label: fig-theory_based_surprises_data
 #| fig-cap: "Theory-based surprises data"
 #| fig.height: 2
-#| cache: true
+#| cache: false
 
 theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
   pluck(3, 3)
@@ -329,33 +454,18 @@ descriptives_table <-
     credit_category = str_replace_all(credit_category, "temp", "Temperature"),
     credit_category = str_replace_all(credit_category, "precip", "Precipitation")
   ) |>
-  filter(!str_detect(credit_category, "value")) |> 
-  mutate(group = factor(
-    case_when(
-      credit_category %in% c(
-        "central_bank_information", "forward_guidance",
-        "miyajima_surprise", "romer_surprise", "target",
-        "country_risk"
-      ) ~ "Monetary Policy",
-      str_starts(credit_category, "corporate") ~ "Corporate Credit",
-      str_starts(credit_category, "household") ~ "Household Credit",
-      str_starts(credit_category, "land_") |
-        str_starts(credit_category, "pop_") ~ "Climate"
-    ),
-    levels = c("Monetary Policy", "Corporate Credit", "Household Credit", "Climate")
-  )) |> 
-  filter(!str_starts(credit_category, "land_")) |>
-  arrange(group, credit_category) |>
-  mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |> 
-  as_grouped_data(groups = "group") |>
+  mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |>
+  as_grouped_data(groups = "groups") |>
   flextable() |>
   colformat_double(digits = 2) |>
-  set_header_labels(group = "", credit_category = "Variable",
-                    mean = "Mean", median = "Median", sd = "SD",
-                    min = "Min", max = "Max", n = "N") |>
+  width(j = "credit_category", width = 1.2) |>
   width(j = "credit_category", width = 1.5) |>
-  width(j = c("mean", "median", "sd", "min", "max"), width = 0.65) |>
-  width(j = "n", width = 0.5)
+  width(j = c("mean", "median", "sd", "min", "max"), width = 0.6) |>
+  width(j = "n", width = 0.5) |> 
+  set_header_labels(groups = "", credit_category = "Variable",
+                    mean = "Mean", median = "Median", sd = "SD",
+                    min = "Min", max = "Max", n = "N") 
+ 
   
 descriptives_table
 
@@ -368,7 +478,7 @@ descriptives_table
 #| label: fig-sector_credit_exposure
 #| fig-cap: "Sector credit exposure"
 #| fig.height: 8
-#| cache: true
+#| cache: false
 
 
 sector_credit_exposure_gg <- 
@@ -378,5 +488,157 @@ sector_credit_exposure_gg <-
 sector_credit_exposure_gg
 ```
 
+# Detailed results
+
+```{r}
+#| label: "fixed_effects_temp"
+#| tbl-cap: "Estimated coefficients from the fixed effects models: Temperature shock"
+#| ftarraystrech: 0
+
+shock_models_tbl <- read_rds(here("Outputs", "all_fe_models.rds")) |> 
+  pluck(2) 
+
+shock_models_tbl |> 
+  filter(climate_shock == "pop_temp_shock") |> 
+  select(-climate_shock, -`(Intercept)`) |> 
+  mutate(
+    Type = if_else(str_detect(dependant, "_rate"), "Lending Rates", "Credit Growth")
+  ) |>
+  arrange(
+    Type,
+    dependant,
+    case_when(
+      str_detect(MPShock, "miyajima")     ~ 1,
+      str_detect(MPShock, "romer")        ~ 2,
+      str_detect(MPShock, "target")       ~ 3,
+      str_detect(MPShock, "forward")      ~ 4,
+      str_detect(MPShock, "central_bank") ~ 5,
+      str_detect(MPShock, "country_risk") ~ 6,
+      .default = 7
+    )
+  ) |> 
+  mutate(surprises = str_replace_all(surprises, 
+                                   c("miyajima_surprise_pop_precip_shock_resid" = "Miyajima",
+                                     "miyajima_surprise_pop_temp_shock_resid" = "Miyajima",
+                                     "romer_surprise_pop_precip_shock_resid" = "Romer",
+                                     "romer_surprise_pop_temp_shock_resid" = "Romer",
+                                     "target_pop_precip_shock_resid" = "Target",
+                                     "target_pop_temp_shock_resid" = "Target",
+                                     "forward_guidance_pop_precip_shock_resid" = "Forward guidance",
+                                     "forward_guidance_pop_temp_shock_resid" = "Forward guidance",
+                                     "central_bank_information_pop_precip_shock_resid" = "Central bank information",
+                                     "central_bank_information_pop_temp_shock_resid" = "Central bank information",
+                                     "country_risk_pop_precip_shock_resid" = "Country risk",
+                                     "country_risk_pop_temp_shock_resid" = "Country risk"
+                                     ))) |> 
+  mutate(dependant = str_replace_all(dependant, c(
+                                          "corporate_secured_credit" = "Corporate secured",
+                                          "corporate_unsecured_credit" = "Corporate unsecured",
+                                          "corporate_mortgage" = "Corporate mortgage",
+                                          "household_secured_credit" = "Household secured",
+                                          "household_unsecured_credit" = "Household unsecured",
+                                          "household_mortgages" = "Household mortgages",
+                                          "Corporate secured_rate" = "Corporate secured",
+                                          "Corporate unsecured_rate" = "Corporate unsecured",
+                                          "Corporate mortgage_rate" = "Corporate mortgage",
+                                          "Household secured_rate" = "Household secured",
+                                          "Household unsecured_rate" = "Household unsecured",
+                                          "household_mortgage_rate" = "Household mortgages"
+                                          ))) |> 
+  as_grouped_data(groups = c("Type"), expand_single = TRUE) |>
+  flextable() |>
+  merge_v(j = "Type") |>
+  merge_v(j = "dependant") |>
+  set_header_labels(Type = "", dependant = "", surprises = "") |>
+  set_table_properties(layout = "fixed") |>
+  fontsize(size = 5, part = "all") |> 
+  autofit(add_w = .2)
+```
+
+```{=latex}
+{\footnotesize
+\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
+
+\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
+}
+
+```
+
+\newpage
+
+```{r}
+#| label: "fixed_effects_precip"
+#| tbl-cap: "Estimated coefficients from the fixed effects models: Precipitation shock"
+#| ftarraystrech: 0
+
+shock_models_tbl <- fixed_effects |> 
+  pluck(2) 
+
+shock_models_tbl |> 
+  filter(climate_shock == "pop_precip_shock") |> 
+  select(-climate_shock, -`(Intercept)`) |> 
+  mutate(
+    Type = if_else(str_detect(dependant, "_rate"), "Lending Rates", "Credit Growth")
+  ) |>
+  arrange(
+    Type,
+    dependant,
+    case_when(
+      str_detect(MPShock, "miyajima")     ~ 1,
+      str_detect(MPShock, "romer")        ~ 2,
+      str_detect(MPShock, "target")       ~ 3,
+      str_detect(MPShock, "forward")      ~ 4,
+      str_detect(MPShock, "central_bank") ~ 5,
+      str_detect(MPShock, "country_risk") ~ 6,
+      .default = 7
+    )
+  ) |> 
+  mutate(surprises = str_replace_all(surprises, 
+                                   c("miyajima_surprise_pop_precip_shock_resid" = "Miyajima",
+                                     "miyajima_surprise_pop_temp_shock_resid" = "Miyajima",
+                                     "romer_surprise_pop_precip_shock_resid" = "Romer",
+                                     "romer_surprise_pop_temp_shock_resid" = "Romer",
+                                     "target_pop_precip_shock_resid" = "Target",
+                                     "target_pop_temp_shock_resid" = "Target",
+                                     "forward_guidance_pop_precip_shock_resid" = "Forward guidance",
+                                     "forward_guidance_pop_temp_shock_resid" = "Forward guidance",
+                                     "central_bank_information_pop_precip_shock_resid" = "Central bank information",
+                                     "central_bank_information_pop_temp_shock_resid" = "Central bank information",
+                                     "country_risk_pop_precip_shock_resid" = "Country risk",
+                                     "country_risk_pop_temp_shock_resid" = "Country risk"
+                                     ))) |> 
+  mutate(dependant = str_replace_all(dependant, c(
+                                          "corporate_secured_credit" = "Corporate secured",
+                                          "corporate_unsecured_credit" = "Corporate unsecured",
+                                          "corporate_mortgage" = "Corporate mortgage",
+                                          "household_secured_credit" = "Household secured",
+                                          "household_unsecured_credit" = "Household unsecured",
+                                          "household_mortgages" = "Household mortgages",
+                                          "Corporate secured_rate" = "Corporate secured",
+                                          "Corporate unsecured_rate" = "Corporate unsecured",
+                                          "Corporate mortgage_rate" = "Corporate mortgage",
+                                          "Household secured_rate" = "Household secured",
+                                          "Household unsecured_rate" = "Household unsecured",
+                                          "household_mortgage_rate" = "Household mortgages"
+                                          ))) |> 
+  as_grouped_data(groups = c("Type"), expand_single = TRUE) |>
+  flextable() |>
+  merge_v(j = "Type") |>
+  merge_v(j = "dependant") |>
+  set_header_labels(Type = "", dependant = "", surprises = "") |>
+  set_table_properties(layout = "fixed") |>
+  fontsize(size = 5, part = "all") |> 
+  autofit(add_w = .2)
+```
+
+
+```{=latex}
+{\footnotesize
+\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
+
+\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
+}
+
+```
 
 
