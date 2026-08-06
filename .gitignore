@@ -5,3 +5,6 @@
 .DS_Store
 .quarto
 .positai
+climate_credit_channel_cache/
+Outputs/
+
