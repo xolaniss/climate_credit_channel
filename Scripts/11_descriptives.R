@@ -22,8 +22,12 @@ model_data_tbl <- read_rds(
 ## Summary statistics table -------------
 descriptive_stats_tbl <-
   model_data_tbl |>
+  select(-ends_with("pos"), -ends_with("neg"), -ends_with("value"), -starts_with("land")) |> 
   pivot_longer(-c("date", "banks"), names_to = "credit_category", values_to = "value") |> 
-  group_by(credit_category) |> 
+  mutate(groups = if_else(str_ends(credit_category, "rate"), "Lending rates", 
+                          if_else(str_ends(credit_category, "credit|mortgages"), "Credit growth", 
+                                  if_else(str_ends(credit_category,"shock"), "Climate shock", "Monetary policy shock"))))|> 
+  group_by(groups, credit_category) |> 
   drop_na() |> 
   summarise(
     across(

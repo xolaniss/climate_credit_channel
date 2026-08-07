@@ -213,13 +213,12 @@ fixed_effects |>
 #| fig.cap: "Lending rates panel regression estimates"
 #| fig.height: 6
 
-fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
-
 fixed_effects |> 
   pluck(3)
 ```
 
 ## Corporate credit growth effects
+\newpage
 
 ```{r}
 #| label: "fig-corporate_temp"
@@ -255,6 +254,7 @@ corporate_precip_gg
 ```
 
 ## Household credit growth effects
+\newpage
 
 ```{r}
 #| label: "fig-household_temp"
@@ -280,6 +280,7 @@ household_precip_gg
 
 
 ## Corporate credit rate effects
+\newpage
 
 ```{r}
 #| label: "fig-rate_corporate_temp"
@@ -312,6 +313,7 @@ corporate_rate_precip_gg
 
 
 ## Household credit rate effects
+\newpage
 
 ```{r}
 #| label: "fig-rate_household_temp"
@@ -453,10 +455,10 @@ descriptives_table <-
     credit_category = str_replace_all(credit_category, "pop", "Population"),
     credit_category = str_replace_all(credit_category, "temp", "Temperature"),
     credit_category = str_replace_all(credit_category, "precip", "Precipitation")
-  ) |>
-  mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |>
-  as_grouped_data(groups = "groups") |>
-  flextable() |>
+  ) |> 
+  mutate(credit_category = credit_category |> str_replace_all("_", " ") |> str_to_title()) |> 
+  flextable::as_grouped_data(groups = "groups") |> 
+  flextable() |> 
   colformat_double(digits = 2) |>
   width(j = "credit_category", width = 1.2) |>
   width(j = "credit_category", width = 1.5) |>
