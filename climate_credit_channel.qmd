@@ -124,13 +124,13 @@ The analysis draws on three main data sources: climate shocks, monetary policy s
 
 The climate shocks are calculated as follows:
 
-$$ W_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, $$ {#eq-weather_shock}
+$$ ClimateShock_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, $$ {#eq-weather_shock}
 
-where $W_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For both temperature and precipitation, $\overline{T}_{t}$ is the calendar-month mean computed over the full sample period (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. The resulting shock series are shown in @fig-climate_shocks_data in the Appendix.
+where $ClimateShock_{t}$ is the temperature or precipitation shock at time $t$ and $T_{t}$ is the observed population-weighted climate variable. For both temperature and precipitation, $\overline{T}_{t}$ is the calendar-month mean computed over the full sample period (e.g., the mean of all January values from 2011 to 2025), and $\sigma(T_{t})$ is the corresponding within-month standard deviation. The resulting shock series are shown in @fig-climate_shocks_data in the Appendix.
 
 **Monetary policy data:** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises serve as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we consider both market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data) and a theory-based shock derived from the policy rate, as described in @sec-methodology below (see @fig-theory_based_surprises_data). Surprises are timed to coincide with policy rate announcement dates and aggregated to a quarterly frequency. Underlying the calculation of the are the forecasts of the real GDP growth, the policy rate (repo-rate), and the inflation rate from Bloomberg Consensus.
 
-**Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. Summary charts are provided in @fig-lending_volume_growth_data and @fig-lending_rates.
+**Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. We use the log of credit volumes and make no other transformations to the other credit data. Summary charts are provided in @fig-lending_volume_growth_data and @fig-lending_rates. 
 
 
 ## Methodology {#sec-methodology}
@@ -167,23 +167,25 @@ $$ {#eq-purge}
 
 where $\text{MPShock}^i_{t}$ is each of the monetary policy shocks described above and $\text{ClimateShock}^i_t$ are the temperature and precipitation shocks. The residual $\varepsilon^i_t$ — the part of the policy shock that cannot be explained by climate conditions — is retained as a "purged" shock. We use these purged shocks in all subsequent estimations.
 
+** To find sources**
+
 **Panel estimation**: Our first estimating equation tests whether the effect of a monetary policy shock on credit is amplified or dampened when a climate shock occurs at the same time:
 
 $$
 \begin{aligned}
-\text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + 
-                       \beta_3 (\text{Climate}_t^k \times \text{MPShock}_t) + \\
+\text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + 
+                       \beta_3 (\text{ClimateShock}_t^k \times \text{MPShock}_t) + \\
                        &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t}, 
 \end{aligned}
 $$ {#eq-credit}
 
-where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corporates) at time $t$, and $\text{Climate}_{t}^k$ captures climate shocks — temperature, precipitation, and extreme wet and dry events, indexed by $k$. The interaction term $\text{Climate}_{t}^k\times\text{MPShock}_t$ is the key coefficient of interest: a significant estimate would indicate that climate shocks alter how monetary policy transmits through credit markets. $\gamma_s$ are agent fixed effects (absorbing time-invariant differences across borrower types), $\delta_t$ are time fixed effects, and $\varepsilon_{s,t}$ is the error term. $X_t$ is a vector of controls added as a robustness check, including **GDP growth, the USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment rate**.
+where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corporates) at time $t$, and $\text{ClimateShock}_{t}^k$ captures climate shocks — temperature, precipitation, and extreme wet and dry events, indexed by $k$. The interaction term $\text{ClimateShock}_{t}^k\times\text{MPShock}_t$ is the key coefficient of interest: a significant estimate would indicate that climate shocks alter how monetary policy transmits through credit markets. $\gamma_s$ are agent fixed effects (absorbing time-invariant differences across borrower types), $\delta_t$ are time fixed effects, and $\varepsilon_{s,t}$ is the error term. $X_t$ is a vector of controls added as a robustness check, including **GDP growth, the USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment rate**.
 
 **Panel local projections**: The panel regression above captures the contemporaneous relationship but cannot tell us how long any effect lasts. To trace the full dynamic response of credit over time, we use the local projections method of @jorda2005, estimating a separate regression for each future horizon $h = 0, 1, \ldots, H$:
 
 $$
 \begin{aligned}
-{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{Climate}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{Climate}_t^k\times\text{MPShock}_t) + \\
+{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + \\
                                       &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
 \end{aligned}
 $$ {#eq-panel_credit}
@@ -203,18 +205,7 @@ where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change i
 fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
 
 fixed_effects |> 
-  pluck(4)
-```
-
-\newpage
-
-```{r}
-#| label: "fig-all_fe_credit_growth_models"
-#| fig.cap: "Lending rates panel regression estimates"
-#| fig.height: 6
-
-fixed_effects |> 
-  pluck(3)
+  pluck(2)
 ```
 
 ## Corporate credit growth effects
@@ -224,7 +215,7 @@ fixed_effects |>
 #| label: "fig-corporate_temp"
 #| fig.cap: "Local projections for monetary policy shock x temperature shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
 
 plot_function <- function(n){
@@ -236,7 +227,7 @@ plot_function <- function(n){
 plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
   pluck(4)
 
-corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(50)/ plot_function(79) / plot_function(97)/ plot_function(121)
+corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)/ plot_function(73)  
 
 corporate_temp_gg
 ```
@@ -245,10 +236,9 @@ corporate_temp_gg
 #| label: "fig-corporate_precip"
 #| fig.cap: "Local projections for monetary policy shock x precipitation shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) / plot_function(109) /  plot_function(133) 
-
+corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) 
 corporate_precip_gg
 
 ```
@@ -260,9 +250,9 @@ corporate_precip_gg
 #| label: "fig-household_temp"
 #| fig.cap: "Local projections for monetary policy shock x temperature shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)/ plot_function(100) / plot_function(124)
+household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)
 
 household_temp_gg
 ```
@@ -271,10 +261,9 @@ household_temp_gg
 #| label: "fig-household_precip"
 #| fig.cap: "Local projections for monetary policy shock x temperature shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)/ plot_function(112) / plot_function(136)
-
+household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)
 household_precip_gg
 ```
 
@@ -286,7 +275,7 @@ household_precip_gg
 #| label: "fig-rate_corporate_temp"
 #| fig.cap: "Local projections for monetary policy shock x temperature shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
 
 odd_plot_function <- function(n){
@@ -294,7 +283,7 @@ odd_plot_function <- function(n){
   (plots[[n]] + plots[[n+2]] + plots[[n+4]] ) 
 }
 
-corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) / odd_plot_function(103) / odd_plot_function(127)
+corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) 
 
 corporate_rate_temp_gg
 ```
@@ -303,9 +292,9 @@ corporate_rate_temp_gg
 #| label: "fig-rate_corporate_precip"
 #| fig.cap: "Local projections for monetary policy shock x preciptation shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) / odd_plot_function(109) / odd_plot_function(133)
+corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) 
 
 corporate_rate_precip_gg
 
@@ -319,9 +308,9 @@ corporate_rate_precip_gg
 #| label: "fig-rate_household_temp"
 #| fig.cap: "Local projections for monetary policy shock x temperature shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) / odd_plot_function(104) / odd_plot_function(128)
+household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
 
 household_rate_temp_gg
 ```
@@ -330,9 +319,9 @@ household_rate_temp_gg
 #| label: "fig-rate_household_precip"
 #| fig.cap: "Local projections for monetary policy shock x precipitation shock"
 #| fig.height: 8
-#| fig.width: 6
+#| fig.width: 9
 
-household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) / odd_plot_function(116) / odd_plot_function(140)
+household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
 
 household_rate_precip_gg
 ```
@@ -496,9 +485,11 @@ sector_credit_exposure_gg
 #| label: "fixed_effects_temp"
 #| tbl-cap: "Estimated coefficients from the fixed effects models: Temperature shock"
 #| ftarraystrech: 0
+#| eval: false
+#| include: false
 
 shock_models_tbl <- read_rds(here("Outputs", "all_fe_models.rds")) |> 
-  pluck(2) 
+  pluck(1) 
 
 shock_models_tbl |> 
   filter(climate_shock == "pop_temp_shock") |> 
@@ -572,9 +563,11 @@ shock_models_tbl |>
 #| label: "fixed_effects_precip"
 #| tbl-cap: "Estimated coefficients from the fixed effects models: Precipitation shock"
 #| ftarraystrech: 0
+#| eval: false
+#| include: false
 
 shock_models_tbl <- fixed_effects |> 
-  pluck(2) 
+  pluck(1) 
 
 shock_models_tbl |> 
   filter(climate_shock == "pop_precip_shock") |> 
