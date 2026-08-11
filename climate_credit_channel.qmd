@@ -185,12 +185,12 @@ where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corpor
 
 $$
 \begin{aligned}
-{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + \\
-                                      &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \\ &\beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + 
+                                      \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
 \end{aligned}
 $$ {#eq-panel_credit}
 
-where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change in credit growth from period $t-1$ to $t+h$, and $h$ is the horizon in quarters. Plotting the estimated $\hat{\beta}_1$, and $\hat{\beta}_2 + \hat{\beta}_3$ across horizons gives the impulse response functions, showing the differential impact of climate on credit in the quarters following a shock. **All regressions use Driscoll-Kraay standard errors to account for correlation across agents and over time [@driscoll1998]**.
+where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change in credit growth from period $t-1$ to $t+h$, and $h$ is the horizon in quarters. Plotting the estimated $\hat{\beta}_1$, and $\hat{\beta}_2 + \hat{\beta}_3$ across horizons gives the impulse response functions, showing the differential impact of climate on credit in the quarters following a shock. All regressions use Driscoll-Kraay standard errors to account for correlation across agents and over time [@driscoll1998].
 
 # Results
 
@@ -200,7 +200,7 @@ where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change i
 ```{r}
 #| label: "fig-all_fe_temp_models"
 #| fig.cap: "Credit growth panel regression estimates"
-#| fig.height: 6
+#| fig.height: 8
 
 fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
 
@@ -208,7 +208,7 @@ fixed_effects |>
   pluck(2)
 ```
 
-## Corporate credit growth effects
+## Average climate shock
 \newpage
 
 ```{r}
@@ -243,7 +243,6 @@ corporate_precip_gg
 
 ```
 
-## Household credit growth effects
 \newpage
 
 ```{r}
@@ -268,7 +267,6 @@ household_precip_gg
 ```
 
 
-## Corporate credit rate effects
 \newpage
 
 ```{r}
@@ -301,7 +299,6 @@ corporate_rate_precip_gg
 ```
 
 
-## Household credit rate effects
 \newpage
 
 ```{r}
@@ -327,17 +324,157 @@ household_rate_precip_gg
 ```
 
 
+## Asymmetric climate shock
+
+```{r}
+#| label: "fig-asym_corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> 
+  pluck(4)
+
+asym_corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)/ plot_function(73)  
+
+asym_corporate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) 
+asym_corporate_precip_gg
+
+```
+
+\newpage
+
+```{r}
+#| label: "fig-asym_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)
+asym_household_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)
+asym_household_precip_gg
+```
+
+
+\newpage
+
+```{r}
+#| label: "fig-asym_rate_corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+
+asym_corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) 
+asym_corporate_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_rate_corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric preciptation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) 
+asym_corporate_rate_precip_gg
+
+```
+
+
+\newpage
+
+```{r}
+#| label: "fig-asym_rate_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
+asym_household_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_rate_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
+asym_household_rate_precip_gg
+```
+
+
+
+
 ## Discussion
 
-# Drivers
+Fixed effects panel results
 
-## Timing sensivity
+The contemporaneous panel estimates show that climate shocks interact with monetary policy transmission, but the evidence is uneven across shock measures and credit types. Temperature shocks produce more consistently significant interactions than precipitation shocks, with the latter yielding few panel-level estimates that clear conventional significance thresholds. The interactions are concentrated in lending rates rather than credit volumes, and within rates, corporate mortgage rates are the most responsive outcome. The Romer and Miyajima measures — once their opposing sign conventions are accounted for — tell a broadly consistent story: a temperature shock during a monetary policy tightening is associated with a dampening of the rate transmission, suggesting that climate stress blunts the pass-through of policy decisions into lending rates. The four market-based factors (target, forward guidance, CB information, country risk) are less precisely estimated in the interaction, though forward guidance and CB information still return some significant interaction coefficients for mortgage rates.
+
+Local projections results
+
+The local projections reveal that these effects are not merely contemporaneous but persist over the forecast horizon. Approximately 67% of interaction-horizon combinations are significant at the 68% confidence level for both temperature and precipitation shocks — a notably high share, though the 68% CI is a relatively lenient threshold common in the LP literature. The direction is predominantly dampening: across both borrower types and both credit volumes and rates, significant interactions are more often negative than positive under precipitation shocks (roughly 55–58% dampening). For temperature shocks the pattern holds for corporate borrowers and household rates, but household credit volumes show the reverse — temperature shocks appear to amplify the household credit volume response to MP, with 115 amplifying horizon-combinations against 47 dampening ones. This asymmetry between households and corporates on the volume side is the most interesting divergence between the two borrower types and warrants closer inspection.
+
+Overall reading
+
+Taken together, the two approaches suggest that climate shocks act primarily as a friction that weakens monetary policy pass-through, in line with the external finance premium mechanism described in the paper. Temperature shocks have more bite than precipitation shocks in the contemporaneous regression, but both climate variables produce persistent interaction effects in the LPs. The one notable exception — household credit volumes appearing to amplify under temperature shocks — could reflect a precautionary borrowing response or a compositional effect, and is worth investigating before drawing strong conclusions.
+
+# Drivers - variation across sectors, horizons, and shock types
 
 
 
-## Sectoral sensitivity
+```{r}
+#| label: "fig-direction"
+#| fig.cap: "Dampening versus amplification"
+#| fig.height: 6
 
-## Type of shock
+extensions <- read_rds(here("Outputs", "artifacts_extensions.rds")) 
+extensions |> 
+  pluck("direction_gg")
+```
+
+
+```{r}
+#| label: "fig-persistence"
+#| fig.cap: "Length of dampening or amplification"
+extensions |> 
+  pluck("combined_gg")
+
+```
+
+
+\newpage
+```{r}
+#| label: "fig-climate_state"
+#| fig.cap: "Length of dampening or amplification by climate state"
+#| fog.height: 6
+
+extensions |> 
+  pluck("combined_asym_gg")
+
+```
+
+
+
 
 # Conclusion
 
@@ -479,7 +616,7 @@ sector_credit_exposure_gg <-
 sector_credit_exposure_gg
 ```
 
-# Detailed results
+<!-- # Detailed results -->
 
 ```{r}
 #| label: "fixed_effects_temp"
@@ -548,14 +685,14 @@ shock_models_tbl |>
   autofit(add_w = .2)
 ```
 
-```{=latex}
-{\footnotesize
-\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
+<!-- ```{=latex} -->
+<!-- {\footnotesize -->
+<!-- \noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level. -->
 
-\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
-}
+<!-- \noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\) -->
+<!-- } -->
 
-```
+<!-- ``` -->
 
 \newpage
 
@@ -627,13 +764,13 @@ shock_models_tbl |>
 ```
 
 
-```{=latex}
-{\footnotesize
-\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
+<!-- ```{=latex} -->
+<!-- {\footnotesize -->
+<!-- \noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level. -->
 
-\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
-}
+<!-- \noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\) -->
+<!-- } -->
 
-```
+<!-- ``` -->
 
 

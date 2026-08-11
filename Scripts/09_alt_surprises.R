@@ -60,9 +60,9 @@ combined_miyajima_variables_tbl <-
   combined_tbl |> 
   mutate(
     # Forecast Errors (FE = actual - forecast)
-    fe_repo = repo_actual - repo_forecast,
-    fe_gdp  = gdp_actual  - gdp_forecast,
-    fe_cpi  = cpi_actual  - cpi_forecast
+    fe_repo =  repo_forecast -repo_actual,
+    fe_gdp  =   gdp_forecast - gdp_actual,
+    fe_cpi  =  cpi_forecast - cpi_actual
   ) 
 
 

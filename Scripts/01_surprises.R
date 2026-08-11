@@ -40,15 +40,12 @@ market_based_surprises_gg <-
   ggplot(aes(x = Date, y = surprise, col = variable)) + # Change the variable names
   geom_line() +
   labs(
-<<<<<<< Updated upstream
     # title = "SA Market-Based MPS",
     x = "",
-    y = "Surprise"
-=======
+    y = "Surprise",
     title = "SA Market-Based MPS",
     x = "Date",
     y = " "
->>>>>>> Stashed changes
   ) +
   facet_wrap(~variable, scales = "free_y", ncol = 2) +
   theme_minimal(base_size = 8) +

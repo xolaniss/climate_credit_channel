@@ -172,17 +172,36 @@ shock_models_tbl <-
 shock_models_tbl
 
 ## Plots ----------------------
+credit_labels <- c(
+  corporate_unsecured_credit       = "Corp. unsecured credit",
+  corporate_secured_credit         = "Corp. secured credit",
+  corporate_mortgages              = "Corp. mortgages",
+  household_unsecured_credit       = "HH unsecured credit",
+  household_secured_credit         = "HH secured credit",
+  household_mortgages              = "HH mortgages",
+  corporate_unsecured_credit_rate  = "Corp. unsecured rate",
+  corporate_secured_credit_rate    = "Corp. secured rate",
+  corporate_mortgage_rate          = "Corp. mortgage rate",
+  household_unsecured_credit_rate  = "HH unsecured rate",
+  household_secured_credit_rate    = "HH secured rate",
+  household_mortgage_rate          = "HH mortgage rate"
+)
+
+climate_labels <- c(
+  pop_temp_shock   = "Temperature shock",
+  pop_precip_shock = "Precipitation shock"
+)
+
 mp_labels2 <- c(
   miyajima_surprise        = "Miyajima",
   romer_surprise           = "Romer",
   target                   = "Target",
-  forward_guidance         = "Fwd. guidance",
-  central_bank_information = "CB info.",
-  country_risk             = "Country risk"
+  forward_guidance         = "Fwd. guidance"
 )
 
 shock_model_gg <- 
-  model_data_long_tbl |>
+  model_data_long_tbl |> 
+  filter(!mp_shock %in% c("country_risk", "central_bank_information")) |> 
   ols_nest_full_prep(group_vars = c("credit", "mp_shock", "climate_shock")) |>
   ols_tidy_group_models(formula = formula) |>
   unnest(cols = models_coef, names_repair = "universal") |>
@@ -203,7 +222,7 @@ shock_model_gg <-
   geom_point(size = 1.8) +
   facet_grid(climate_shock + group ~ mp_shock, scale ="free") +
   coord_cartesian(xlim = c(-1.5, 3)) +
-  scale_color_manual(values = c("p < 0.05" = "#C0392B", "p ≥ 0.05" = "grey55")) +
+  # scale_color_manual(values = c("p < 0.05" = "#C0392B", "p ≥ 0.05" = "grey55")) +
   scale_x_continuous(breaks = c(-1, 0, 1, 2)) +
   labs(
     x     = "Coefficient (MP shock × Climate shock interaction)",
@@ -218,7 +237,12 @@ shock_model_gg <-
     strip.text       = element_text(size = 8.5),
     axis.text.y      = element_text(size = 8),
     axis.text.x      = element_text(size = 8),
-    panel.grid.minor = element_blank())
+    panel.grid.minor = element_blank(),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    panel.border     = element_rect(color = "grey80", fill = NA)) +
+  scale_color_manual(values = pnw_palette("Bay",2), labels = scales::label_wrap(20))
+ 
   
 
 # Save all models ------------------------------------------------------
