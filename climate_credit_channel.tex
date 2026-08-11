@@ -446,8 +446,8 @@ regression for each future horizon \(h = 0, 1, \ldots, H\):
 
 \begin{equation}\phantomsection\label{eq-panel_credit}{
 \begin{aligned}
-{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + \\
-                                      &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+{Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \\ &\beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + 
+                                      \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
 \end{aligned}
 }\end{equation}
 
@@ -456,9 +456,9 @@ cumulative change in credit growth from period \(t-1\) to \(t+h\), and
 \(h\) is the horizon in quarters. Plotting the estimated
 \(\hat{\beta}_1\), and \(\hat{\beta}_2 + \hat{\beta}_3\) across horizons
 gives the impulse response functions, showing the differential impact of
-climate on credit in the quarters following a shock. \textbf{All
-regressions use Driscoll-Kraay standard errors to account for
-correlation across agents and over time \citep{driscoll1998}}.
+climate on credit in the quarters following a shock. All regressions use
+Driscoll-Kraay standard errors to account for correlation across agents
+and over time \citep{driscoll1998}.
 
 \section{Results}\label{results}
 
@@ -479,8 +479,7 @@ estimates}
 
 \end{figure}%
 
-\subsection{Corporate credit growth
-effects}\label{corporate-credit-growth-effects}
+\subsection{Average climate shock}\label{average-climate-shock}
 
 \newpage
 
@@ -510,9 +509,6 @@ policy shock x precipitation shock}
 
 \end{figure}%
 
-\subsection{Household credit growth
-effects}\label{household-credit-growth-effects}
-
 \newpage
 
 \begin{figure}[H]
@@ -540,9 +536,6 @@ shock x temperature shock}
 policy shock x temperature shock}
 
 \end{figure}%
-
-\subsection{Corporate credit rate
-effects}\label{corporate-credit-rate-effects}
 
 \newpage
 
@@ -572,9 +565,6 @@ policy shock x preciptation shock}
 
 \end{figure}%
 
-\subsection{Household credit rate
-effects}\label{household-credit-rate-effects}
-
 \newpage
 
 \begin{figure}[H]
@@ -603,15 +593,212 @@ policy shock x precipitation shock}
 
 \end{figure}%
 
+\subsection{Asymmetric climate shock}\label{asymmetric-climate-shock}
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_corporate_temp-1.png}
+
+}
+
+\caption{\label{fig-asym_corporate_temp}Local projections for monetary
+policy shock x asymmetric temperature shock}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_corporate_precip-1.png}
+
+}
+
+\caption{\label{fig-asym_corporate_precip}Local projections for monetary
+policy shock x asymmetric precipitation shock}
+
+\end{figure}%
+
+\newpage
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_household_temp-1.png}
+
+}
+
+\caption{\label{fig-asym_household_temp}Local projections for monetary
+policy shock x asymmetric temperature shock}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_household_precip-1.png}
+
+}
+
+\caption{\label{fig-asym_household_precip}Local projections for monetary
+policy shock x asymmetric temperature shock}
+
+\end{figure}%
+
+\newpage
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_temp-1.png}
+
+}
+
+\caption{\label{fig-asym_rate_corporate_temp}Local projections for
+monetary policy shock x asymmetric temperature shock}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_precip-1.png}
+
+}
+
+\caption{\label{fig-asym_rate_corporate_precip}Local projections for
+monetary policy shock x asymmetric preciptation shock}
+
+\end{figure}%
+
+\newpage
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_temp-1.png}
+
+}
+
+\caption{\label{fig-asym_rate_household_temp}Local projections for
+monetary policy shock x asymmetric temperature shock}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_precip-1.png}
+
+}
+
+\caption{\label{fig-asym_rate_household_precip}Local projections for
+monetary policy shock x asymmetric precipitation shock}
+
+\end{figure}%
+
 \subsection{Discussion}\label{discussion}
 
-\section{Drivers}\label{drivers}
+Fixed effects panel results
 
-\subsection{Timing sensivity}\label{timing-sensivity}
+The contemporaneous panel estimates show that climate shocks interact
+with monetary policy transmission, but the evidence is uneven across
+shock measures and credit types. Temperature shocks produce more
+consistently significant interactions than precipitation shocks, with
+the latter yielding few panel-level estimates that clear conventional
+significance thresholds. The interactions are concentrated in lending
+rates rather than credit volumes, and within rates, corporate mortgage
+rates are the most responsive outcome. The Romer and Miyajima measures
+--- once their opposing sign conventions are accounted for --- tell a
+broadly consistent story: a temperature shock during a monetary policy
+tightening is associated with a dampening of the rate transmission,
+suggesting that climate stress blunts the pass-through of policy
+decisions into lending rates. The four market-based factors (target,
+forward guidance, CB information, country risk) are less precisely
+estimated in the interaction, though forward guidance and CB information
+still return some significant interaction coefficients for mortgage
+rates.
 
-\subsection{Sectoral sensitivity}\label{sectoral-sensitivity}
+Local projections results
 
-\subsection{Type of shock}\label{type-of-shock}
+The local projections reveal that these effects are not merely
+contemporaneous but persist over the forecast horizon. Approximately
+67\% of interaction-horizon combinations are significant at the 68\%
+confidence level for both temperature and precipitation shocks --- a
+notably high share, though the 68\% CI is a relatively lenient threshold
+common in the LP literature. The direction is predominantly dampening:
+across both borrower types and both credit volumes and rates,
+significant interactions are more often negative than positive under
+precipitation shocks (roughly 55--58\% dampening). For temperature
+shocks the pattern holds for corporate borrowers and household rates,
+but household credit volumes show the reverse --- temperature shocks
+appear to amplify the household credit volume response to MP, with 115
+amplifying horizon-combinations against 47 dampening ones. This
+asymmetry between households and corporates on the volume side is the
+most interesting divergence between the two borrower types and warrants
+closer inspection.
+
+Overall reading
+
+Taken together, the two approaches suggest that climate shocks act
+primarily as a friction that weakens monetary policy pass-through, in
+line with the external finance premium mechanism described in the paper.
+Temperature shocks have more bite than precipitation shocks in the
+contemporaneous regression, but both climate variables produce
+persistent interaction effects in the LPs. The one notable exception ---
+household credit volumes appearing to amplify under temperature shocks
+--- could reflect a precautionary borrowing response or a compositional
+effect, and is worth investigating before drawing strong conclusions.
+
+\section{Drivers - variation across sectors, horizons, and shock
+types}\label{drivers---variation-across-sectors-horizons-and-shock-types}
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-direction-1.png}
+
+}
+
+\caption{\label{fig-direction}Dampening versus amplification}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-persistence-1.png}
+
+}
+
+\caption{\label{fig-persistence}Length of dampening or amplification}
+
+\end{figure}%
+
+\newpage
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{climate_credit_channel_files/figure-pdf/fig-climate_state-1.png}
+
+}
+
+\caption{\label{fig-climate_state}Length of dampening or amplification
+by climate state}
+
+\end{figure}%
 
 \section{Conclusion}\label{conclusion}
 
@@ -861,7 +1048,7 @@ data}
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Miyajima\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.77}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{208}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Miyajima\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.77}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{208}}}} \\
 
 
 
@@ -902,21 +1089,7 @@ data}
 
 \end{figure}%
 
-\section{Detailed results}\label{detailed-results}
-
-{\footnotesize
-\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
-
-\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
-}
-
 \newpage
-
-{\footnotesize
-\noindent \textit{Note:}  All models include bank fixed effects. Standard errors are clustered at the bank level.
-
-\noindent $^{*}$\(p < 0.10\), $^{**}$\(p < 0.05\), $^{***}$\(p < 0.01\)
-}
 
 
 

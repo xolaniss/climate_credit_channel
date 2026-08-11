@@ -105,12 +105,12 @@ panel_id <- ~ banks + date
 big_shock_sd <- 3
 climate_values <- c(-big_shock_sd, 0, big_shock_sd)
 
-comp_base <- "MP shock alone (no climate shock)"
-comp_neg <- paste0("MP shock during a large negative climate shock (-", big_shock_sd, " SD)")
-comp_pos <- paste0("MP shock during a large positive climate shock (+", big_shock_sd, " SD)")
+comp_base <- "No climate shock"
+comp_neg <- paste0("-", big_shock_sd, " SD")
+comp_pos <- paste0("+", big_shock_sd, " SD")
 
 comp_levels <- c(comp_base, comp_neg, comp_pos)
-comp_cols <- c("#444444", "#1b6ca8", "#c1272d")
+comp_cols <- c("#00496f", "#0f85a0", "#dd4124")
 names(comp_cols) <- comp_levels
 
 # Component in the same order as climate_values (-3, 0, +3)
@@ -218,6 +218,7 @@ dir.create(here("Outputs", "LP_unsmoothed_asym", "Combined_Plots"), showWarnings
 # Loop -----------------------------------------------------------------------
 irf_store <- list()
 table_store <- list()
+plot_store <- list()
 
 for (mp_base in mp_base_vars) {
   for (climate in climate_shock_vars) {
@@ -294,21 +295,23 @@ for (mp_base in mp_base_vars) {
         scale_colour_manual(values = comp_cols, drop = FALSE, name = NULL) +
         scale_fill_manual(values = comp_cols, drop = FALSE, name = NULL) +
         labs(
-          title = paste0("Asymmetric local projection: ", dep_labels[[dep]]),
+          title = paste0(dep_labels[[dep]]),
           subtitle = paste0(
-            "MP shock: ", mp_labels[[mp_base]],
-            " | Climate shock: ", climate_labels[[climate]]
+            mp_labels[[mp_base]], "\n",
+             climate_labels[[climate]]
           ),
-          caption = plot_caption,
+          # caption = plot_caption,
           x = "Horizon (months)",
           y = "Coefficient"
         ) +
-        theme_minimal(base_size = 11) +
+        theme_minimal(base_size = 6) +
         theme(
           legend.position = "bottom",
-          legend.direction = "vertical",
-          plot.caption = element_text(hjust = 0, size = 8, colour = "grey30")
-        )
+          # legend.direction = "vertical",
+          plot.caption = element_text(hjust = 0, size = 6, colour = "grey30")
+        ) +
+        scale_x_continuous(breaks = scales::breaks_width(1))
+      plot_store[[combo]] <- p
       
       ggsave(
         filename = here(
@@ -413,7 +416,8 @@ artifacts <- list(
     big_shock_sd = big_shock_sd,
     climate_shocks = climate_shock_vars,
     mp_shocks = mp_base_vars
-  )
+  ),
+  plot_store = plot_store
 )
 
 write_rds(

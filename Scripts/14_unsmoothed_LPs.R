@@ -283,8 +283,8 @@ for (mp_base in mp_base_vars) {
         theme(
           legend.position = "bottom",
           plot.caption = element_text(hjust = 0, size = 6, colour = "grey30")
-        ) +
-        scale_y_continuous(breaks = breaks_pretty())
+        ) +  
+        scale_x_continuous(breaks = scales::breaks_width(1))
       
       plot_store[[combo]] <- p
       
