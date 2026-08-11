@@ -9,7 +9,7 @@ ols_tidy_group_models <-
   function(nested_data, formula) {
     nested_data |>
       mutate(models = map(data, ~feols(formula, data = .x, cluster = ~banks))) |>
-      mutate(models_coef = map(models, ~tidy(.)))
+      mutate(models_coef = map(models, ~tidy(., conf.int = TRUE)))
   }
 
 ols_pretty_full_results <-
