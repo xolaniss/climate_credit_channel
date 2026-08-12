@@ -199,56 +199,73 @@ mp_labels2 <- c(
   forward_guidance         = "Fwd. guidance"
 )
 
-shock_model_gg <- 
-  model_data_long_tbl |> 
-  filter(!mp_shock %in% c("country_risk", "central_bank_information")) |> 
+shock_model_data <-
+  model_data_long_tbl |>
+  filter(!mp_shock %in% c("country_risk", "central_bank_information")) |>
   ols_nest_full_prep(group_vars = c("credit", "mp_shock", "climate_shock")) |>
   ols_tidy_group_models(formula = formula) |>
   unnest(cols = models_coef, names_repair = "universal") |>
   select(credit, mp_shock, climate_shock, term, estimate, conf.low, conf.high, p.value) |>
   ungroup() |>
-  mutate(group = if_else(str_ends(credit, "credit|mortgages"), "Log of credit", "Lending rates")) |> 
   filter(term == "mp_shock_value:climate_shock_value") |>
   mutate(
+    group         = if_else(str_ends(credit, "credit|mortgages"), "Log of credit", "Lending rates"),
     credit        = factor(credit_labels[credit], levels = rev(credit_labels)),
     mp_shock      = factor(mp_labels2[mp_shock], levels = mp_labels2),
     climate_shock = factor(climate_labels[climate_shock], levels = climate_labels),
     sig           = if_else(p.value < 0.05, "p < 0.05", "p ≥ 0.05")
-  ) |>
-  ggplot(aes(x = estimate, y = credit, color = sig)) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
-  geom_errorbar(aes(xmin = conf.low, xmax = conf.high),
-                orientation = "y", width = 0.35) +
-  geom_point(size = 1.8) +
-  facet_grid(climate_shock + group ~ mp_shock, scale ="free") +
-  coord_cartesian(xlim = c(-1.5, 3)) +
-  # scale_color_manual(values = c("p < 0.05" = "#C0392B", "p ≥ 0.05" = "grey55")) +
-  scale_x_continuous(breaks = c(-1, 0, 1, 2)) +
-  labs(
-    x     = "Coefficient (MP shock × Climate shock interaction)",
-    y     = NULL,
-    color = NULL,
-    title    = "Interaction effect: MP shock × Climate shock",
-    subtitle = "Fixed effects regression (bank FE + quarter FE) | 95% CI, clustered SEs"
-  ) +
-  theme_bw(base_size = 11) +
-  theme(
-    legend.position  = "bottom",
-    strip.text       = element_text(size = 8.5),
-    axis.text.y      = element_text(size = 8),
-    axis.text.x      = element_text(size = 8),
-    panel.grid.minor = element_blank(),
-    strip.background = element_blank(),
-    panel.background = element_blank(),
-    panel.border     = element_rect(color = "grey80", fill = NA)) +
-  scale_color_manual(values = pnw_palette("Bay",2), labels = scales::label_wrap(20))
+  )
+
+fe_coef_plot <- function(data, title) {
+  data |>
+    ggplot(aes(x = estimate, y = credit, color = sig)) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+    geom_errorbar(aes(xmin = conf.low, xmax = conf.high),
+                  orientation = "y", width = 0.35) +
+    geom_point(size = 1.8) +
+    facet_grid(climate_shock ~ mp_shock, scales = "free_x") +
+    scale_x_continuous(breaks = scales::breaks_width(1)) +
+    scale_color_manual(values = pnw_palette("Bay", 2),
+                       labels = scales::label_wrap(20)) +
+    labs(
+      title    = title,
+      subtitle = "Fixed effects regression (bank FE + quarter FE) | 95% CI, clustered SEs",
+      x = "Coefficient (MP shock × Climate shock interaction)",
+      y = NULL, color = NULL
+    ) +
+    theme_bw(base_size = 11) +
+    theme(
+      legend.position  = "bottom",
+      strip.text       = element_text(size = 8.5),
+      axis.text.y      = element_text(size = 8),
+      axis.text.x      = element_text(size = 8),
+      panel.grid.minor = element_blank(),
+      strip.background = element_blank(),
+      panel.background = element_blank(),
+      panel.border     = element_rect(color = "grey80", fill = NA)
+    )
+}
+
+shock_model_rates_gg <-
+  shock_model_data |>
+  filter(group == "Lending rates") |>
+  fe_coef_plot(title = "Interaction effect: MP shock × Climate shock — Lending rates")
+
+shock_model_credit_gg <-
+  shock_model_data |>
+  filter(group == "Log of credit") |>
+  fe_coef_plot(title = "Interaction effect: MP shock × Climate shock — Log of credit")
+
+# Keep combined for backwards compatibility
+shock_model_gg <- shock_model_rates_gg
  
   
 
 # Save all models ------------------------------------------------------
 
 write_rds(
-  list(shock_models_tbl = shock_models_tbl,
-       shock_model_gg = shock_model_gg),
+  list(shock_models_tbl    = shock_models_tbl,
+       shock_model_rates_gg  = shock_model_rates_gg,
+       shock_model_credit_gg = shock_model_credit_gg),
   here("Outputs", "all_fe_models.rds")
 )
