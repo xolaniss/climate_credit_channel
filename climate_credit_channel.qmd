@@ -198,7 +198,7 @@ where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change i
 \newpage
 
 ```{r}
-#| label: "fig-all_fe_temp_models"
+#| label: "fig-credit_fe_temp_models"
 #| fig.cap: "Credit growth panel regression estimates"
 #| fig.height: 8
 
@@ -208,7 +208,19 @@ fixed_effects |>
   pluck(2)
 ```
 
-## Average climate shock
+
+```{r}
+#| label: "fig-rates_fe_temp_models"
+#| fig.cap: "Lending rates panel regression estimates"
+#| fig.height: 8
+
+fixed_effects |> 
+  pluck(3)
+```
+
+
+
+## Local projections 
 \newpage
 
 ```{r}
@@ -324,7 +336,49 @@ household_rate_precip_gg
 ```
 
 
-## Asymmetric climate shock
+
+
+\newpage
+
+```{r}
+#| label: "fig-asym_rate_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
+asym_household_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_rate_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
+asym_household_rate_precip_gg
+```
+
+
+
+
+## Discussion
+
+Fixed effects panel results
+
+The contemporaneous panel estimates show that climate shocks interact with monetary policy transmission, but the evidence is uneven across shock measures and credit types. Temperature shocks produce more consistently significant interactions than precipitation shocks, with the latter yielding few panel-level estimates that clear conventional significance thresholds. The interactions are concentrated in lending rates rather than credit volumes, and within rates, corporate mortgage rates are the most responsive outcome. The Romer and Miyajima measures — once their opposing sign conventions are accounted for — tell a broadly consistent story: a temperature shock during a monetary policy tightening is associated with a dampening of the rate transmission, suggesting that climate stress blunts the pass-through of policy decisions into lending rates. The four market-based factors (target, forward guidance, CB information, country risk) are less precisely estimated in the interaction, though forward guidance and CB information still return some significant interaction coefficients for mortgage rates.
+
+Local projections results
+
+The local projections reveal that these effects are not merely contemporaneous but persist over the forecast horizon. Approximately 67% of interaction-horizon combinations are significant at the 68% confidence level for both temperature and precipitation shocks — a notably high share, though the 68% CI is a relatively lenient threshold common in the LP literature. The direction is predominantly dampening: across both borrower types and both credit volumes and rates, significant interactions are more often negative than positive under precipitation shocks (roughly 55–58% dampening). For temperature shocks the pattern holds for corporate borrowers and household rates, but household credit volumes show the reverse — temperature shocks appear to amplify the household credit volume response to MP, with 115 amplifying horizon-combinations against 47 dampening ones. This asymmetry between households and corporates on the volume side is the most interesting divergence between the two borrower types and warrants closer inspection.
+
+Overall reading
+
+Taken together, the two approaches suggest that climate shocks act primarily as a friction that weakens monetary policy pass-through, in line with the external finance premium mechanism described in the paper. Temperature shocks have more bite than precipitation shocks in the contemporaneous regression, but both climate variables produce persistent interaction effects in the LPs. The one notable exception — household credit volumes appearing to amplify under temperature shocks — could reflect a precautionary borrowing response or a compositional effect, and is worth investigating before drawing strong conclusions.
+
+# Drivers - variation across sectors, horizons, and shock types
+
 
 ```{r}
 #| label: "fig-asym_corporate_temp"
@@ -399,47 +453,6 @@ asym_corporate_rate_precip_gg
 ```
 
 
-\newpage
-
-```{r}
-#| label: "fig-asym_rate_household_temp"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
-asym_household_rate_temp_gg
-```
-
-```{r}
-#| label: "fig-asym_rate_household_precip"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
-asym_household_rate_precip_gg
-```
-
-
-
-
-## Discussion
-
-Fixed effects panel results
-
-The contemporaneous panel estimates show that climate shocks interact with monetary policy transmission, but the evidence is uneven across shock measures and credit types. Temperature shocks produce more consistently significant interactions than precipitation shocks, with the latter yielding few panel-level estimates that clear conventional significance thresholds. The interactions are concentrated in lending rates rather than credit volumes, and within rates, corporate mortgage rates are the most responsive outcome. The Romer and Miyajima measures — once their opposing sign conventions are accounted for — tell a broadly consistent story: a temperature shock during a monetary policy tightening is associated with a dampening of the rate transmission, suggesting that climate stress blunts the pass-through of policy decisions into lending rates. The four market-based factors (target, forward guidance, CB information, country risk) are less precisely estimated in the interaction, though forward guidance and CB information still return some significant interaction coefficients for mortgage rates.
-
-Local projections results
-
-The local projections reveal that these effects are not merely contemporaneous but persist over the forecast horizon. Approximately 67% of interaction-horizon combinations are significant at the 68% confidence level for both temperature and precipitation shocks — a notably high share, though the 68% CI is a relatively lenient threshold common in the LP literature. The direction is predominantly dampening: across both borrower types and both credit volumes and rates, significant interactions are more often negative than positive under precipitation shocks (roughly 55–58% dampening). For temperature shocks the pattern holds for corporate borrowers and household rates, but household credit volumes show the reverse — temperature shocks appear to amplify the household credit volume response to MP, with 115 amplifying horizon-combinations against 47 dampening ones. This asymmetry between households and corporates on the volume side is the most interesting divergence between the two borrower types and warrants closer inspection.
-
-Overall reading
-
-Taken together, the two approaches suggest that climate shocks act primarily as a friction that weakens monetary policy pass-through, in line with the external finance premium mechanism described in the paper. Temperature shocks have more bite than precipitation shocks in the contemporaneous regression, but both climate variables produce persistent interaction effects in the LPs. The one notable exception — household credit volumes appearing to amplify under temperature shocks — could reflect a precautionary borrowing response or a compositional effect, and is worth investigating before drawing strong conclusions.
-
-# Drivers - variation across sectors, horizons, and shock types
-
 
 
 ```{r}
@@ -461,17 +474,6 @@ extensions |>
 
 ```
 
-
-\newpage
-```{r}
-#| label: "fig-climate_state"
-#| fig.cap: "Length of dampening or amplification by climate state"
-#| fog.height: 6
-
-extensions |> 
-  pluck("combined_asym_gg")
-
-```
 
 
 
