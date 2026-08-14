@@ -146,7 +146,7 @@ where $\Delta r_t$ is the change in the repo rate forecast, $\tilde{r_t}$ is the
 As an alternative, we construct a second measure of the monetary policy surprise following @miyajima2024. This approach uses forecast errors — the gap between what forecasters expected and what actually occurred — rather than SARB forecasts. The construction proceeds in two steps. First, for each variable $i$, the forecast error is:
 
 $$
-FE^i_{t} = ACT^i_{t} - EXP^i_{t},
+FE^i_{t} =  EXP^i_{t} - ACT^i_{t},
 $$ {#eq-forecast_error}
 
 where $i \in \{\text{policy rate}, \text{inflation}, \text{GDP growth}\}$, $ACT^i_{t}$ is what was actually observed, and $EXP^i_{t}$ is the Bloomberg consensus forecast made beforehand. In the second step, the policy rate forecast error is regressed on the inflation and output growth forecast errors:
@@ -199,7 +199,7 @@ where $\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1}$ is the cumulative change i
 
 ```{r}
 #| label: "fig-credit_fe_temp_models"
-#| fig.cap: "Credit growth panel regression estimates"
+#| fig.cap: "Lending rate panel regression estimates"
 #| fig.height: 8
 
 fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds")) 
@@ -211,7 +211,7 @@ fixed_effects |>
 
 ```{r}
 #| label: "fig-rates_fe_temp_models"
-#| fig.cap: "Lending rates panel regression estimates"
+#| fig.cap: "Credit growth panel regression estimates"
 #| fig.height: 8
 
 fixed_effects |> 
@@ -239,7 +239,7 @@ plot_function <- function(n){
 plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
   pluck(4)
 
-corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)/ plot_function(73)  
+corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)
 
 corporate_temp_gg
 ```
@@ -250,7 +250,7 @@ corporate_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) 
+corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) 
 corporate_precip_gg
 
 ```
@@ -263,7 +263,7 @@ corporate_precip_gg
 #| fig.height: 8
 #| fig.width: 9
 
-household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)
+household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) 
 
 household_temp_gg
 ```
@@ -274,7 +274,7 @@ household_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)
+household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) 
 household_precip_gg
 ```
 
@@ -293,7 +293,7 @@ odd_plot_function <- function(n){
   (plots[[n]] + plots[[n+2]] + plots[[n+4]] ) 
 }
 
-corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) 
+corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) 
 
 corporate_rate_temp_gg
 ```
@@ -304,7 +304,7 @@ corporate_rate_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) 
+corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67)
 
 corporate_rate_precip_gg
 
@@ -319,7 +319,7 @@ corporate_rate_precip_gg
 #| fig.height: 8
 #| fig.width: 9
 
-household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
+household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) 
 
 household_rate_temp_gg
 ```
@@ -330,36 +330,10 @@ household_rate_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
+household_rate_precip_gg <- odd_plot_function(n = 20) / odd_plot_function(44) / odd_plot_function(68) 
 
 household_rate_precip_gg
 ```
-
-
-
-
-\newpage
-
-```{r}
-#| label: "fig-asym_rate_household_temp"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) / odd_plot_function(80) 
-asym_household_rate_temp_gg
-```
-
-```{r}
-#| label: "fig-asym_rate_household_precip"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_household_rate_precip_gg <- odd_plot_function(n = 16) / odd_plot_function(44) / odd_plot_function(68) / odd_plot_function(88) 
-asym_household_rate_precip_gg
-```
-
 
 
 
@@ -386,10 +360,16 @@ Taken together, the two approaches suggest that climate shocks act primarily as 
 #| fig.height: 8
 #| fig.width: 9
 
-plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> 
+asym_plot_function <- function(n){
+  n <- n
+  
+  (asym_plots[[n]] + asym_plots[[n+1]] + asym_plots[[n+2]] ) 
+}
+
+asym_plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> 
   pluck(4)
 
-asym_corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)/ plot_function(73)  
+asym_corporate_temp_gg <- asym_plot_function(n = 1) / asym_plot_function(25) /  asym_plot_function(49)  
 
 asym_corporate_temp_gg
 ```
@@ -400,7 +380,7 @@ asym_corporate_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-asym_corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) / plot_function(85) 
+asym_corporate_precip_gg <- asym_plot_function(13) / asym_plot_function(37) /  asym_plot_function(61) 
 asym_corporate_precip_gg
 
 ```
@@ -413,7 +393,7 @@ asym_corporate_precip_gg
 #| fig.height: 8
 #| fig.width: 9
 
-asym_household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) /  plot_function(76)
+asym_household_temp_gg <- asym_plot_function(n = 4) / asym_plot_function(28) / asym_plot_function(52)
 asym_household_temp_gg
 ```
 
@@ -423,7 +403,14 @@ asym_household_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-asym_household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) / plot_function(88)
+asym_odd_function <- function(n){
+  n <- n
+  
+  (asym_plots[[n]] + asym_plots[[n+2]] + asym_plots[[n+4]] ) 
+}
+
+
+asym_household_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
 asym_household_precip_gg
 ```
 
@@ -437,7 +424,7 @@ asym_household_precip_gg
 #| fig.width: 9
 
 
-asym_corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) / odd_plot_function(79) 
+asym_corporate_rate_temp_gg <- asym_odd_function(n = 7) / asym_odd_function(31) / asym_odd_function(55)
 asym_corporate_rate_temp_gg
 ```
 
@@ -447,11 +434,30 @@ asym_corporate_rate_temp_gg
 #| fig.height: 8
 #| fig.width: 9
 
-asym_corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67) / odd_plot_function(91) 
+asym_corporate_rate_precip_gg <- asym_odd_function(n = 19) / asym_odd_function(43) / asym_odd_function(67)
 asym_corporate_rate_precip_gg
 
 ```
 
+```{r}
+#| label: "fig-asym_rate_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_temp_gg <- asym_odd_function(n = 8) / asym_odd_function(32) / asym_odd_function(56)  
+asym_household_rate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_rate_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_rate_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
+asym_household_rate_precip_gg
+```
 
 
 
@@ -474,8 +480,16 @@ extensions |>
 
 ```
 
+\newpage
 
+```{r}
+#| label: "fig-product_persistence"
+#| fig.cap: "Sector length of dampening or amplification"
+#| fig.height: 8
+extensions |> 
+  pluck("combined_product_gg")
 
+```
 
 
 # Conclusion

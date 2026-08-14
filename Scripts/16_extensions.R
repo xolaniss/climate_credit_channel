@@ -219,6 +219,93 @@ direction_gg <-
   )
 
 
+## Persistence and Peak by credit product -----
+
+short_dep_labels2 <- c(
+  corporate_mortgage_rate         = "Corp. mortgage",
+  corporate_secured_credit_rate   = "Corp. secured",
+  corporate_unsecured_credit_rate = "Corp. unsecured",
+  household_mortgage_rate         = "HH mortgage",
+  household_secured_credit_rate   = "HH secured",
+  household_unsecured_credit_rate = "HH unsecured",
+  corporate_mortgages             = "Corp. mortgage",
+  corporate_secured_credit        = "Corp. secured",
+  corporate_unsecured_credit      = "Corp. unsecured",
+  household_mortgages             = "HH mortgage",
+  household_secured_credit        = "HH secured",
+  household_unsecured_credit      = "HH unsecured"
+)
+
+product_order <- c(
+  "Corp. mortgage", "Corp. secured", "Corp. unsecured",
+  "HH mortgage",    "HH secured",    "HH unsecured"
+)
+
+product_summary_tbl <- timing_stats |>
+  mutate(dep_label = factor(short_dep_labels2[dep], levels = rev(product_order))) |>
+  group_by(dep_label, borrower, credit_type, climate_label) |>
+  summarise(
+    med_peak = median(peak_horizon),
+    lo_peak  = quantile(peak_horizon, 0.25),
+    hi_peak  = quantile(peak_horizon, 0.75),
+    med_sig  = median(n_sig),
+    lo_sig   = quantile(n_sig, 0.25),
+    hi_sig   = quantile(n_sig, 0.75),
+    .groups  = "drop"
+  )
+
+product_cols <- c("Corporate" = "#00496f", "Household" = "#dd4124")
+
+p_product_peak_gg <- product_summary_tbl |>
+  ggplot(aes(x = med_peak, y = dep_label, colour = borrower,
+             xmin = lo_peak, xmax = hi_peak)) +
+  geom_vline(xintercept = median(timing_stats$peak_horizon),
+             linetype = "dashed", colour = "grey60", linewidth = 0.5) +
+  geom_pointrange(size = 0.55, linewidth = 0.9) +
+  facet_grid(credit_type ~ climate_label, scales = "free_y", space = "free_y") +
+  scale_x_continuous(breaks = seq(0, 12, 2), limits = c(0, 13)) +
+  scale_colour_manual(values = product_cols) +
+  labs(
+    title  = "Peak horizon by credit product",
+    subtitle = "Median across MP shock measures | range = IQR | dashed = overall median",
+    x = "Peak horizon (quarters)", y = NULL, colour = NULL
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    panel.grid.minor   = element_blank(),
+    panel.grid.major.y = element_blank(),
+    strip.text         = element_text(size = 9, face = "bold"),
+    legend.position    = "bottom"
+  )
+
+p_product_sig_gg <- product_summary_tbl |>
+  ggplot(aes(x = med_sig, y = dep_label, colour = borrower,
+             xmin = lo_sig, xmax = hi_sig)) +
+  geom_vline(xintercept = median(timing_stats$n_sig),
+             linetype = "dashed", colour = "grey60", linewidth = 0.5) +
+  geom_pointrange(size = 0.55, linewidth = 0.9) +
+  facet_grid(credit_type ~ climate_label, scales = "free_y", space = "free_y") +
+  scale_x_continuous(breaks = seq(0, 13, 2), limits = c(0, 13)) +
+  scale_colour_manual(values = product_cols) +
+  labs(
+    title    = "Persistence by credit product",
+    subtitle = "Quarters significant at 68% CI | range = IQR | dashed = overall median",
+    x = "Quarters significant", y = NULL, colour = NULL
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    panel.grid.minor   = element_blank(),
+    panel.grid.major.y = element_blank(),
+    strip.text         = element_text(size = 9, face = "bold"),
+    legend.position    = "bottom"
+  )
+
+combined_product_gg <-
+  p_product_peak_gg / p_product_sig_gg +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+
+
 ## Climate state -----------
 
 asym_timing <- irf_asym |>
@@ -322,9 +409,10 @@ combined_asym_gg <-
 # Export ------------------------------------------------------------------
 
 artifacts_extensions <- list(
-  direction_gg = direction_gg,
-  combined_gg = combined_gg,
-  combined_asym_gg = combined_asym_gg
+  direction_gg         = direction_gg,
+  combined_gg          = combined_gg,
+  combined_product_gg  = combined_product_gg,
+  combined_asym_gg     = combined_asym_gg
 )
 
 write_rds(artifacts_extensions, here("Outputs", "artifacts_extensions.rds"))
