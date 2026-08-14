@@ -33,7 +33,7 @@ climate_temp_shocks_quarterly_tbl <-
   timetk::summarise_by_time(
     .date_var = date,
     .by = "quarter",
-    across(.cols = contains("temp"),  .fns = mean)
+    across(.cols = contains("temp"),  .fns = median)
   ) |> 
   mutate(date = date %-time% "1 day") 
 
@@ -54,7 +54,7 @@ lending_quarterly_tbl <-
   timetk::summarise_by_time(
     .date_var = date,
     .by = "quarter",
-    across(.cols = everything() ,  .fns = sum) # maybe average
+    across(.cols = everything() ,  .fns = median) # maybe average
   ) |> 
   mutate(date = date %-time% "1 day") |> 
   ungroup()
@@ -130,7 +130,8 @@ model_data_tbl <-
   left_join(climate_precip_shocks_quarterly_panel_tbl, by = c("banks", "date")) |> 
   left_join(suprises_panel_tbl, by = c("banks", "date")) |> 
   left_join(market_based_surprises_panel_tbl, by = c("banks", "date")) |> 
-  filter(date > "2012-12-31")
+  filter(date > "2012-12-31") |> 
+  select(-ends_with("value"), -starts_with("land"))
   
 
 
