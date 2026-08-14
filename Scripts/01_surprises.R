@@ -29,7 +29,8 @@ market_based_surprises_tbl <-
          "Forward Guidance" = 3, 
          "Central Bank Information" = 4, 
          "Country Risk" = 5) |> 
-  filter(Date >= "2008-01-01" )
+  filter(Date >= "2008-01-01" ) |> 
+  mutate(across(-Date, ~ .x /100))
   
 
   

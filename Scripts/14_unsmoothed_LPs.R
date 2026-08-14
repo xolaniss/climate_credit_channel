@@ -276,7 +276,7 @@ for (mp_base in mp_base_vars) {
           #   "Red: response to the same MP shock when it coincides with a 1 SD climate shock. ",
           #   "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
           # ),
-          x = "Horizon (months)",
+          x = "Horizon (quaters)",
           y = "Coefficient"
         ) +
         theme_minimal(base_size = 6) +
@@ -303,7 +303,7 @@ for (mp_base in mp_base_vars) {
             " | Climate shock: ", climate_labels[[climate]]
           ),
           caption = "Difference between the two IRF paths: the extra response attributable to the climate shock overlap.",
-          x = "Horizon (months)",
+          x = "Horizon (quaters)",
           y = "Interaction coefficient"
         ) +
         theme_minimal(base_size = 11) +
@@ -381,7 +381,7 @@ for (dep in dep_vars) {
           "Red: response to the same MP shock when it coincides with a 1 SD climate shock. ",
           "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
         ),
-        x = "Horizon (months)",
+        x = "Horizon (quaters)",
         y = "Coefficient"
       ) +
       theme_minimal(base_size = 11) +
@@ -434,7 +434,7 @@ for (dep in dep_vars) {
           "Interaction across all six MP surprises | Climate shock: ",
           climate_labels[[climate]]
         ),
-        x = "Horizon (months)",
+        x = "Horizon (quaters)",
         y = "Interaction coefficient"
       ) +
       theme_minimal(base_size = 11) +

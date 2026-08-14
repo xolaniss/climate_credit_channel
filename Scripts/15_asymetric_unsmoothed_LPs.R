@@ -301,7 +301,7 @@ for (mp_base in mp_base_vars) {
              climate_labels[[climate]]
           ),
           # caption = plot_caption,
-          x = "Horizon (months)",
+          x = "Horizon (quaters)",
           y = "Coefficient"
         ) +
         theme_minimal(base_size = 6) +
@@ -367,7 +367,7 @@ for (dep in dep_vars) {
           climate_labels[[climate]]
         ),
         caption = plot_caption,
-        x = "Horizon (months)",
+        x = "Horizon (quaters)",
         y = "Coefficient"
       ) +
       theme_minimal(base_size = 11) +
