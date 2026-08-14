@@ -23,7 +23,10 @@ source(here("Functions", "fx_plot.R"))
 model_data_purge_tbl <- read_rds(
   here("Outputs", "artifacts_model_data_purged.rds")
 ) |>
-  pluck("model_data_purge_tbl")
+  pluck("model_data_purge_tbl") |> 
+  mutate(
+    fe_date = as.numeric(lubridate::quarter(date))
+  )
 
 # Define variables ----------------------------------------------------------
 
@@ -100,10 +103,10 @@ panel_id <- ~ banks + date
 
 # Component labels + colours ------------------------------------------------
 comp_base <- "MP shock alone"
-comp_climate <- "MP shock during a 1 SD climate shock"
+comp_climate <- "MP shock with climate shock"
 comp_interaction <- "Interaction (climate amplification)"
 comp_levels <- c(comp_base, comp_climate)
-comp_cols <- c("#1b6ca8", "#c1272d")
+comp_cols <- c("#00496f", "#dd4124")
 names(comp_cols) <- comp_levels
 
 # create z of a two-sided level (0.68 -> 0.994, 0.90 -> 1.645) - need this for the confidence intervals
@@ -126,7 +129,7 @@ estimate_h <- function(dat, dep, climate, resid, h) {
     lag_terms(resid, n_lags)
   )
   fe <- "banks"
-  trend <- "+ as.numeric(date)" #linear time trend eg. technological improvements
+  trend <- "+ date" #linear time trend eg. technological improvements
   fml <- as.formula( #build LP formula
     paste0(
       lhs, " ~ ",
@@ -192,6 +195,7 @@ dir.create(here("Outputs", "LP_unsmoothed", "Combined_Plots"), showWarnings = FA
 # Loop -----------------------------------------------------------------------
 irf_store <- list() #create empty lists to store IRFs and regression tables
 table_store <- list()
+plot_store <- list()
 
 for (mp_base in mp_base_vars) {
   for (climate in climate_shock_vars) {
@@ -262,24 +266,27 @@ for (mp_base in mp_base_vars) {
         scale_colour_manual(values = comp_cols, name = NULL) +
         scale_fill_manual(values = comp_cols, name = NULL) +
         labs(
-          title = paste0("Local projection: ", dep_labels[[dep]]),
+          title = paste0(dep_labels[[dep]]),
           subtitle = paste0(
-            "MP shock: ", mp_labels[[mp_base]],
-            " | Climate shock: ", climate_labels[[climate]]
+             mp_labels[[mp_base]],
+            "\n", climate_labels[[climate]]
           ),
-          caption = paste0(
-            "Blue: response to the MP shock on its own. ",
-            "Red: response to the same MP shock when it coincides with a 1 SD climate shock. ",
-            "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
-          ),
-          x = "Horizon (months)",
+          # caption = paste0(
+          #   "Blue: response to the MP shock on its own. ",
+          #   "Red: response to the same MP shock when it coincides with a 1 SD climate shock. ",
+          #   "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
+          # ),
+          x = "Horizon (quaters)",
           y = "Coefficient"
         ) +
-        theme_minimal(base_size = 11) +
+        theme_minimal(base_size = 6) +
         theme(
           legend.position = "bottom",
-          plot.caption = element_text(hjust = 0, size = 8, colour = "grey30")
-        )
+          plot.caption = element_text(hjust = 0, size = 6, colour = "grey30")
+        ) +  
+        scale_x_continuous(breaks = scales::breaks_width(1))
+      
+      plot_store[[combo]] <- p
       
       # Interaction plot: the climate amplification term on its own
       p_int <- irf_tbl |>
@@ -296,7 +303,7 @@ for (mp_base in mp_base_vars) {
             " | Climate shock: ", climate_labels[[climate]]
           ),
           caption = "Difference between the two IRF paths: the extra response attributable to the climate shock overlap.",
-          x = "Horizon (months)",
+          x = "Horizon (quaters)",
           y = "Interaction coefficient"
         ) +
         theme_minimal(base_size = 11) +
@@ -312,6 +319,8 @@ for (mp_base in mp_base_vars) {
         height = 4.5,
         dpi = 300
       )
+      
+     
       
       ggsave(
         filename = here(
@@ -372,7 +381,7 @@ for (dep in dep_vars) {
           "Red: response to the same MP shock when it coincides with a 1 SD climate shock. ",
           "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
         ),
-        x = "Horizon (months)",
+        x = "Horizon (quaters)",
         y = "Coefficient"
       ) +
       theme_minimal(base_size = 11) +
@@ -425,7 +434,7 @@ for (dep in dep_vars) {
           "Interaction across all six MP surprises | Climate shock: ",
           climate_labels[[climate]]
         ),
-        x = "Horizon (months)",
+        x = "Horizon (quaters)",
         y = "Interaction coefficient"
       ) +
       theme_minimal(base_size = 11) +
@@ -467,7 +476,8 @@ artifacts <- list(
     components = c(comp_levels, comp_interaction),
     climate_shocks = climate_shock_vars,
     mp_shocks = mp_base_vars
-  )
+  ),
+  plot_store = plot_store
 )
 
 write_rds(

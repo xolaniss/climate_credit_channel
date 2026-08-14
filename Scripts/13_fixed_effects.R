@@ -16,21 +16,13 @@ library(here)
 # Functions ---------------------------------------------------------------
 source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
+source(here("Functions", "group_ols_functions.R"))
 
 # Import ---------------------------------------------------------------
 model_data_tbl <- read_rds(
   here("Outputs", "artifacts_model_data.rds")
 ) |>
   pluck("model_data_tbl")
-
-# Data preparation -----------------------------------------------------
-
-# Convert identifiers to factors
-model_data_tbl <- model_data_tbl |>
-  mutate(
-    banks = as.factor(banks),
-    date = as.factor(date)
-  )
 
 # Dependent variables --------------------------------------------------
 
@@ -50,16 +42,12 @@ dependent_vars <- c(
 )
 
 # Climate shock variables ----------------------------------------------
-
 climate_vars <- c(
-  # "land_temp_shock",
   "pop_temp_shock",
-  # "land_precip_shock",
   "pop_precip_shock"
 )
 
 # Monetary policy surprises --------------------------------------------
-
 surprise_vars <- c(
   "miyajima_surprise",
   "romer_surprise",
@@ -72,216 +60,212 @@ surprise_vars <- c(
 # Variable labels ------------------------------------------------------
 
 variable_labels <- c(
-  
-  # Climate variables
-  # "land_temp_shock" =
-  #   "Land-weighted temperature shock",
-  
+  # Climate shock
   "pop_temp_shock" =
     "Population-weighted temperature shock",
-  
-  # "land_precip_shock" =
-  #   "Land-weighted precipitation shock",
-  
   "pop_precip_shock" =
     "Population-weighted precipitation shock",
   
   # Surprise variables
   "miyajima_surprise" =
     "Miyajima surprise",
-  
   "romer_surprise" =
     "Romer surprise",
-  
   "target" =
     "Target factor",
-  
   "forward_guidance" =
     "Forward guidance factor",
-  
   "central_bank_information" =
     "Central bank information factor",
-  
   "country_risk" =
     "Country risk factor",
   
-  # Interaction terms --------------------------------------------------
-  
-  # "land_temp_shock:miyajima_surprise" =
-  #   "Land temp shock × Miyajima surprise",
-  # 
-  # "land_temp_shock:romer_surprise" =
-  #   "Land temp shock × Romer surprise",
-  # 
-  # "land_temp_shock:target" =
-  #   "Land temp shock × Target factor",
-  
-  # "land_temp_shock:forward_guidance" =
-  #   "Land temp shock × Forward guidance",
-  # 
-  # "land_temp_shock:central_bank_information" =
-  #   "Land temp shock × Central bank information",
-  # 
-  # "land_temp_shock:country_risk" =
-  #   "Land temp shock × Country risk",
-  # 
+  # Interaction terms 
   "pop_temp_shock:miyajima_surprise" =
     "Population temp shock × Miyajima surprise",
-  
   "pop_temp_shock:romer_surprise" =
     "Population temp shock × Romer surprise",
-  
   "pop_temp_shock:target" =
     "Population temp shock × Target factor",
-  
   "pop_temp_shock:forward_guidance" =
     "Population temp shock × Forward guidance",
-  
   "pop_temp_shock:central_bank_information" =
     "Population temp shock × Central bank information",
-  
   "pop_temp_shock:country_risk" =
     "Population temp shock × Country risk",
-  
-  # "land_precip_shock:miyajima_surprise" =
-  #   "Land precip shock × Miyajima surprise",
-  # 
-  # "land_precip_shock:romer_surprise" =
-  #   "Land precip shock × Romer surprise",
-  # 
-  # "land_precip_shock:target" =
-  #   "Land precip shock × Target factor",
-  # 
-  # "land_precip_shock:forward_guidance" =
-  #   "Land precip shock × Forward guidance",
-  # 
-  # "land_precip_shock:central_bank_information" =
-  #   "Land precip shock × Central bank information",
-  # 
-  # "land_precip_shock:country_risk" =
-  #   "Land precip shock × Country risk",
-  
   "pop_precip_shock:miyajima_surprise" =
     "Population precip shock × Miyajima surprise",
-  
   "pop_precip_shock:romer_surprise" =
     "Population precip shock × Romer surprise",
-  
   "pop_precip_shock:target" =
     "Population precip shock × Target factor",
-  
   "pop_precip_shock:forward_guidance" =
     "Population precip shock × Forward guidance",
-  
   "pop_precip_shock:central_bank_information" =
     "Population precip shock × Central bank information",
-  
   "pop_precip_shock:country_risk" =
     "Population precip shock × Country risk"
 )
 
-# Create output folders ------------------------------------------------
+# Regression estimation ------------------------------------------------
+formula <- as.formula(
+  credit_value ~ mp_shock_value + climate_shock_value + 
+    climate_shock_value * mp_shock_value |
+    banks + lubridate::year(date))
 
-dir.create(
-  here("Outputs", "Fixed Effects Regression Tables"),
-  recursive = TRUE,
-  showWarnings = FALSE
+
+model_data_long_tbl <- 
+  model_data_tbl |>
+  select(-ends_with("neg"), -ends_with("pos")) |>
+  pivot_longer(
+    -c(
+      "banks",
+      "date",
+      ends_with("shock"),
+      ends_with("surprise"),
+      "target",
+      "forward_guidance",
+      "central_bank_information",
+      "country_risk"
+    ),
+    values_to = "credit_value",
+    names_to = "credit"
+  ) |> 
+  pivot_longer(
+    -c("banks", "date", "credit", "credit_value", ends_with("shock")),
+    names_to = "mp_shock",
+    values_to = "mp_shock_value"
+  ) |> 
+  pivot_longer(
+    -c("banks", "date", "credit", "credit_value", "mp_shock", "mp_shock_value"),
+    names_to = "climate_shock",
+    values_to = "climate_shock_value"
+  ) |> 
+  relocate(
+    c("mp_shock", "climate_shock"), .before = credit_value
+  ) 
+  
+
+# Running regression workflow-----------------------------------------
+
+## Regardless of type of climate and mp_shock --------------------
+model_data_long_tbl |> 
+  ols_nest_full_prep(group_vars = "credit") |> 
+  ols_tidy_group_models(formula = formula) |> 
+  ols_pretty_full_results(group_vars = "credit")
+  
+
+## Regardless of climate shock ------------
+model_data_long_tbl |> 
+  ols_nest_full_prep(group_vars = c("credit", "mp_shock")) |> 
+  ols_tidy_group_models(formula = formula)  |> 
+  ols_pretty_full_results(group_vars = c("credit", "mp_shock"))
+
+  
+## Full regression --------------
+shock_models_tbl <-
+  model_data_long_tbl |>
+  ols_nest_full_prep(group_vars = c("credit", "mp_shock", "climate_shock")) |>
+  ols_tidy_group_models(formula = formula)  |>
+  ols_pretty_full_results(group_vars = c("credit", "mp_shock", "climate_shock")) 
+
+shock_models_tbl
+
+## Plots ----------------------
+credit_labels <- c(
+  corporate_unsecured_credit       = "Corp. unsecured credit",
+  corporate_secured_credit         = "Corp. secured credit",
+  corporate_mortgages              = "Corp. mortgages",
+  household_unsecured_credit       = "HH unsecured credit",
+  household_secured_credit         = "HH secured credit",
+  household_mortgages              = "HH mortgages",
+  corporate_unsecured_credit_rate  = "Corp. unsecured rate",
+  corporate_secured_credit_rate    = "Corp. secured rate",
+  corporate_mortgage_rate          = "Corp. mortgage rate",
+  household_unsecured_credit_rate  = "HH unsecured rate",
+  household_secured_credit_rate    = "HH secured rate",
+  household_mortgage_rate          = "HH mortgage rate"
 )
 
-# Regression estimation ------------------------------------------------
+climate_labels <- c(
+  pop_temp_shock   = "Temperature shock",
+  pop_precip_shock = "Precipitation shock"
+)
 
-# Loop initial command 
-all_models <- list()
+mp_labels2 <- c(
+  miyajima_surprise        = "Miyajima",
+  romer_surprise           = "Romer",
+  target                   = "Target",
+  forward_guidance         = "Fwd. guidance"
+)
 
-for(dep in dependent_vars){
-  dep_models <- list()
-  for(climate in climate_vars){
-    for(surprise in surprise_vars){
-      regression_formula <- as.formula(      # Make formula
-        paste0(
-          dep,
-          " ~ ",
-          climate,
-          " * ",
-          surprise,
-          " | banks "
-        )
-      )
-      model <- feols(      # Estimate FE model
-        regression_formula,
-        data = model_data_tbl,
-        cluster = ~banks
-      )
-      model_name <- paste(          # naming model
-        climate,
-        "x",
-        surprise,
-        sep = "_"
-      )
-      dep_models[[model_name]] <- model
-    }
-  }
-  all_models[[dep]] <- dep_models        # Store models
-}
-
-# Export regression tables ---------------------------------------------
-
-# Loop initial command 
-for(dep in names(all_models)){
-  models_tbl <- all_models[[dep]] # extracts all regression models associated with the current dependent variable
-  
-  # Create numbered column headings
-  model_names <- paste0(
-    "(",
-    seq_along(models_tbl),
-    ")"
-  )
-  names(models_tbl) <- model_names
-  modelsummary(                 # Create table
-    models_tbl,
-    statistic = "std.error",  # Robust clustered SEs (estimated in feols)
-    stars = c(
-      "*" = .10,
-      "**" = .05,
-      "***" = .01
-    ),
-    gof_map = c(         # Goodness-of-fit statistics
-      "nobs",
-      "r.squared",
-      "adj.r.squared",
-      "within.r.squared"
-    ),
-    coef_map = variable_labels # Rename variables
-    # output = here(              # Output file
-    #   "Outputs",
-    #   "Fixed Effects Regression Tables",
-    #   paste0(dep, "_fe_regressions.html")
-    # )
-  )
-  
- 
-}
-
-
-# Extracting coeficients -----------------------------------------
-
-estimates_tbl <- 
-  map_dfr(models_tbl, modelsummary::get_estimates, .id = "model") |> 
-  mutate(estimate = round(estimate, 3)) |> 
-  select(-starts_with("conf"), -statistic, -df.error, -starts_with("s."), -group, -std.error) |> 
+shock_model_data <-
+  model_data_long_tbl |>
+  filter(!mp_shock %in% c("country_risk", "central_bank_information")) |>
+  ols_nest_full_prep(group_vars = c("credit", "mp_shock", "climate_shock")) |>
+  ols_tidy_group_models(formula = formula) |>
+  unnest(cols = models_coef, names_repair = "universal") |>
+  select(credit, mp_shock, climate_shock, term, estimate, conf.low, conf.high, p.value) |>
+  ungroup() |>
+  filter(term == "mp_shock_value:climate_shock_value") |>
   mutate(
-    stars = ifelse(p.value < 0.01, "***", 
-                   ifelse(p.value < 0.05, "**", 
-                          ifelse(p.value < 0.1, "*", "")))
-  ) |> 
-  mutate(estimate = paste0(estimate, stars)) |> 
-  pivot_wider(names_from = model, values_from = estimate) |> 
-  select(-p.value, -stars) 
+    group         = if_else(str_ends(credit, "credit|mortgages"), "Log of credit", "Lending rates"),
+    credit        = factor(credit_labels[credit], levels = rev(credit_labels)),
+    mp_shock      = factor(mp_labels2[mp_shock], levels = mp_labels2),
+    climate_shock = factor(climate_labels[climate_shock], levels = climate_labels),
+    sig           = if_else(p.value < 0.05, "p < 0.05", "p ≥ 0.05")
+  )
 
+fe_coef_plot <- function(data, title) {
+  data |>
+    ggplot(aes(x = estimate, y = credit, color = sig)) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+    geom_errorbar(aes(xmin = conf.low, xmax = conf.high),
+                  orientation = "y", width = 0.35) +
+    geom_point(size = 1.8) +
+    facet_grid(climate_shock ~ mp_shock, scales = "free_x") +
+    scale_x_continuous(breaks = scales::breaks_width(1)) +
+    scale_color_manual(values = pnw_palette("Bay", 2),
+                       labels = scales::label_wrap(20)) +
+    labs(
+      title    = title,
+      subtitle = "Fixed effects regression (bank FE + quarter FE) | 95% CI, clustered SEs",
+      x = "Coefficient (MP shock × Climate shock interaction)",
+      y = NULL, color = NULL
+    ) +
+    theme_bw(base_size = 11) +
+    theme(
+      legend.position  = "bottom",
+      strip.text       = element_text(size = 8.5),
+      axis.text.y      = element_text(size = 8),
+      axis.text.x      = element_text(size = 8),
+      panel.grid.minor = element_blank(),
+      strip.background = element_blank(),
+      panel.background = element_blank(),
+      panel.border     = element_rect(color = "grey80", fill = NA)
+    )
+}
+
+shock_model_rates_gg <-
+  shock_model_data |>
+  filter(group == "Lending rates") |>
+  fe_coef_plot(title = "Interaction effect: MP shock × Climate shock — Lending rates")
+
+shock_model_credit_gg <-
+  shock_model_data |>
+  filter(group == "Log of credit") |>
+  fe_coef_plot(title = "Interaction effect: MP shock × Climate shock — Log of credit")
+
+# Keep combined for backwards compatibility
+shock_model_gg <- shock_model_rates_gg
+ 
+  
 
 # Save all models ------------------------------------------------------
 
 write_rds(
-  list(all_models = all_models, estimates_tbl = estimates_tbl),
+  list(shock_models_tbl    = shock_models_tbl,
+       shock_model_rates_gg  = shock_model_rates_gg,
+       shock_model_credit_gg = shock_model_credit_gg),
   here("Outputs", "all_fe_models.rds")
 )

@@ -29,7 +29,8 @@ market_based_surprises_tbl <-
          "Forward Guidance" = 3, 
          "Central Bank Information" = 4, 
          "Country Risk" = 5) |> 
-  filter(Date >= "2008-01-01" )
+  filter(Date >= "2008-01-01" ) |> 
+  mutate(across(-Date, ~ .x /100))
   
 
   
@@ -42,7 +43,10 @@ market_based_surprises_gg <-
   labs(
     # title = "SA Market-Based MPS",
     x = "",
-    y = "Surprise"
+    y = "Surprise",
+    title = "SA Market-Based MPS",
+    x = "Date",
+    y = " "
   ) +
   facet_wrap(~variable, scales = "free_y", ncol = 2) +
   theme_minimal(base_size = 8) +
