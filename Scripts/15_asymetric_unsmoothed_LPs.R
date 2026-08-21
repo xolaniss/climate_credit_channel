@@ -4,15 +4,18 @@
 # interaction, with lags, fixed effects and Driscoll-Kraay standard errors.
 # Asymmetric (large-shock) version - July 2026
 #
-# IRF plots show the MP shock response evaluated at different climate states:
-#   (1) "MP shock alone (no climate shock)": beta, i.e. how the MP shock would
-#       have manifested with the climate shock switched off;
-#   (2) "MP shock during a large negative climate shock (-3 SD)": beta - 3*delta;
-#   (3) "MP shock during a large positive climate shock (+3 SD)": beta + 3*delta,
-#       i.e. how the same MP shock manifests when it overlaps with a large
-#       climate shock in each direction.
-# The distance between the baseline and the large-shock paths is the
-# amplification (or dampening) caused by the climate shock overlap.
+# Only the extreme climate state of interest is retained for each climate
+# variable: extreme heat (+3 SD temperature) and extreme dryness
+# (-3 SD precipitation). Extreme cold and extreme wet are not considered.
+#
+# IRF plots therefore show two paths per model:
+#   (1) "No climate shock": beta, i.e. how the MP shock would have manifested
+#       with the climate shock switched off;
+#   (2) "+3 SD" (temperature) or "-3 SD" (precipitation):
+#       beta + 3*delta and beta - 3*delta respectively, i.e. how the same MP
+#       shock manifests when it overlaps with an extreme climate shock.
+# The distance between the two paths is the amplification (or dampening)
+# caused by the climate shock overlap.
 
 # Preliminaries -------------------------------------------------------------
 library(here)
@@ -101,25 +104,48 @@ ci_levels <- c(0.68, 0.90)
 panel_id <- ~ banks + date
 
 # Climate states at which the MP response is evaluated -----------------------
-# Baseline (0) is the MP shock on its own; the large states are the overlap.
+# Baseline (0) is the MP shock on its own; the extreme state is the overlap.
+# Only one direction is of interest per climate variable:
+#   temperature   -> +3 SD (extreme heat)
+#   precipitation -> -3 SD (extreme dryness)
 big_shock_sd <- 3
-climate_values <- c(-big_shock_sd, 0, big_shock_sd)
+
+climate_direction <- c(
+  pop_temp_shock = 1,
+  pop_precip_shock = -1
+)
 
 comp_base <- "No climate shock"
-comp_neg <- paste0("-", big_shock_sd, " SD")
-comp_pos <- paste0("+", big_shock_sd, " SD")
+comp_neg <- paste0("MP Shock with extreme dryness")
+comp_pos <- paste0("MP Shock with extreme heat")
 
+# Full label vocabulary (kept for the colour mapping and for the artifacts);
+# each individual model uses only the baseline plus its own extreme state.
 comp_levels <- c(comp_base, comp_neg, comp_pos)
 comp_cols <- c("#00496f", "#0f85a0", "#dd4124")
 names(comp_cols) <- comp_levels
 
-# Component in the same order as climate_values (-3, 0, +3)
-comp_by_value <- c(comp_neg, comp_base, comp_pos)
+# Extreme-state label for a given climate variable
+comp_shock_of <- function(climate) {
+  if (climate_direction[[climate]] > 0) comp_pos else comp_neg
+}
+
+# Component levels used in a given model / plot (baseline first)
+comp_levels_of <- function(climate) {
+  c(comp_base, comp_shock_of(climate))
+}
+
+# Climate states, in the same order as comp_levels_of()
+climate_values_of <- function(climate) {
+  c(0, big_shock_sd * climate_direction[[climate]])
+}
 
 plot_caption <- paste0(
-  "Grey: response to the MP shock on its own. ",
-  "Blue / red: response to the same MP shock when it coincides with a large ",
-  "negative / positive climate shock (", big_shock_sd, " SD). ",
+  "Dark blue: response to the MP shock on its own. ",
+  "Red / light blue: response to the same MP shock when it coincides with an ",
+  "extreme climate shock of ", big_shock_sd, " SD ",
+  "(+", big_shock_sd, " SD temperature, i.e. extreme heat; ",
+  "-", big_shock_sd, " SD precipitation, i.e. extreme dryness). ",
   "Bands: 68% and 90% Driscoll-Kraay confidence intervals."
 )
 
@@ -133,9 +159,13 @@ lag_terms <- function(var, k) {
 }
 
 # Estimation of LP for each horizon ------------------------------------------
-# Returns the MP response evaluated at each climate state, with the delta
-# method standard error for that linear combination.
+# Returns the MP response evaluated at the baseline and at the extreme climate
+# state of interest, with the delta method standard error for each linear
+# combination.
 estimate_h <- function(dat, dep, climate, resid, h) {
+  states <- climate_values_of(climate)
+  comps <- comp_levels_of(climate)
+  
   lhs <- paste0("f(", dep, ", ", h, ") - l(", dep, ", 1)")
   rhs_shocks <- c(climate, resid, paste0(climate, ":", resid))
   rhs_lags <- c(
@@ -184,20 +214,20 @@ estimate_h <- function(dat, dep, climate, resid, h) {
     var_delta <- 0
     cov_bd <- 0
   }
-  irf <- beta + climate_values * delta
+  irf <- beta + states * delta
   se <- sqrt(
     var_beta +
-      (climate_values^2) * var_delta +
-      2 * climate_values * cov_bd
+      (states^2) * var_delta +
+      2 * states * cov_bd
   )
   tibble(
-    h = rep(h, length(climate_values)),
-    climate_state = climate_values,
-    component = factor(comp_by_value, levels = comp_levels),
+    h = rep(h, length(states)),
+    climate_state = states,
+    component = factor(comps, levels = comps),
     irf = irf,
     se = se,
     nobs = mod$nobs,
-    tidy = list(co, co, co)
+    tidy = rep(list(co), length(states))
   )
 }
 
@@ -283,7 +313,7 @@ for (mp_base in mp_base_vars) {
       
       table_store[[combo]] <- reg_tbl
       
-      # IRF plot: MP shock alone vs MP shock during a large climate shock
+      # IRF plot: MP shock alone vs MP shock during an extreme climate shock
       p <- ggplot(
         irf_tbl,
         aes(x = h, y = irf, colour = component, fill = component)
@@ -298,10 +328,10 @@ for (mp_base in mp_base_vars) {
           title = paste0(dep_labels[[dep]]),
           subtitle = paste0(
             mp_labels[[mp_base]], "\n",
-             climate_labels[[climate]]
+            climate_labels[[climate]]
           ),
           # caption = plot_caption,
-          x = "Horizon (quaters)",
+          x = "Horizon (quarters)",
           y = "Coefficient"
         ) +
         theme_minimal(base_size = 6) +
@@ -333,7 +363,8 @@ table_all <- bind_rows(table_store)
 
 # Combined figures -----------------------------------------------------------
 # One figure per dependent variable and climate shock, faceted over all six
-# MP surprise variables, with every climate state shown in each panel.
+# MP surprise variables, with the baseline and the extreme climate state of
+# interest shown in each panel.
 for (dep in dep_vars) {
   for (climate in climate_shock_vars) {
     
@@ -343,7 +374,7 @@ for (dep in dep_vars) {
         climate_shock == .env$climate
       ) |>
       mutate(
-        component = factor(component, levels = comp_levels),
+        component = factor(component, levels = comp_levels_of(climate)),
         mp_shock = factor(mp_shock, levels = mp_base_vars, labels = mp_labels[mp_base_vars])
       )
     
@@ -367,7 +398,7 @@ for (dep in dep_vars) {
           climate_labels[[climate]]
         ),
         caption = plot_caption,
-        x = "Horizon (quaters)",
+        x = "Horizon (quarters)",
         y = "Coefficient"
       ) +
       theme_minimal(base_size = 11) +
@@ -412,7 +443,9 @@ artifacts <- list(
     dk_lag = dk_lag,
     ci_levels = ci_levels,
     components = comp_levels,
-    climate_states = climate_values,
+    components_by_climate = map(set_names(climate_shock_vars), comp_levels_of),
+    climate_states = map(set_names(climate_shock_vars), climate_values_of),
+    climate_direction = climate_direction,
     big_shock_sd = big_shock_sd,
     climate_shocks = climate_shock_vars,
     mp_shocks = mp_base_vars
