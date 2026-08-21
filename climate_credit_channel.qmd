@@ -252,75 +252,7 @@ fixed_effects |>
 ```
 
 
-```{r}
-#| label: "fig-rates_fe_temp_models"
-#| fig.cap: "Credit growth panel regression estimates"
-#| fig.height: 8
-
-fixed_effects |> 
-  pluck(3)
-```
-
-
-
 ## Local projections 
-\newpage
-
-```{r}
-#| label: "fig-corporate_temp"
-#| fig.cap: "Local projections for monetary policy shock x temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-
-plot_function <- function(n){
-  n <- n
-  
-  (plots[[n]] + plots[[n+1]] + plots[[n+2]] ) 
-}
-
-plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
-  pluck(4)
-
-corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)
-
-corporate_temp_gg
-```
-
-```{r}
-#| label: "fig-corporate_precip"
-#| fig.cap: "Local projections for monetary policy shock x precipitation shock"
-#| fig.height: 8
-#| fig.width: 9
-
-corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) 
-corporate_precip_gg
-
-```
-
-\newpage
-
-```{r}
-#| label: "fig-household_temp"
-#| fig.cap: "Local projections for monetary policy shock x temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) 
-
-household_temp_gg
-```
-
-```{r}
-#| label: "fig-household_precip"
-#| fig.cap: "Local projections for monetary policy shock x temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) 
-household_precip_gg
-```
-
 
 \newpage
 
@@ -335,6 +267,9 @@ odd_plot_function <- function(n){
   n <- n
   (plots[[n]] + plots[[n+2]] + plots[[n+4]] ) 
 }
+
+plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
+  pluck(4)
 
 corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) 
 
@@ -397,8 +332,9 @@ Taken together, the two approaches suggest that climate shocks act primarily as 
 # Drivers - variation across sectors, horizons, and shock types
 
 
+
 ```{r}
-#| label: "fig-asym_corporate_temp"
+#| label: "fig-asym_rate_corporate_temp"
 #| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
 #| fig.height: 8
 #| fig.width: 9
@@ -409,42 +345,6 @@ asym_plot_function <- function(n){
   (asym_plots[[n]] + asym_plots[[n+1]] + asym_plots[[n+2]] ) 
 }
 
-asym_plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> 
-  pluck(4)
-
-asym_corporate_temp_gg <- asym_plot_function(n = 1) / asym_plot_function(25) /  asym_plot_function(49)  
-
-asym_corporate_temp_gg
-```
-
-```{r}
-#| label: "fig-asym_corporate_precip"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_corporate_precip_gg <- asym_plot_function(13) / asym_plot_function(37) /  asym_plot_function(61) 
-asym_corporate_precip_gg
-
-```
-
-\newpage
-
-```{r}
-#| label: "fig-asym_household_temp"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
-#| fig.height: 8
-#| fig.width: 9
-
-asym_household_temp_gg <- asym_plot_function(n = 4) / asym_plot_function(28) / asym_plot_function(52)
-asym_household_temp_gg
-```
-
-```{r}
-#| label: "fig-asym_household_precip"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
-#| fig.height: 8
-#| fig.width: 9
 
 asym_odd_function <- function(n){
   n <- n
@@ -453,18 +353,9 @@ asym_odd_function <- function(n){
 }
 
 
-asym_household_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
-asym_household_precip_gg
-```
 
-
-\newpage
-
-```{r}
-#| label: "fig-asym_rate_corporate_temp"
-#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
-#| fig.height: 8
-#| fig.width: 9
+asym_plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> 
+  pluck(4)
 
 
 asym_corporate_rate_temp_gg <- asym_odd_function(n = 7) / asym_odd_function(31) / asym_odd_function(55)
@@ -602,8 +493,9 @@ climate_shocks_gg
 
 ```{r}
 #| label: fig-market_based_surprises_data
-#| fig-cap: "Market-Based Surprises Data"
+#| fig-cap: "Market-Based Surprise"
 #| cache: false
+#| fig.height: 2
 
 market_based_surprises_gg <- read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> 
   pluck(2)
@@ -613,7 +505,7 @@ market_based_surprises_gg
 
 ```{r}
 #| label: fig-theory_based_surprises_data
-#| fig-cap: "Theory-based surprises data"
+#| fig-cap: "Theory-based surprises"
 #| fig.height: 2
 #| cache: false
 
@@ -635,7 +527,10 @@ theory_based_surprises_gg
 
 descriptives_table <- 
   read_rds(here("Outputs", "artifacts_descriptive_statistics.rds")) |> 
-  pluck(1) |>
+  pluck(1) |> 
+  filter(
+    !credit_category %in% c("forward_guidance", "central_bank_information", "country_risk")
+  ) |> 
    mutate(
     credit_category = str_replace_all(credit_category, "pop", "Population"),
     credit_category = str_replace_all(credit_category, "temp", "Temperature"),
@@ -659,13 +554,15 @@ descriptives_table
 ```
 
 
-## Sector Credit Exposure 
+<!-- ## Sector Credit Exposure  -->
 
 ```{r}
 #| label: fig-sector_credit_exposure
 #| fig-cap: "Sector credit exposure"
 #| fig.height: 8
 #| cache: false
+#| eval: false
+#| include: false
 
 
 sector_credit_exposure_gg <- 
@@ -753,7 +650,7 @@ shock_models_tbl |>
 
 <!-- ``` -->
 
-\newpage
+
 
 ```{r}
 #| label: "fixed_effects_precip"
@@ -831,5 +728,132 @@ shock_models_tbl |>
 <!-- } -->
 
 <!-- ``` -->
+
+# Credit growth results
+
+## Fixed effects
+
+```{r}
+#| label: "fig-rates_fe_temp_models"
+#| fig.cap: "Credit growth panel regression estimates"
+#| fig.height: 8
+
+fixed_effects |> 
+  pluck(3)
+```
+
+
+## Local projections
+
+
+```{r}
+#| label: "fig-corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+
+plot_function <- function(n){
+  n <- n
+  
+  (plots[[n]] + plots[[n+1]] + plots[[n+2]] ) 
+}
+
+
+
+corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)
+
+corporate_temp_gg
+```
+
+```{r}
+#| label: "fig-corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) 
+corporate_precip_gg
+
+```
+
+\newpage
+
+```{r}
+#| label: "fig-household_temp"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) 
+
+household_temp_gg
+```
+
+```{r}
+#| label: "fig-household_precip"
+#| fig.cap: "Local projections for monetary policy shock x temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) 
+household_precip_gg
+```
+
+
+## Asymmetric local projections
+
+
+```{r}
+#| label: "fig-asym_corporate_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_corporate_temp_gg <- asym_plot_function(n = 1) / asym_plot_function(25) /  asym_plot_function(49)  
+
+asym_corporate_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_corporate_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric precipitation shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_corporate_precip_gg <- asym_plot_function(13) / asym_plot_function(37) /  asym_plot_function(61) 
+asym_corporate_precip_gg
+
+```
+
+\newpage
+
+```{r}
+#| label: "fig-asym_household_temp"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+asym_household_temp_gg <- asym_plot_function(n = 4) / asym_plot_function(28) / asym_plot_function(52)
+asym_household_temp_gg
+```
+
+```{r}
+#| label: "fig-asym_household_precip"
+#| fig.cap: "Local projections for monetary policy shock x asymmetric temperature shock"
+#| fig.height: 8
+#| fig.width: 9
+
+
+
+asym_household_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
+asym_household_precip_gg
+```
+
+
+\newpage
+
+# Credit rates results with controls (to complete)
+
 
 

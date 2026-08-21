@@ -38,10 +38,11 @@ market_based_surprises_tbl <-
 market_based_surprises_gg <- 
   market_based_surprises_tbl |> 
   pivot_longer(-Date, names_to = "variable", values_to = "surprise") |> 
+  filter(!variable %in% c("Forward Guidance", "Central Bank Information", "Country Risk")) |> 
   ggplot(aes(x = Date, y = surprise, col = variable)) + # Change the variable names
   geom_line() +
   labs(
-    # title = "SA Market-Based MPS",
+    # title = "SA Market-Based Monetary Policy Surprise",
     x = "",
     y = "Surprise",
     title = "SA Market-Based MPS",

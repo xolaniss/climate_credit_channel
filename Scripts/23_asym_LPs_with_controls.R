@@ -118,7 +118,7 @@ comp_pos <- paste0("MP Shock with extreme heat")
 # Full label vocabulary (kept for the colour mapping and for the artifacts);
 # each individual model uses only the baseline plus its own extreme state.
 comp_levels <- c(comp_base, comp_neg, comp_pos)
-comp_cols <- c("#00496f", "#0f85a0", "#dd4124")
+comp_cols <- c("#00496f", "#dd4124", "#dd4124")
 names(comp_cols) <- comp_levels
 
 # Extreme-state label for a given climate variable

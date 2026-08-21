@@ -145,6 +145,15 @@ lending_vol_gg <-
 
 lending_growth_gg <- 
   lending_growth_tbl |> 
+  mutate(
+    banks = replace_values(
+      banks,
+      "ABSA BANK" ~ "BANK A",
+      "FIRSTRAND BANK" ~ "BANK B",
+      "NEDBANK" ~ "BANK C",
+      "STANDARD BANK" ~ "BANK D"
+    )
+  ) |> 
   ungroup() |> 
   pivot_longer(-c("date", "banks"), values_to = "value", names_to = "credit_category") |> 
   mutate(
