@@ -99,7 +99,7 @@ lending_vol_2022_2026_tbl <-
   ) |> 
   mutate(value = as.numeric(value)) |> 
   mutate(credit_sector = str_to_lower(credit_sector)) |> 
-  mutate(credit_sector = recode_values(credit_sector,
+  mutate(credit_sector = dplyr::recode_values(credit_sector,
     "non-financial corporate sector"                    ~ "corporate",
     "private non-financial corporate sector"            ~ "corporate",
     "unincorporated business enterprises of households" ~ "household",
