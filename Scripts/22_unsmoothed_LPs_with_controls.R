@@ -1,8 +1,8 @@
 # Description ---------------------------------------------------------------
 # Unsmoothed panel local projections (Jorda 2005) of bank variables on
-# population-weighted climate shocks + purged monetary policy surprises +
-# interaction, with lags, fixed effects, controls (2 lags of each control are also included) 
-# and Driscoll-Kraay standard errors.
+# population-weighted climate shocks + ORIGINAL (unpurged) monetary policy
+# surprises + interaction, with lags, fixed effects, controls (2 lags of each
+# control are also included) and Driscoll-Kraay standard errors.
 # July 2026
 #
 # Results are generally similar to baseline case. Suggest using this as robustness
@@ -15,10 +15,20 @@ source(here("packages.R"))
 source(here("Functions","fx_plot.R"))
 
 # Import --------------------------------------------------------------------
-model_data_purge_tbl <- read_rds(
-  here("Outputs","artifacts_model_data_purged.rds")
+## Unpurged model data: original MP surprises, not the orthogonalised resids.
+model_data_tbl <- read_rds(
+  here("Outputs","artifacts_model_data.rds")
 ) |>
-  pluck("model_data_purge_tbl") |>
+  pluck("model_data_tbl")
+
+if (is.null(model_data_tbl)) {
+  model_data_tbl <- read_rds(
+    here("Outputs","artifacts_model_data.rds")
+  ) |>
+    pluck("model_data_tbl")
+}
+
+model_data_tbl <- model_data_tbl |>
   mutate(
     fe_date = as.numeric(lubridate::quarter(date))
   )
@@ -47,8 +57,7 @@ climate_shock_vars <- c(
   "pop_precip_shock"
 )
 
-## Purged (orthogonalised) monetary policy surprises ----
-## Each resid is paired with its own population-weighted climate shock.
+## Original (unpurged) monetary policy surprises ----
 mp_base_vars <- c(
   "miyajima_surprise",
   "romer_surprise",
@@ -122,13 +131,13 @@ lag_terms <- function(var,k) {
 # Estimation of LP for each horizon ------------------------------------------
 # Returns the pure MP path (beta 1), the climate-overlap path (beta 1 + delta)
 # and the interaction path (delta).
-estimate_h <- function(dat,dep,climate,resid,h) {
+estimate_h <- function(dat,dep,climate,mp_var,h) {
   lhs <- paste0("f(",dep,", ",h,") - l(",dep,", 1)")
-  rhs_shocks <- c(climate,resid,paste0(climate,":",resid))
+  rhs_shocks <- c(climate,mp_var,paste0(climate,":",mp_var))
   rhs_lags <- c(
     lag_terms(dep,n_lags),
     lag_terms(climate,n_lags),
-    lag_terms(resid,n_lags)
+    lag_terms(mp_var,n_lags)
   )
   rhs_controls <- unlist(
     lapply(control_vars,function(x) c(x,lag_terms(x,n_lags)))
@@ -155,8 +164,8 @@ estimate_h <- function(dat,dep,climate,resid,h) {
   co <- broom::tidy(mod)
   b <- coef(mod)
   V <- vcov(mod)
-  nm_r <- resid
-  nm_i <- paste0(climate,":",resid)
+  nm_r <- mp_var
+  nm_i <- paste0(climate,":",mp_var)
   if (!(nm_r %in% names(b))) return(NULL)
   beta <- b[[nm_r]]
   var_beta <- V[nm_r,nm_r]
@@ -185,8 +194,8 @@ estimate_h <- function(dat,dep,climate,resid,h) {
 }
 
 # Estimate the complete local projection ------------------------------------
-run_lp <- function(dat,dep,climate,resid) {
-  map(0:H,~ estimate_h(dat,dep,climate,resid,.x)) |>
+run_lp <- function(dat,dep,climate,mp_var) {
+  map(0:H,~ estimate_h(dat,dep,climate,mp_var,.x)) |>
     compact() |>
     bind_rows()
 }
@@ -205,17 +214,17 @@ plot_store <- list()
 
 for (mp_base in mp_base_vars) {
   for (climate in climate_shock_vars) {
-    resid <- paste0(mp_base,"_",climate,"_resid")
+    mp_var <- mp_base   # original, unpurged MP surprise
     for (dep in dep_vars) {
       combo <- paste(dep,mp_base,climate,sep = "__")
-      dat <- model_data_purge_tbl |>
+      dat <- model_data_tbl |>
         dplyr::select(
           banks,date,
-          all_of(dep),all_of(climate),all_of(resid),
+          all_of(dep),all_of(climate),all_of(mp_var),
           all_of(control_vars)
         ) |>
         dplyr::arrange(banks,date)
-      res <- run_lp(dat,dep,climate,resid)
+      res <- run_lp(dat,dep,climate,mp_var)
       if (nrow(res) == 0) next
       irf_tbl <- res |>
         mutate(

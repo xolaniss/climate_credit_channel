@@ -1,11 +1,12 @@
 # Description ---------------------------------------------------------------
 # Unsmoothed panel local projections (Jorda 2005) of bank variables on
-# population-weighted climate shocks + purged monetary policy surprises +
-# interaction, with lags, fixed effects and Driscoll-Kraay standard errors.
+# population-weighted climate shocks + unpurged, original monetary policy
+# surprises + interaction, with lags, fixed effects and Driscoll-Kraay
+# standard errors.
 # July 2026
 #
 # IRF plots show two coefficient paths on the same figure:
-#   (1) "MP shock alone": the pure purged MP shock effect (beta), i.e. how the
+#   (1) "MP shock alone": the pure MP shock effect (beta), i.e. how the
 #       MP shock would have manifested in the absence of a climate shock;
 #   (2) "MP shock during a 1 SD climate shock": beta + delta, i.e. how the same
 #       MP shock manifests when it overlaps with a one standard deviation
@@ -20,10 +21,13 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import --------------------------------------------------------------------
-model_data_purge_tbl <- read_rds(
-  here("Outputs", "artifacts_model_data_purged.rds")
+## Unpurged model data: original MP surprises, not the orthogonalised resids.
+model_data_tbl <- read_rds(
+  here("Outputs", "artifacts_model_data.rds")
 ) |>
-  pluck("model_data_purge_tbl") |> 
+  pluck("model_data_tbl")
+
+model_data_tbl <- model_data_tbl |>
   mutate(
     fe_date = as.numeric(lubridate::quarter(date))
   )
@@ -52,8 +56,7 @@ climate_shock_vars <- c(
   "pop_precip_shock"
 )
 
-## Purged (orthogonalised) monetary policy surprises ----
-## Each resid is paired with its own population-weighted climate shock.
+## Original (unpurged) monetary policy surprises ----
 mp_base_vars <- c(
   "miyajima_surprise",
   "romer_surprise",
@@ -120,13 +123,13 @@ lag_terms <- function(var, k) { #k is the number of lags
 # Estimation of LP for each horizon ------------------------------------------
 # Returns the pure MP path (beta 1), the climate-overlap path (beta 1 + detla) and
 # the interaction path (delta).
-estimate_h <- function(dat, dep, climate, resid, h) { 
+estimate_h <- function(dat, dep, climate, mp_var, h) {
   lhs <- paste0("f(", dep, ", ", h, ") - l(", dep, ", 1)")
-  rhs_shocks <- c(climate, resid, paste0(climate, ":", resid))
+  rhs_shocks <- c(climate, mp_var, paste0(climate, ":", mp_var))
   rhs_lags <- c(
     lag_terms(dep, n_lags),
     lag_terms(climate, n_lags),
-    lag_terms(resid, n_lags)
+    lag_terms(mp_var, n_lags)
   )
   fe <- "banks"
   trend <- "+ date" #linear time trend eg. technological improvements
@@ -150,8 +153,8 @@ estimate_h <- function(dat, dep, climate, resid, h) {
   co <- broom::tidy(mod) #save as tidy to get dataframe
   b <- coef(mod)
   V <- vcov(mod)
-  nm_r <- resid
-  nm_i <- paste0(climate, ":", resid) #build interaction figure
+  nm_r <- mp_var
+  nm_i <- paste0(climate, ":", mp_var) #build interaction figure
   beta <- b[[nm_r]]
   var_beta <- V[nm_r, nm_r] #diagonal of covariance matrix
   if (nm_i %in% names(b)) { #if interaction exists, extract coefficient otherwise return zero so code keeps running
@@ -178,9 +181,9 @@ estimate_h <- function(dat, dep, climate, resid, h) {
   )
 }
 
-# Estimate the complete local projection (dep, climate, resid) ---------------------------
-run_lp <- function(dat, dep, climate, resid) {
-  map(0:H, ~ estimate_h(dat, dep, climate, resid, .x)) |>
+# Estimate the complete local projection (dep, climate, mp_var) ---------------------------
+run_lp <- function(dat, dep, climate, mp_var) {
+  map(0:H, ~ estimate_h(dat, dep, climate, mp_var, .x)) |>
     compact() |> #removes null objects/failed regressions
     bind_rows()
 }
@@ -199,18 +202,18 @@ plot_store <- list()
 
 for (mp_base in mp_base_vars) {
   for (climate in climate_shock_vars) {
-    resid <- paste0(mp_base, "_", climate, "_resid")
+    mp_var <- mp_base   # original, unpurged MP surprise
     for (dep in dep_vars) {
       combo <- paste(dep, mp_base, climate, sep = "__")
       
-      dat <- model_data_purge_tbl |>
+      dat <- model_data_tbl |>
         dplyr::select(
           banks, date,
-          all_of(dep), all_of(climate), all_of(resid)
+          all_of(dep), all_of(climate), all_of(mp_var)
         ) |>
         dplyr::arrange(banks, date)
       
-      res <- run_lp(dat, dep, climate, resid)
+      res <- run_lp(dat, dep, climate, mp_var)
       if (nrow(res) == 0) next
       
       # Attach identifiers + CI bands
@@ -268,7 +271,7 @@ for (mp_base in mp_base_vars) {
         labs(
           title = paste0(dep_labels[[dep]]),
           subtitle = paste0(
-             mp_labels[[mp_base]],
+            mp_labels[[mp_base]],
             "\n", climate_labels[[climate]]
           ),
           # caption = paste0(
@@ -320,7 +323,7 @@ for (mp_base in mp_base_vars) {
         dpi = 300
       )
       
-     
+      
       
       ggsave(
         filename = here(

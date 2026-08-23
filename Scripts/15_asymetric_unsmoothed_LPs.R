@@ -1,7 +1,8 @@
 # Description ---------------------------------------------------------------
 # Unsmoothed panel local projections (Jorda 2005) of bank variables on
-# population-weighted climate shocks + purged monetary policy surprises +
-# interaction, with lags, fixed effects and Driscoll-Kraay standard errors.
+# population-weighted climate shocks + original, unpurged monetary policy
+# surprises + interaction, with lags, fixed effects and Driscoll-Kraay
+# standard errors.
 # Asymmetric (large-shock) version - July 2026
 #
 # Only the extreme climate state of interest is retained for each climate
@@ -25,10 +26,11 @@ source(here("packages.R"))
 source(here("Functions", "fx_plot.R"))
 
 # Import --------------------------------------------------------------------
-model_data_purge_tbl <- read_rds(
-  here("Outputs", "artifacts_model_data_purged.rds")
+## Unpurged model data: original MP surprises, not the orthogonalised resids.
+model_data_tbl <- read_rds(
+  here("Outputs", "artifacts_model_data.rds")
 ) |>
-  pluck("model_data_purge_tbl")
+  pluck("model_data_tbl")
 
 # Define variables ----------------------------------------------------------
 
@@ -54,8 +56,7 @@ climate_shock_vars <- c(
   "pop_precip_shock"
 )
 
-## Purged (orthogonalised) monetary policy surprises ----
-## Each resid is paired with its own population-weighted climate shock.
+## Original (unpurged) monetary policy surprises ----
 mp_base_vars <- c(
   "miyajima_surprise",
   "romer_surprise",
@@ -162,16 +163,16 @@ lag_terms <- function(var, k) {
 # Returns the MP response evaluated at the baseline and at the extreme climate
 # state of interest, with the delta method standard error for each linear
 # combination.
-estimate_h <- function(dat, dep, climate, resid, h) {
+estimate_h <- function(dat, dep, climate, mp_var, h) {
   states <- climate_values_of(climate)
   comps <- comp_levels_of(climate)
   
   lhs <- paste0("f(", dep, ", ", h, ") - l(", dep, ", 1)")
-  rhs_shocks <- c(climate, resid, paste0(climate, ":", resid))
+  rhs_shocks <- c(climate, mp_var, paste0(climate, ":", mp_var))
   rhs_lags <- c(
     lag_terms(dep, n_lags),
     lag_terms(climate, n_lags),
-    lag_terms(resid, n_lags)
+    lag_terms(mp_var, n_lags)
   )
   fe <- "banks"
   # No time fixed effects: the MP surprises and climate shocks vary only over
@@ -197,9 +198,9 @@ estimate_h <- function(dat, dep, climate, resid, h) {
   co <- broom::tidy(mod)
   b <- coef(mod)
   V <- vcov(mod)
-  nm_r <- resid
-  nm_i <- paste0(climate, ":", resid)
-  if (!nm_i %in% names(b)) nm_i <- paste0(resid, ":", climate)
+  nm_r <- mp_var
+  nm_i <- paste0(climate, ":", mp_var)
+  if (!nm_i %in% names(b)) nm_i <- paste0(mp_var, ":", climate)
   have_r <- nm_r %in% names(b)
   have_i <- nm_i %in% names(b)
   if (!have_r) return(NULL)
@@ -231,9 +232,9 @@ estimate_h <- function(dat, dep, climate, resid, h) {
   )
 }
 
-# Runner for one (dep, climate, resid) combination ---------------------------
-run_lp <- function(dat, dep, climate, resid) {
-  map(0:H, ~ estimate_h(dat, dep, climate, resid, .x)) |>
+# Runner for one (dep, climate, mp_var) combination ---------------------------
+run_lp <- function(dat, dep, climate, mp_var) {
+  map(0:H, ~ estimate_h(dat, dep, climate, mp_var, .x)) |>
     compact() |>
     bind_rows()
 }
@@ -253,19 +254,19 @@ plot_store <- list()
 for (mp_base in mp_base_vars) {
   for (climate in climate_shock_vars) {
     
-    resid <- paste0(mp_base, "_", climate, "_resid")
+    mp_var <- mp_base   # original, unpurged MP surprise
     for (dep in dep_vars) {
       
       combo <- paste(dep, mp_base, climate, sep = "__")
       
-      dat <- model_data_purge_tbl |>
+      dat <- model_data_tbl |>
         dplyr::select(
           banks, date,
-          all_of(dep), all_of(climate), all_of(resid)
+          all_of(dep), all_of(climate), all_of(mp_var)
         ) |>
         dplyr::arrange(banks, date)
       
-      res <- run_lp(dat, dep, climate, resid)
+      res <- run_lp(dat, dep, climate, mp_var)
       if (nrow(res) == 0) next
       
       # Attach identifiers + CI bands
