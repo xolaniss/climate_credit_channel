@@ -1,20 +1,22 @@
 # Makefile for climate credit channel analysis pipeline
 # Usage:
 #   make        - build all outputs
+#   make -j4    - parallel build (stages 0 and 4b run concurrently)
 #   make clean  - remove all generated artifacts
 
 R = Rscript
 
 # ─── Top-level target ─────────────────────────────────────────────────────────
-# Terminal outputs: extensions, fixed effects, descriptives, SARB forecast,
-# and robust (controls) LP results.
 
 all: Outputs/artifacts_extensions.rds \
      Outputs/all_fe_models.rds \
      Outputs/artifacts_descriptive_statistics.rds \
      Outputs/artifacts_sarb_forecast.rds \
      Outputs/artifacts_lp_unsmoothed_robust.rds \
-     Outputs/artifacts_lp_unsmoothed_asym_robust.rds
+     Outputs/artifacts_lp_unsmoothed_asym_robust.rds \
+     Outputs/all_fe_models_purged.rds \
+     Outputs/artifacts_lp_unsmoothed_purged.rds \
+     Outputs/artifacts_lp_unsmoothed_asym_purged.rds
 
 # ─── Stage 0: No upstream R-script dependencies ───────────────────────────────
 
@@ -44,6 +46,20 @@ Outputs/artifacts_sarb_forecast.rds: Scripts/07_sarb_forecasts.R \
 
 Outputs/artifacts_bloomberg_actuals.rds: Scripts/08_bloomberg_actuals.R \
     Data/cpi_gdp_repo_actuals.xlsx
+	$(R) $<
+
+# ─── Stage 0b: Control variable cleaning (parallel with Stage 0) ──────────────
+
+Outputs/artifacts_unemployment.rds: Scripts/17_clean_unemployment.R \
+    Data/QLFS.xlsx
+	$(R) $<
+
+Outputs/artifacts_gdp.rds: Scripts/18_clean_GDP_per_capita.R \
+    Data/GDP_per_capita.xlsx
+	$(R) $<
+
+Outputs/artifacts_exchange_rate.rds: Scripts/19_clean_exchange_rate.R \
+    Data/Exchange_Rate.xlsx
 	$(R) $<
 
 # ─── Stage 1: Depends on Stage 0 ─────────────────────────────────────────────
@@ -80,7 +96,7 @@ Outputs/artifacts_model_data.rds: Scripts/10_model_data.R \
     Outputs/artifacts_market_based_surprises.rds
 	$(R) $<
 
-# ─── Stage 4: Modelling (all depend on model_data) ───────────────────────────
+# ─── Stage 4: Baseline modelling ─────────────────────────────────────────────
 
 Outputs/artifacts_descriptive_statistics.rds: Scripts/11_descriptives.R \
     Outputs/artifacts_model_data.rds
@@ -94,7 +110,7 @@ Outputs/all_fe_models.rds: Scripts/13_fixed_effects.R \
     Outputs/artifacts_model_data.rds
 	$(R) $<
 
-# ─── Stage 5: Local projections (depend on purged model data) ─────────────────
+# ─── Stage 5: Baseline local projections ─────────────────────────────────────
 
 Outputs/artifacts_lp_unsmoothed.rds: Scripts/14_unsmoothed_LPs.R \
     Outputs/artifacts_model_data_purged.rds
@@ -104,51 +120,51 @@ Outputs/artifacts_lp_unsmoothed_asym.rds: Scripts/15_asymetric_unsmoothed_LPs.R 
     Outputs/artifacts_model_data_purged.rds
 	$(R) $<
 
-# ─── Stage 6: Extensions ──────────────────────────────────────────────────────
+# ─── Stage 5b: Purged robustness (FE + LPs on purged data) ───────────────────
+
+Outputs/all_fe_models_purged.rds: Scripts/23_purged_FE.R \
+    Outputs/artifacts_model_data_purged.rds
+	$(R) $<
+
+Outputs/artifacts_lp_unsmoothed_purged.rds: Scripts/24_purged_LP.R \
+    Outputs/artifacts_model_data_purged.rds
+	$(R) $<
+
+Outputs/artifacts_lp_unsmoothed_asym_purged.rds: Scripts/25_purged_asymetric_LP.R \
+    Outputs/artifacts_model_data_purged.rds
+	$(R) $<
+
+# ─── Stage 6: Extensions (baseline) ──────────────────────────────────────────
 
 Outputs/artifacts_extensions.rds: Scripts/16_extensions.R \
     Outputs/artifacts_lp_unsmoothed.rds \
     Outputs/artifacts_lp_unsmoothed_asym.rds
 	$(R) $<
 
-# ─── Stage 4b: Control variable cleaning (no upstream R dependencies) ─────────
+# ─── Stage 6b: Controls merge ─────────────────────────────────────────────────
+# Script 20 augments artifacts_model_data.rds in-place (overwrites it with
+# controls appended). A stamp file ensures the baseline scripts (11, 13) finish
+# on the original model_data before augmentation, and that 12 (purging) also
+# completes so the purged data is not affected by the controls merge.
 
-Outputs/artifacts_unemployment.rds: Scripts/17_clean_unemployment.R \
-    Data/QLFS.xlsx
-	$(R) $<
-
-Outputs/artifacts_gdp.rds: Scripts/18_clean_GDP_per_capita.R \
-    Data/GDP_per_capita.xlsx
-	$(R) $<
-
-Outputs/artifacts_exchange_rate.rds: Scripts/19_clean_exchange_rate.R \
-    Data/Exchange_Rate.xlsx
-	$(R) $<
-
-# ─── Stage 5b: Controls merge ─────────────────────────────────────────────────
-# Script 21 augments artifacts_model_data_purged.rds in-place (overwrites it).
-# A stamp file is used so that:
-#   (a) the baseline LPs (14, 15) run first on the pre-controls purged data, and
-#   (b) the robust LPs (22, 23) run after the augmented data is ready.
-# Script 20 (loan-to-deposit ratio) is currently a placeholder and is omitted.
-
-Outputs/.controls_merged: Scripts/21_controls_merge.R \
+Outputs/.controls_merged: Scripts/20_controls_merge.R \
+    Outputs/artifacts_model_data.rds \
+    Outputs/artifacts_descriptive_statistics.rds \
+    Outputs/all_fe_models.rds \
     Outputs/artifacts_model_data_purged.rds \
-    Outputs/artifacts_lp_unsmoothed.rds \
-    Outputs/artifacts_lp_unsmoothed_asym.rds \
     Outputs/artifacts_unemployment.rds \
     Outputs/artifacts_gdp.rds \
     Outputs/artifacts_exchange_rate.rds
 	$(R) $<
 	touch $@
 
-# ─── Stage 6: Robust local projections (with controls) ────────────────────────
+# ─── Stage 7: Controls local projections ─────────────────────────────────────
 
-Outputs/artifacts_lp_unsmoothed_robust.rds: Scripts/22_unsmoothed_LPs_with_controls.R \
+Outputs/artifacts_lp_unsmoothed_robust.rds: Scripts/21_unsmoothed_LPs_with_controls.R \
     Outputs/.controls_merged
 	$(R) $<
 
-Outputs/artifacts_lp_unsmoothed_asym_robust.rds: Scripts/23_asym_LPs_with_controls.R \
+Outputs/artifacts_lp_unsmoothed_asym_robust.rds: Scripts/22_asym_LPs_with_controls.R \
     Outputs/.controls_merged
 	$(R) $<
 
@@ -157,4 +173,4 @@ Outputs/artifacts_lp_unsmoothed_asym_robust.rds: Scripts/23_asym_LPs_with_contro
 .PHONY: all clean
 
 clean:
-	rm -f Outputs/artifacts_*.rds Outputs/all_fe_models.rds Outputs/.controls_merged
+	rm -f Outputs/artifacts_*.rds Outputs/all_fe_models*.rds Outputs/.controls_merged

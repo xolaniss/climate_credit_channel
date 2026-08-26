@@ -79,13 +79,13 @@ exchange_rate_merge_tbl <- exchange_rate_tbl |>
   )
 
 # Merge macroeconomic variables --------------------------------------
-model_data_tbl <- model_data_tbl |>
+model_data_controls_tbl <- model_data_tbl |>
   left_join(gdp_merge_tbl,by = "date") |>
   left_join(unemployment_merge_tbl,by = "date") |>
   left_join(exchange_rate_merge_tbl,by = "date")
 
 # Check merged data ---------------------------------------------------
-model_data_tbl |>
+model_data_controls_tbl |>
   summarise(
     min_date = min(date,na.rm = TRUE),
     max_date = max(date,na.rm = TRUE),
@@ -97,7 +97,7 @@ model_data_tbl |>
   )
 
 # Check last observations --------------------------------------------
-model_data_tbl |>
+model_data_controls_tbl |>
   select(
     banks,
     date,
@@ -115,7 +115,7 @@ model_data_tbl |>
   slice_tail(n = 20)
 
 # Check Q1 2026 -------------------------------------------------------
-model_data_tbl |>
+model_data_controls_tbl |>
   filter(date == as.Date("2026-03-31")) |>
   select(
     banks,
@@ -133,10 +133,10 @@ model_data_tbl |>
 
 # Export --------------------------------------------------------------
 artifacts <- list(
-  model_data_tbl = model_data_tbl
+  model_data_controls_tbl = model_data_controls_tbl
 )
 
 write_rds(
   artifacts,
-  file = here("Outputs","artifacts_model_data.rds")
+  file = here("Outputs","artifacts_model_data_controls.rds")
 )

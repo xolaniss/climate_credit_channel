@@ -16,19 +16,10 @@ source(here("Functions","fx_plot.R"))
 
 # Import --------------------------------------------------------------------
 ## Unpurged model data: original MP surprises, not the orthogonalised resids.
-model_data_tbl <- read_rds(
-  here("Outputs","artifacts_model_data.rds")
+model_data_controls_tbl <- read_rds(
+  here("Outputs","artifacts_model_data_controls.rds")
 ) |>
-  pluck("model_data_tbl")
-
-if (is.null(model_data_tbl)) {
-  model_data_tbl <- read_rds(
-    here("Outputs","artifacts_model_data.rds")
-  ) |>
-    pluck("model_data_tbl")
-}
-
-model_data_tbl <- model_data_tbl |>
+  pluck("model_data_controls_tbl") |> 
   mutate(
     fe_date = as.numeric(lubridate::quarter(date))
   )
@@ -217,7 +208,7 @@ for (mp_base in mp_base_vars) {
     mp_var <- mp_base   # original, unpurged MP surprise
     for (dep in dep_vars) {
       combo <- paste(dep,mp_base,climate,sep = "__")
-      dat <- model_data_tbl |>
+      dat <- model_data_controls_tbl |>
         dplyr::select(
           banks,date,
           all_of(dep),all_of(climate),all_of(mp_var),
