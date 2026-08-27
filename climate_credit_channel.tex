@@ -1,4 +1,5 @@
 % Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
@@ -7,22 +8,22 @@
   letterpaper,
   DIV=11,
   numbers=noendperiod]{scrartcl}
-
+\usepackage{xcolor}
 \usepackage{amsmath,amssymb}
-\usepackage{setspace}
+\setcounter{secnumdepth}{5}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 \usepackage{lmodern}
-\ifPDFTeX\else  
-    % xetex/luatex font selection
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -30,22 +31,34 @@
   \usepackage[]{microtype}
   \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage{xcolor}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{5}
+\usepackage{setspace}
 % Make \paragraph and \subparagraph free-standing
+\makeatletter
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
   \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+\makeatother
 
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -57,23 +70,41 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+\usepackage[round]{natbib}
+\bibliographystyle{apalike}
+
 
 \usepackage{fontspec}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{colortbl}
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage{hhline}
 \newlength\Oldarrayrulewidth
 \newlength\Oldtabcolsep
@@ -166,15 +197,9 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-\usepackage[round]{natbib}
-\bibliographystyle{apalike}
 \usepackage{bookmark}
-
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   colorlinks=true,
   linkcolor={blue!000!black},
@@ -183,9 +208,9 @@
   urlcolor={blue!000!black},
   pdfcreator={LaTeX via pandoc}}
 
+
 \author{}
 \date{}
-
 \begin{document}
 
 \title{The Climate Credit Channel: Physical Shocks and Monetary Policy Transmission in South Africa}
@@ -208,6 +233,7 @@ AAAAAA
 \noindent\textbf{Keywords}: \\
 \textbf{JEL Codes}: 
 \newpage
+
 
 \setstretch{1.5}
 \section{Introduction}\label{introduction}
@@ -284,9 +310,8 @@ present.
 \subsection{Corporates}\label{corporates}
 
 From the perspective of corporates, we draw from a framework put forward
-by Bean et al (REF:Financial frictions and the monetary transmission
-mechanism: theory, evidence and policy implications 2002) as follows:
-\begin{equation}\phantomsection\label{eq-corporate_interest_rate}{
+by \citet{Bean2002Financial} as follows:
+\begin{equation}\protect\phantomsection\label{eq-corporate_interest_rate}{
 R_{it}^{c} = R_t + f(D_t/E_t), \qquad f' > 0
 }\end{equation}
 
@@ -300,18 +325,17 @@ Equation~\ref{eq-corporate_interest_rate} holds.
 
 We posit that climate shocks alter the interest rate faced by corporates
 through changes in their financial position, which affect the external
-finance premium and, consequently, the cost of borrowing (REF: Laumer
-and Schaffer: Monetary policy transmission under supply chain pressure
-2025). In particular, a climate shock can yield supply chain
-disruptions, damage of capital and production losses. These effects may
-reduce revenue and profits. Simultaneously, climate shock-related damage
-may reduce the value of collateral against which corporates borrow.
-These effects can increase corporate debt, \(D_t\), while the associated
-decline in profitability, asset values and net worth can reduce equity,
-\(E_t\). Consequently, a climate shock may increase a corporate's
-finance premium and in turn, raise the cost of external finance faced by
-the corporate. In this way, an adverse climate shock amplifies a
-contractionary monetary policy shock.
+finance premium and, consequently, the cost of borrowing
+\citep{LAUMER2025104949}. In particular, a climate shock can yield
+supply chain disruptions, damage of capital and production losses. These
+effects may reduce revenue and profits. Simultaneously, climate
+shock-related damage may reduce the value of collateral against which
+corporates borrow. These effects can increase corporate debt, \(D_t\),
+while the associated decline in profitability, asset values and net
+worth can reduce equity, \(E_t\). Consequently, a climate shock may
+increase a corporate's finance premium and in turn, raise the cost of
+external finance faced by the corporate. In this way, an adverse climate
+shock amplifies a contractionary monetary policy shock.
 
 The same framework allows for a dampening effect of contractionary
 monetary policy. That is, firms with large cash buffers, liquid assets
@@ -323,9 +347,7 @@ less responsive to the higher borrowing costs. Thus, climate shocks need
 not strengthen the transmission of monetary policy and may instead leave
 it unchanged or weaken it. Evidence that cash holdings can mitigate the
 effect of monetary tightening on corporate investment supports this
-mechanism (REF: Why Isn't Business Investment More Sensitive to Interest
-Rates? Evidence from Surveys. 2020. Steven A. Sharpe , Gustavo A.
-Suarez).
+mechanism \citep{SharpeSuarez2020}.
 
 A final, related potential propagation mechanism for corporates arises
 from the possibility that corporate borrowing and investment decisions
@@ -337,17 +359,16 @@ less sensitive to the cost of external finance. This does not
 necessarily mean that \(R_{it}^{c}\) itself falls; rather, the higher
 financing cost has a smaller effect on corporates' borrowing decisions.
 This effect would be most evident when higher interest rates coincide
-with an increase in credit volumes. Consistent with this possibility, Xu
-et al (REF: Navigating the green wave: Urban climate adaptation and
-firms'investment decisions-evidence from China 2025) demonstrate that
-adaptation policy increases firm investment even in the absence of an
-easing of financial constraints faced by firms.
+with an increase in credit volumes. Consistent with this possibility,
+\citet{XU2025108087} demonstrate that adaptation policy increases firm
+investment even in the absence of an easing of financial constraints
+faced by firms.
 
 \subsection{Households}\label{households}
 
 Analogous to Equation~\ref{eq-corporate_interest_rate}, we this of
 households facing an interest rate according to the following Equation:
-\begin{equation}\phantomsection\label{eq-household_interest_rate}{
+\begin{equation}\protect\phantomsection\label{eq-household_interest_rate}{
 R_{it}^{h} = R_t + \phi_{t}, \qquad \phi_{t} > 0
 }\end{equation} where \(R_{it}^{h}\) is the interest rate faced by
 households as a result of the policy rate \(R_t\) and the
@@ -361,9 +382,7 @@ borrowing costs. This allowance for differentiated credit market
 outcomes faced by households is driven by evidence suggesting that
 transmission of monetary policy varies across households according to a
 range of factors including their exposure to income fluctuations
-(REF:Household balance sheet channels of monetary policy: A back of the
-envelope calculation for the euro area BY Jiri Slacaleka, Oreste
-Tristani, Giovanni L. Violante).
+\citep{SLACALEK2020103879}.
 
 The household mechanism ensues similarly to the case of firms. On the
 one hand, climate shocks may amplify the credit channel's response to
@@ -381,8 +400,7 @@ change in \(\phi_{t}\) and therefore need not amplify the response of
 household borrowing costs to monetary policy.Empirical evidence suggests
 that insurance may lower debt levels in the face of disasters as
 households use insurance payouts to pay off mortgages rather than to
-reconstruct (REF:Household Finance after a Natural Disaster: The Case of
-Hurricane Katrina. Justin Gallagher and Daniel Hartley).
+reconstruct \citep{Household2017}.
 
 \subsection{Banks}\label{banks}
 
@@ -393,12 +411,9 @@ during climate shock episodes, creditors heighten the importance they
 attach to corporates' and households' balance sheet strength. Indeed,
 there is evidence that mortgage arreas is higher in regions that have
 faced more damage from climate shocks relative to less damaged regions
-(Ref:We didn't start the fire: Effects of a natural disaster on
-consumers' financial distress) Recent evidence suggests that in
-response, banks pose stricter lending conditions to borowers in
-disaster-prone regions (REF: Natural Disaster Risk and Residential
-Mortgage Lending Standards. 2022. Jun Duanmu, Yongjia Li, Meimei Lin,
-Salman Tahsin).
+\citep{HO2023102790} Recent evidence suggests that in response, banks
+pose stricter lending conditions to borowers in disaster-prone regions
+\citep{Duanmu02012022}.
 
 On the other hand, a climate shock may dampen the transmission of
 monetary policy if it reduces the demand for credit. A deterioration in
@@ -413,22 +428,19 @@ spread between lending rates and the policy rate, thereby limiting its
 potential to amplify the increase in borrowing costs associated with a
 monetary policy tightening.
 
-We must also consider the role that the policy rate, itself, plays in
-the determination of credit rates and, by extension, volumes. Two
-related concepts influence our framework. The first is around the
-mechanics of monetary policy transmission. Monetary policy transmission
-to lending rates is notoriously heterogeneous across banks and dependent
-on several factors including bank balance sheet characteristics, (REF:
-Mending the broken link: Heterogeneous bank lending rates and monetary
-policy pass-through; Carlo Altavilla, Fabio Canova, Matteo CiccarellI)
+TO BE MOVED TO INTRODUCTION: --- We must also consider the role that the
+policy rate, itself, plays in the determination of credit rates and, by
+extension, volumes. Two related concepts influence our framework. The
+first is around the mechanics of monetary policy transmission. Monetary
+policy transmission to lending rates is notoriously heterogeneous across
+banks and dependent on several factors such as bank balance sheet
+characteristics \citep{ALTAVILLA202081}.
 
 The second concept relates to the distinction between an anticipated
 interest rate change and an unanticipated rate change. Monetary policy
 passthrough in the credit market is faster when the policy rate is
-correctly anticipated (REF: Expected versus unexpected monetary policy
-impulses and interest rate pass-through in euro-zone retail banking
-markets, Stefanie Kleimeier, Harald Sander). We study monetary policy
-surprises which, by design, are unanticipated.
+correctly anticipated \citep{KLEIMEIER20061839}. We study monetary
+policy surprises which, by design, are unanticipated.
 
 This has non-negligible implications for credit condition outcomes. In
 particular,\ldots{}
@@ -441,15 +453,13 @@ corporates, households and banks. This is not necessarily always the
 case. Consider the case of precipitation shocks. One of the main ways
 that climate shocks impact macroeconomic outcomes is through the
 agricultural sector. Agricultural production is reliant on rainfall in
-the South African context where the
-majority\footnote{In production value terms} of crops are rainfed (REF:
-FAO https://www.fao.org/4/y5998e/y5998e07.htm) . This dependence is
-further heightened by the country's relatively limited water resources
-(REF: Water and sanitation --
-https://www.gov.za/about-sa/water-affairs). Hence, non-extreme positive
-precipitation shocks may aid agricultural production. This may, in turn,
-yield favourable outcomes in the agricultural sector as well as upstream
-and downstream sectors and ultimately allow for a reduction in
+the South African context where the majority of crops are rainfed
+\citep{Hartley2021ClimateUncertainty} . This dependence is further
+heightened by the country's relatively limited water resources
+\citep{GovernmentSouthAfrica2024WaterSanitation}. Hence, non-extreme
+positive precipitation shocks may aid agricultural production. This may,
+in turn, yield favourable outcomes in the agricultural sector as well as
+upstream and downstream sectors and ultimately allow for a reduction in
 \(f(D_t/E_t)\) and \(\phi_{t}\).
 
 While we present an array of explanations for how climate shocks
@@ -482,7 +492,7 @@ long-run historical norms in temperature and precipitation.
 
 The climate shocks are calculated as follows:
 
-\begin{equation}\phantomsection\label{eq-weather_shock}{ ClimateShock_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, }\end{equation}
+\begin{equation}\protect\phantomsection\label{eq-weather_shock}{ ClimateShock_{t} =  \dfrac{T_{t} -\overline{T}_{t} }{\sigma(T_{t})}, }\end{equation}
 
 where \(ClimateShock_{t}\) is the temperature or precipitation shock at
 time \(t\) and \(T_{t}\) is the observed population-weighted climate
@@ -538,7 +548,7 @@ already tracking, and treat whatever is left over --- the part of the
 rate change that cannot be explained by those forecasts --- as the true
 policy surprise. Formally:
 
-\begin{equation}\phantomsection\label{eq-mp-shock}{
+\begin{equation}\protect\phantomsection\label{eq-mp-shock}{
 \Delta r_t = \alpha + \tilde{r_t} + \sum_{t=0}^{2} \beta_t \Delta \tilde{y_t} + \sum_{t=0}^{2} \delta_t \tilde{\pi_t} + \varepsilon_t,
 }\end{equation}
 
@@ -558,7 +568,7 @@ errors --- the gap between what forecasters expected and what actually
 occurred --- rather than SARB forecasts. The construction proceeds in
 two steps. First, for each variable \(i\), the forecast error is:
 
-\begin{equation}\phantomsection\label{eq-forecast_error}{
+\begin{equation}\protect\phantomsection\label{eq-forecast_error}{
 FE^i_{t} =  EXP^i_{t} - ACT^i_{t},
 }\end{equation}
 
@@ -569,7 +579,7 @@ Bloomberg consensus forecast made beforehand. In the second step, the
 policy rate forecast error is regressed on the inflation and output
 growth forecast errors:
 
-\begin{equation}\phantomsection\label{eq-m_surprise}{
+\begin{equation}\protect\phantomsection\label{eq-m_surprise}{
 FE^{r}_{t} = \alpha + \beta FE^{\pi}_{t} + \gamma FE^{y}_t + \epsilon_t,
 }\end{equation}
 
@@ -601,7 +611,7 @@ shocks would partly reflect climate events rather than pure policy
 decisions, which would confound our estimates. To address this, we
 regress each monetary policy shock on the climate shock measures:
 
-\begin{equation}\phantomsection\label{eq-purge}{
+\begin{equation}\protect\phantomsection\label{eq-purge}{
 \text{MPShock}^i_{t} = \text{ClimateShock}^i_t + \varepsilon^i_t,
 }\end{equation}
 
@@ -618,7 +628,7 @@ subsequent estimations.
 the effect of a monetary policy shock on credit is amplified or dampened
 when a climate shock occurs at the same time:
 
-\begin{equation}\phantomsection\label{eq-credit}{
+\begin{equation}\protect\phantomsection\label{eq-credit}{
 \begin{aligned}
 \text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + 
                        \beta_3 (\text{ClimateShock}_t^k \times \text{MPShock}_t) + \\
@@ -634,7 +644,7 @@ interaction term \(\text{ClimateShock}_{t}^k\times\text{MPShock}_t\) is
 the key coefficient of interest: a significant estimate would indicate
 that climate shocks alter how monetary policy transmits through credit
 markets. \(\gamma_s\) are agent fixed effects (absorbing time-invariant
-differences across borrower types), \(\delta_t\) are time fixed effects,
+differences across borrower types), \(\delta_t\) is a linear time trend,
 and \(\varepsilon_{s,t}\) is the error term. \(X_t\) is a vector of
 controls added as a robustness check, including \textbf{GDP growth, the
 USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment
@@ -646,7 +656,7 @@ lasts. To trace the full dynamic response of credit over time, we use
 the local projections method of \citet{jorda2005}, estimating a separate
 regression for each future horizon \(h = 0, 1, \ldots, H\):
 
-\begin{equation}\phantomsection\label{eq-panel_credit}{
+\begin{equation}\protect\phantomsection\label{eq-panel_credit}{
 \begin{aligned}
 {Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \\ &\beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + 
                                       \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
@@ -672,7 +682,7 @@ and over time \citep{driscoll1998}.
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-credit_fe_temp_models-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-credit_fe_temp_models-1.png}}
 
 }
 
@@ -689,7 +699,7 @@ estimates}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-rate_corporate_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-rate_corporate_temp-1.png}}
 
 }
 
@@ -702,7 +712,7 @@ policy shock x temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-rate_corporate_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-rate_corporate_precip-1.png}}
 
 }
 
@@ -717,7 +727,7 @@ policy shock x preciptation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-rate_household_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-rate_household_temp-1.png}}
 
 }
 
@@ -730,7 +740,7 @@ policy shock x temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-rate_household_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-rate_household_precip-1.png}}
 
 }
 
@@ -799,7 +809,7 @@ types}\label{drivers---variation-across-sectors-horizons-and-shock-types}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_temp-1.png}}
 
 }
 
@@ -812,7 +822,7 @@ monetary policy shock x asymmetric temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_rate_corporate_precip-1.png}}
 
 }
 
@@ -825,7 +835,7 @@ monetary policy shock x asymmetric preciptation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_temp-1.png}}
 
 }
 
@@ -838,7 +848,7 @@ monetary policy shock x asymmetric temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_rate_household_precip-1.png}}
 
 }
 
@@ -851,7 +861,7 @@ monetary policy shock x asymmetric precipitation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-direction-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-direction-1.png}}
 
 }
 
@@ -863,7 +873,7 @@ monetary policy shock x asymmetric precipitation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-persistence-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-persistence-1.png}}
 
 }
 
@@ -877,7 +887,7 @@ monetary policy shock x asymmetric precipitation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-product_persistence-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-product_persistence-1.png}}
 
 }
 
@@ -915,7 +925,7 @@ amplification}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_volume_growth_data-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-lending_volume_growth_data-1.png}}
 
 }
 
@@ -928,7 +938,7 @@ over time}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-lending_rates-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-lending_rates-1.png}}
 
 }
 
@@ -940,7 +950,7 @@ over time}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-climate_shocks_data-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-climate_shocks_data-1.png}}
 
 }
 
@@ -952,7 +962,7 @@ over time}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-market_based_surprises_data-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-market_based_surprises_data-1.png}}
 
 }
 
@@ -964,7 +974,7 @@ over time}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-theory_based_surprises_data-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-theory_based_surprises_data-1.png}}
 
 }
 
@@ -994,139 +1004,139 @@ over time}
 
 \ascline{1pt}{000000}{1-8}
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Variable}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Mean}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Median}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{SD}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Min}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Max}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{N}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Variable}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Mean}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Median}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} SD}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Min}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Max}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} N}}}} \\
 
 \ascline{1pt}{000000}{1-8}\endfirsthead 
 
 \ascline{1pt}{000000}{1-8}
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Variable}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Mean}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Median}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{SD}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Min}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Max}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{N}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Variable}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Mean}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Median}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} SD}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Min}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Max}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} N}}}} \\
 
 \ascline{1pt}{000000}{1-8}\endhead
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Climate\ shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Climate\ shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Precipitation\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.48}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.88}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-4.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{6.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Population\ Precipitation\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.48}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.88}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -4.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 6.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 204}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Population\ Temperature\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.88}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.69}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.59}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{2.84}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Population\ Temperature\ Shock}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.88}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.69}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.59}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 2.84}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 204}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Lending\ rates}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Lending\ rates}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Mortgage\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{8.43}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{9.07}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{2.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{4.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{11.35}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Mortgage\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 8.43}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 9.07}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 2.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 4.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 11.35}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Secured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{9.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{9.99}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.36}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{3.30}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{12.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Secured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 9.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 9.99}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.36}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 3.30}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 12.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Unsecured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{8.71}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{8.62}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.74}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{5.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{12.59}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Unsecured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 8.71}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 8.62}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.74}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 5.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 12.59}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Mortgage\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{9.30}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{9.75}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.41}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{6.56}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{11.67}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Mortgage\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 9.30}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 9.75}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.41}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 6.56}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 11.67}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Secured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{11.28}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{11.35}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.42}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{7.09}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{14.11}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Secured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 11.28}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 11.35}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.42}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 7.09}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 14.11}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Unsecured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{14.52}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{14.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{10.22}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{18.37}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Unsecured\ Credit\ Rate}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 14.52}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 14.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 10.22}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 18.37}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Log\ of\ credit}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Log\ of\ credit}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Mortgages}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.27}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{23.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.94}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Mortgages}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.27}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.54}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 23.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.94}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Secured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.17}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.22}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.37}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{23.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Secured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.17}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.22}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.37}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 23.38}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.95}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Corporate\ Unsecured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.75}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.73}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.28}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{26.42}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Corporate\ Unsecured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.75}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.73}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.28}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 26.42}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Mortgages}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{26.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{26.09}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.34}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.48}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{26.76}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Mortgages}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 26.12}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 26.09}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.34}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.48}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 26.76}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Secured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.97}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.10}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.44}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.03}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.82}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Secured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.97}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.10}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.44}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.03}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.82}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Household\ Unsecured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.33}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{24.27}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{25.45}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{212}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Household\ Unsecured\ Credit}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.96}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.33}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 24.27}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 25.45}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 212}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Monetary\ policy\ shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Monetary\ policy\ shock}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Miyajima\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.77}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{208}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Miyajima\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.00}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.26}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.91}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.77}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 208}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Romer\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.41}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-1.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{1.53}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{204}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Romer\ Surprise}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.06}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.41}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -1.04}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 1.53}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 204}}}} \\
 
 
 
 
 
-\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{Target}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.03}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.13}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{-0.19}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{0.45}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{\global\setmainfont{Arial}{192}}}} \\
+\multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} }}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 1.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} Target}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.03}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.01}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.13}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} -0.19}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.6in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 0.45}}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.5in+0\tabcolsep}}{\advance\leftskip by 5.0pt\relax \advance\rightskip by 5.0pt\relax \textcolor[HTML]{000000}{\fontsize{7}{7}\selectfont{{\fontspec{Arial} 192}}}} \\
 
 \ascline{1pt}{000000}{1-8}
 
@@ -1149,7 +1159,7 @@ over time}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-rates_fe_temp_models-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-rates_fe_temp_models-1.png}}
 
 }
 
@@ -1164,7 +1174,7 @@ estimates}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-corporate_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-corporate_temp-1.png}}
 
 }
 
@@ -1177,7 +1187,7 @@ shock x temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-corporate_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-corporate_precip-1.png}}
 
 }
 
@@ -1192,7 +1202,7 @@ policy shock x precipitation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-household_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-household_temp-1.png}}
 
 }
 
@@ -1205,7 +1215,7 @@ shock x temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-household_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-household_precip-1.png}}
 
 }
 
@@ -1221,7 +1231,7 @@ projections}\label{asymmetric-local-projections}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_corporate_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_corporate_temp-1.png}}
 
 }
 
@@ -1234,7 +1244,7 @@ policy shock x asymmetric temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_corporate_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_corporate_precip-1.png}}
 
 }
 
@@ -1249,7 +1259,7 @@ policy shock x asymmetric precipitation shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_household_temp-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_household_temp-1.png}}
 
 }
 
@@ -1262,7 +1272,7 @@ policy shock x asymmetric temperature shock}
 
 \centering{
 
-\includegraphics{climate_credit_channel_files/figure-pdf/fig-asym_household_precip-1.png}
+\pandocbounded{\includegraphics[keepaspectratio]{climate_credit_channel_files/figure-pdf/fig-asym_household_precip-1.png}}
 
 }
 
@@ -1275,6 +1285,7 @@ policy shock x asymmetric temperature shock}
 
 
 \renewcommand\refname{Credit rates results with controls (to complete)}
+
 
 
 \end{document}
