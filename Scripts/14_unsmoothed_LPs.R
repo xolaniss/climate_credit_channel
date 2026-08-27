@@ -132,12 +132,12 @@ estimate_h <- function(dat, dep, climate, mp_var, h) {
     lag_terms(mp_var, n_lags)
   )
   fe <- "banks"
-  trend <- "+ date" #linear time trend eg. technological improvements
+  trend <-  "+ date"
   fml <- as.formula( #build LP formula
     paste0(
       lhs, " ~ ",
       paste(c(rhs_shocks, rhs_lags), collapse = " + "),
-      trend, " | ", fe
+        trend, " | ", fe
     )
   )
   mod <- tryCatch( #store fitted model in mode. and, trycatch ensures script keeps running even if there is an error

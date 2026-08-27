@@ -110,8 +110,8 @@ variable_labels <- c(
 # Regression estimation ------------------------------------------------
 formula <- as.formula(
   credit_value ~ mp_shock_value + climate_shock_value + 
-    climate_shock_value * mp_shock_value |
-    banks + lubridate::year(date))
+    climate_shock_value * mp_shock_value + date |
+    banks)
 
 
 model_data_long_tbl <- 
@@ -201,7 +201,7 @@ mp_labels2 <- c(
 
 shock_model_data <-
   model_data_long_tbl |>
-  filter(!mp_shock %in% c("country_risk", "central_bank_information")) |>
+  filter(!mp_shock %in% c("country_risk", "central_bank_information", "forward_guidance")) |>
   ols_nest_full_prep(group_vars = c("credit", "mp_shock", "climate_shock")) |>
   ols_tidy_group_models(formula = formula) |>
   unnest(cols = models_coef, names_repair = "universal") |>
@@ -229,7 +229,7 @@ fe_coef_plot <- function(data, title) {
                        labels = scales::label_wrap(20)) +
     labs(
       title    = title,
-      subtitle = "Fixed effects regression (bank FE + quarter FE) | 95% CI, clustered SEs",
+      subtitle = "Fixed effects regression (bank FE + year FE) | 95% CI, clustered SEs",
       x = "Coefficient (MP shock × Climate shock interaction)",
       y = NULL, color = NULL
     ) +
