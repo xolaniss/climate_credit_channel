@@ -221,18 +221,18 @@ $$
 \begin{aligned}
 \text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + 
                        \beta_3 (\text{ClimateShock}_t^k \times \text{MPShock}_t) + \\
-                       &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t}, 
+                       &\Gamma X_t + \gamma_s + \tau t + \varepsilon_{s,t}, 
 \end{aligned}
 $$ {#eq-credit}
 
-where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corporates) at time $t$, and $\text{ClimateShock}_{t}^k$ captures climate shocks — temperature, precipitation, and extreme wet and dry events, indexed by $k$. The interaction term $\text{ClimateShock}_{t}^k\times\text{MPShock}_t$ is the key coefficient of interest: a significant estimate would indicate that climate shocks alter how monetary policy transmits through credit markets. $\gamma_s$ are agent fixed effects (absorbing time-invariant differences across borrower types), $\delta_t$ is a linear time trend, and $\varepsilon_{s,t}$ is the error term. $X_t$ is a vector of controls added as a robustness check, including **GDP growth, the USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment rate**.
+where $\text{Credit}_{s,t}$ is credit growth for agent $s$ (households or corporates) at time $t$, and $\text{ClimateShock}_{t}^k$ captures climate shocks — temperature, precipitation, and extreme wet and dry events, indexed by $k$. The interaction term $\text{ClimateShock}_{t}^k\times\text{MPShock}_t$ is the key coefficient of interest: a significant estimate would indicate that climate shocks alter how monetary policy transmits through credit markets. $\gamma_s$ are agent fixed effects (absorbing time-invariant differences across borrower types), $\tau t$ is a linear time trend, and $\varepsilon_{s,t}$ is the error term. $X_t$ is a vector of controls added as a robustness check, including **GDP growth, the USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment rate**.
 
 **Panel local projections**: The panel regression above captures the contemporaneous relationship but cannot tell us how long any effect lasts. To trace the full dynamic response of credit over time, we use the local projections method of @jorda2005, estimating a separate regression for each future horizon $h = 0, 1, \ldots, H$:
 
 $$
 \begin{aligned}
 {Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \\ &\beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + 
-                                      \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+                                      \Gamma X_t + \gamma_s + \tau t + \varepsilon_{s,t},
 \end{aligned}
 $$ {#eq-panel_credit}
 
