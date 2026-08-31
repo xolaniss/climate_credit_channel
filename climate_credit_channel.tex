@@ -98,6 +98,11 @@
 % \usepackage{booktabs,caption}
 % \usepackage[flushleft]{threeparttable}
 % \usepackage{tabularx}
+% Figure note command: compact font + tighter leading, prefixes "Note:"
+\newcommand{\fignote}[1]{%
+  \vspace{-0.5em}%
+  {\scriptsize\linespread{1.1}\selectfont\noindent\textit{Note:}~#1\par}%
+}
 \usepackage{sfmath}
 \usepackage{fontspec}
 \usepackage[utf8]{inputenc}
@@ -261,8 +266,6 @@ I will investigate to what extent the manifestation of climate shocks
 act as a credit market friction and how this (potential) friction
 impacts monetary policy transmission.
 
-\section{Literature review}\label{literature-review}
-
 \section{Conceptual Framework}\label{conceptual-framework}
 
 We argue that climate shocks may alter the strength of the credit
@@ -402,13 +405,15 @@ spread between lending rates and the policy rate, thereby limiting its
 potential to amplify the increase in borrowing costs associated with a
 monetary policy tightening.
 
-TO BE MOVED TO INTRODUCTION: --- We must also consider the role that the
-policy rate, itself, plays in the determination of credit rates and, by
-extension, volumes. Two related concepts influence our framework. The
-first is around the mechanics of monetary policy transmission. Monetary
-policy transmission to lending rates is notoriously heterogeneous across
-banks and dependent on several factors such as bank balance sheet
-characteristics \citep{ALTAVILLA202081}.
+\subsection{Policy}\label{policy}
+
+We must also consider the role that the policy rate, itself, plays in
+the determination of credit rates and, by extension, volumes. Two
+related concepts influence our framework. The first is around the
+mechanics of monetary policy transmission. Monetary policy transmission
+to lending rates is notoriously heterogeneous across banks and dependent
+on several factors such as bank balance sheet characteristics
+\citep{ALTAVILLA202081}.
 
 The second concept relates to the distinction between an anticipated
 interest rate change and an unanticipated rate change. Monetary policy
@@ -606,7 +611,7 @@ when a climate shock occurs at the same time:
 \begin{aligned}
 \text{Credit}_{s,t} = &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + 
                        \beta_3 (\text{ClimateShock}_t^k \times \text{MPShock}_t) + \\
-                       &\Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t}, 
+                       &\Gamma X_t + \gamma_s + \tau t + \varepsilon_{s,t}, 
 \end{aligned}
 }\end{equation}
 
@@ -618,7 +623,7 @@ interaction term \(\text{ClimateShock}_{t}^k\times\text{MPShock}_t\) is
 the key coefficient of interest: a significant estimate would indicate
 that climate shocks alter how monetary policy transmits through credit
 markets. \(\gamma_s\) are agent fixed effects (absorbing time-invariant
-differences across borrower types), \(\delta_t\) is a linear time trend,
+differences across borrower types), \(\tau t\) is a linear time trend,
 and \(\varepsilon_{s,t}\) is the error term. \(X_t\) is a vector of
 controls added as a robustness check, including \textbf{GDP growth, the
 USD/ZAR exchange rate, the loan-to-deposit ratio, and the unemployment
@@ -633,7 +638,7 @@ regression for each future horizon \(h = 0, 1, \ldots, H\):
 \begin{equation}\phantomsection\label{eq-panel_credit}{
 \begin{aligned}
 {Credit}_{s,t+h} -{Credit}_{s,t-1} =  &\beta_0 + \beta_1 \text{ClimateShock}_{t}^k  + \beta_2 \text{MPShock}_t + \\ &\beta_3 (\text{ClimateShock}_t^k\times\text{MPShock}_t) + 
-                                      \Gamma X_t + \gamma_s + \delta_t + \varepsilon_{s,t},
+                                      \Gamma X_t + \gamma_s + \tau t + \varepsilon_{s,t},
 \end{aligned}
 }\end{equation}
 
@@ -650,8 +655,6 @@ and over time \citep{driscoll1998}.
 
 \subsection{Fixed effects}\label{fixed-effects}
 
-\newpage
-
 \begin{figure}[H]
 
 \centering{
@@ -660,10 +663,12 @@ and over time \citep{driscoll1998}.
 
 }
 
-\caption{\label{fig-credit_fe_temp_models}Lending rate panel regression
-estimates}
+\caption{\label{fig-credit_fe_temp_models}Interaction between climate
+and monetary policy shocks on lending rates}
 
 \end{figure}%
+
+\fignote{Each point shows the estimated coefficient $\hat{\beta}_3$ on the interaction term $\text{ClimateShock} \times \text{MPShock}$ from Equation~\ref{eq-credit}, with 95\% confidence intervals. Teal points indicate statistical significance at the 5\% level; red points are insignificant. Rows correspond to individual lending rate series disaggregated by borrower type and product; columns correspond to the four monetary policy surprise measures retained after excluding the country risk and central bank information factors. All models include bank and quarter-of-year fixed effects with standard errors clustered at the bank level.}
 
 \subsection{Local projections}\label{local-projections}
 
@@ -677,10 +682,12 @@ estimates}
 
 }
 
-\caption{\label{fig-rate_corporate_temp}Local projections for monetary
-policy shock x temperature shock}
+\caption{\label{fig-rate_corporate_temp}Impulse responses of corporate
+lending rates to monetary policy shocks: temperature shock interaction}
 
 \end{figure}%
+
+\fignote{Impulse response functions (IRFs) from panel local projections estimated at horizons $h = 0, \ldots, 12$ quarters following Equation~\ref{eq-panel_credit}. The blue line shows the cumulative response of the corporate lending rate to the monetary policy shock alone ($\hat{\beta}_2$); the red line shows the response when the same shock coincides with the population-weighted temperature shock ($\hat{\beta}_2 + \hat{\beta}_3$). Shaded bands are 68\% and 90\% Driscoll-Kraay confidence intervals. Rows correspond to corporate unsecured, secured, and mortgage lending rates; columns correspond to the Miyajima, Romer, and Target monetary policy surprise measures.}
 
 \begin{figure}[H]
 
@@ -690,10 +697,13 @@ policy shock x temperature shock}
 
 }
 
-\caption{\label{fig-rate_corporate_precip}Local projections for monetary
-policy shock x preciptation shock}
+\caption{\label{fig-rate_corporate_precip}Impulse responses of corporate
+lending rates to monetary policy shocks: precipitation shock
+interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-rate_corporate_temp} but for the population-weighted precipitation shock. The red line shows the corporate lending rate response when the monetary policy shock coincides with a precipitation shock ($\hat{\beta}_2 + \hat{\beta}_3$).}
 
 \newpage
 
@@ -705,10 +715,12 @@ policy shock x preciptation shock}
 
 }
 
-\caption{\label{fig-rate_household_temp}Local projections for monetary
-policy shock x temperature shock}
+\caption{\label{fig-rate_household_temp}Impulse responses of household
+lending rates to monetary policy shocks: temperature shock interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-rate_corporate_temp} but for household lending rates (unsecured, secured, and mortgage). The gap between the blue and red lines at each horizon represents the climate amplification or dampening of monetary policy transmission.}
 
 \begin{figure}[H]
 
@@ -718,10 +730,13 @@ policy shock x temperature shock}
 
 }
 
-\caption{\label{fig-rate_household_precip}Local projections for monetary
-policy shock x precipitation shock}
+\caption{\label{fig-rate_household_precip}Impulse responses of household
+lending rates to monetary policy shocks: precipitation shock
+interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-rate_household_temp} but for the population-weighted precipitation shock. Rows correspond to household unsecured, secured, and mortgage lending rates.}
 
 \subsection{Discussion}\label{discussion}
 
@@ -787,10 +802,12 @@ types}\label{drivers---variation-across-sectors-horizons-and-shock-types}
 
 }
 
-\caption{\label{fig-asym_rate_corporate_temp}Local projections for
-monetary policy shock x asymmetric temperature shock}
+\caption{\label{fig-asym_rate_corporate_temp}Asymmetric impulse
+responses of corporate lending rates under extreme temperature states}
 
 \end{figure}%
+
+\fignote{Impulse response functions from asymmetric panel local projections. The blue line shows the cumulative response of corporate lending rates to the monetary policy shock in the absence of a climate shock; the red line shows the response evaluated at an extreme positive temperature state ($+3$ SD). The gap between the two paths is the marginal climate amplification or dampening effect at that climate intensity. Shaded bands are 68\% and 90\% Driscoll-Kraay confidence intervals. Rows correspond to corporate unsecured, secured, and mortgage lending rates.}
 
 \begin{figure}[H]
 
@@ -800,10 +817,12 @@ monetary policy shock x asymmetric temperature shock}
 
 }
 
-\caption{\label{fig-asym_rate_corporate_precip}Local projections for
-monetary policy shock x asymmetric preciptation shock}
+\caption{\label{fig-asym_rate_corporate_precip}Asymmetric impulse
+responses of corporate lending rates under extreme precipitation states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_rate_corporate_temp} but evaluated at an extreme negative precipitation state ($-3$ SD, i.e.\ drought conditions). A gap between the red and blue lines indicates that drought amplifies or dampens the transmission of monetary policy to corporate lending rates relative to the no-climate-shock baseline.}
 
 \begin{figure}[H]
 
@@ -813,10 +832,12 @@ monetary policy shock x asymmetric preciptation shock}
 
 }
 
-\caption{\label{fig-asym_rate_household_temp}Local projections for
-monetary policy shock x asymmetric temperature shock}
+\caption{\label{fig-asym_rate_household_temp}Asymmetric impulse
+responses of household lending rates under extreme temperature states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_rate_corporate_temp} but for household lending rates (unsecured, secured, and mortgage). Compares the monetary policy transmission response in the absence of a climate shock against the response under an extreme positive temperature state ($+3$ SD).}
 
 \begin{figure}[H]
 
@@ -826,10 +847,12 @@ monetary policy shock x asymmetric temperature shock}
 
 }
 
-\caption{\label{fig-asym_rate_household_precip}Local projections for
-monetary policy shock x asymmetric precipitation shock}
+\caption{\label{fig-asym_rate_household_precip}Asymmetric impulse
+responses of household lending rates under extreme precipitation states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_rate_household_temp} but evaluated at an extreme negative precipitation state ($-3$ SD). Rows correspond to household unsecured, secured, and mortgage lending rates.}
 
 \begin{figure}[H]
 
@@ -839,9 +862,13 @@ monetary policy shock x asymmetric precipitation shock}
 
 }
 
-\caption{\label{fig-direction}Dampening versus amplification}
+\caption{\label{fig-direction}Direction and magnitude of the
+climate--monetary policy interaction across credit products and shock
+measures}
 
 \end{figure}%
+
+\fignote{Heatmap summarising the direction and magnitude of the climate–monetary policy interaction $\hat{\beta}_3$ from the local projections. Each cell shows the median signed interaction coefficient across all statistically significant horizons (68\% CI), with ``$+$'' indicating amplification (the climate shock strengthens monetary policy transmission) and ``$-$'' indicating dampening (the climate shock weakens transmission). Colour intensity reflects the magnitude of the median interaction, capped at $\pm 0.5$ for readability. Rows correspond to individual credit products; columns correspond to the four monetary policy surprise measures. Panels separate the results by credit type (rates vs.\ log volumes) and climate shock (temperature vs.\ precipitation).}
 
 \begin{figure}[H]
 
@@ -851,9 +878,12 @@ monetary policy shock x asymmetric precipitation shock}
 
 }
 
-\caption{\label{fig-persistence}Length of dampening or amplification}
+\caption{\label{fig-persistence}Timing and persistence of the
+climate--monetary policy interaction}
 
 \end{figure}%
+
+\fignote{Distribution of two timing statistics computed from the local projection interaction coefficients. \textit{Left panel:} the horizon at which the absolute interaction effect reaches its peak, across all credit product and monetary policy shock combinations. \textit{Right panel:} the number of quarters for which the interaction coefficient is statistically significant at the 68\% confidence level (a measure of persistence). Dashed lines mark the median for each borrower group. Results are disaggregated by credit type (rates vs.\ log volumes) and climate shock (temperature vs.\ precipitation).}
 
 \newpage
 
@@ -865,10 +895,12 @@ monetary policy shock x asymmetric precipitation shock}
 
 }
 
-\caption{\label{fig-product_persistence}Sector length of dampening or
-amplification}
+\caption{\label{fig-product_persistence}Timing and persistence of the
+climate--monetary policy interaction by credit product}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-persistence} but disaggregated by individual credit product rather than pooled across products. Points show the median peak horizon (left panel) and median quarters significant (right panel) across all six monetary policy surprise measures, with interquartile range bars. The dashed line marks the overall median across all products and shock combinations. Corporate products are shown in dark blue; household products in red.}
 
 \section{Conclusion}\label{conclusion}
 
@@ -903,10 +935,12 @@ amplification}
 
 }
 
-\caption{\label{fig-lending_volume_growth_data}Lending volume growth
-over time}
+\caption{\label{fig-lending_volume_growth_data}Private sector credit
+extension by borrower type and product, 2011--2025}
 
 \end{figure}%
+
+\fignote{Log of quarterly credit extension at the bank level, disaggregated by borrower type (corporate and household) and product category (unsecured, secured, and mortgage credit). Series are constructed from the South African Reserve Bank's BA900 and BA930 bank compliance reports following \citet{sibande2025} and \citet{sibande2025a}. The sample covers the period 2011Q1–2025Q1 and is restricted to the major South African banking groups.}
 
 \begin{figure}[H]
 
@@ -916,9 +950,12 @@ over time}
 
 }
 
-\caption{\label{fig-lending_rates}Lending rates overtime}
+\caption{\label{fig-lending_rates}Bank-level lending rates by borrower
+type and credit product, 2011--2025}
 
 \end{figure}%
+
+\fignote{Quarterly lending rates at the bank level, disaggregated by borrower type and product (unsecured, secured, and mortgage credit for both corporates and households). Rates are expressed in percentage points and are sourced from the SARB BA930 compliance reports. Unlike credit volumes, lending rates are not log-transformed. The pronounced heterogeneity across banks and products reflects differences in risk pricing, collateral requirements, and borrower characteristics.}
 
 \begin{figure}[H]
 
@@ -928,9 +965,12 @@ over time}
 
 }
 
-\caption{\label{fig-climate_shocks_data}Climate Shocks Data}
+\caption{\label{fig-climate_shocks_data}Population-weighted temperature
+and precipitation shocks for South Africa, 2011--2025}
 
 \end{figure}%
+
+\fignote{Standardised climate shock series constructed from ERA5 reanalysis data (European Centre for Medium-Range Weather Forecasts) at a 31\,km horizontal resolution. Each observation is the deviation of the population-weighted monthly average from the long-run calendar-month mean, expressed in standard deviation units: $\text{ClimateShock}_t = (T_t - \bar{T}_t)/\sigma(T_t)$. Positive values indicate warmer or wetter conditions than the historical norm; negative values indicate cooler or drier conditions. Grid-level values are weighted by population density and aggregated to a quarterly frequency by averaging within-quarter monthly values.}
 
 \begin{figure}[H]
 
@@ -940,9 +980,12 @@ over time}
 
 }
 
-\caption{\label{fig-market_based_surprises_data}Market-Based Surprise}
+\caption{\label{fig-market_based_surprises_data}High-frequency
+market-based monetary policy surprise factors, 2011--2025}
 
 \end{figure}%
+
+\fignote{Monetary policy surprise factors derived from the high-frequency identification approach of \citet{gurkaynak2005} and constructed for South Africa by \citet{pirozhkova2025}. Each factor is extracted from movements in financial market prices in a narrow window around Monetary Policy Committee (MPC) announcement dates. Four components are shown: the \textit{target factor} (surprise in the level of the policy rate), the \textit{forward guidance factor} (surprise in the expected future path of policy), the \textit{central bank information factor} (economic outlook news revealed by the central bank's communication), and the \textit{country risk factor} (shifts in sovereign risk perceptions around MPC dates). Series are aggregated to a quarterly frequency.}
 
 \begin{figure}[H]
 
@@ -952,9 +995,12 @@ over time}
 
 }
 
-\caption{\label{fig-theory_based_surprises_data}Theory-based surprises}
+\caption{\label{fig-theory_based_surprises_data}Theory-based monetary
+policy surprises: Romer--Romer and Miyajima measures, 2011--2025}
 
 \end{figure}%
+
+\fignote{Two theory-based monetary policy surprise measures used as alternative identification strategies. The \textit{Romer measure} (blue) is the residual from regressing the change in the SARB's repo rate forecast on its own internal projections for GDP growth and inflation, following the approach of \citet{romer2004} adapted to South Africa by \citet{merrino2022}; a positive value indicates an unexpected tightening relative to the SARB's own information set. The \textit{Miyajima measure} (red) is the residual from regressing the Bloomberg consensus forecast error for the policy rate on forecast errors for inflation and GDP growth \citep{miyajima2024}; a positive value indicates the repo rate came in above what economic news alone would have predicted. Both series are aggregated to a quarterly frequency and purged of climate shock variation prior to use in the main regressions (see Equation~\ref{eq-purge}).}
 
 \subsection{Descriptive Statistics}\label{descriptive-statistics}
 
@@ -972,7 +1018,8 @@ over time}
 
 \begin{longtable}[l]{|p{0.75in}|p{1.50in}|p{0.60in}|p{0.60in}|p{0.60in}|p{0.60in}|p{0.60in}|p{0.50in}}
 
-\caption{\label{tbl-descriptives}Descriptive statistics}
+\caption{\label{tbl-descriptives}Summary statistics for key variables
+used in the analysis}
 
 \tabularnewline
 
@@ -1125,6 +1172,8 @@ over time}
 
 \renewcommand*{\arraystretch}{1}
 
+\fignote{Summary statistics computed over the full estimation sample (2011Q1--2025Q1) at the bank-quarter level. Credit volumes are expressed in log terms; lending rates are in percentage points; climate shocks are standardised deviations from the long-run calendar-month mean (see Equation~\ref{eq-weather_shock}); and monetary policy surprises are expressed in percentage points. The country risk factor, forward guidance factor, and central bank information factor are excluded from this table to preserve space but are included in the main regressions. $N$ denotes the number of non-missing bank-quarter observations.}
+
 \section{Credit growth results}\label{credit-growth-results}
 
 \subsection{Fixed effects}\label{fixed-effects-1}
@@ -1137,10 +1186,12 @@ over time}
 
 }
 
-\caption{\label{fig-rates_fe_temp_models}Credit growth panel regression
-estimates}
+\caption{\label{fig-rates_fe_temp_models}Interaction between climate and
+monetary policy shocks on credit growth: fixed effects estimates}
 
 \end{figure}%
+
+\fignote{Each point shows the estimated coefficient $\hat{\beta}_3$ on the interaction term $\text{ClimateShock} \times \text{MPShock}$ from Equation~\ref{eq-credit}, with 95\% confidence intervals. Teal points indicate statistical significance at the 5\% level; red points are insignificant. Rows correspond to individual log credit volume series disaggregated by borrower type and product; columns correspond to the four monetary policy surprise measures retained after excluding the country risk and central bank information factors. All models include bank and quarter-of-year fixed effects with standard errors clustered at the bank level. Credit volumes are expressed in logarithms so coefficients represent proportional responses.}
 
 \subsection{Local projections}\label{local-projections-1}
 
@@ -1152,10 +1203,12 @@ estimates}
 
 }
 
-\caption{\label{fig-corporate_temp}Local projections for monetary policy
-shock x temperature shock}
+\caption{\label{fig-corporate_temp}Impulse responses of corporate credit
+growth to monetary policy shocks: temperature shock interaction}
 
 \end{figure}%
+
+\fignote{Impulse response functions (IRFs) from panel local projections estimated at horizons $h = 0, \ldots, 12$ quarters following Equation~\ref{eq-panel_credit}. The blue line shows the cumulative response of log corporate credit growth to the monetary policy shock alone ($\hat{\beta}_2$); the red line shows the response when the same shock coincides with the population-weighted temperature shock ($\hat{\beta}_2 + \hat{\beta}_3$). Shaded bands are 68\% and 90\% Driscoll-Kraay confidence intervals. Rows correspond to corporate unsecured, secured, and mortgage credit; columns correspond to the Miyajima, Romer, and Target monetary policy surprise measures.}
 
 \begin{figure}[H]
 
@@ -1165,10 +1218,13 @@ shock x temperature shock}
 
 }
 
-\caption{\label{fig-corporate_precip}Local projections for monetary
-policy shock x precipitation shock}
+\caption{\label{fig-corporate_precip}Impulse responses of corporate
+credit growth to monetary policy shocks: precipitation shock
+interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-corporate_temp} but for the population-weighted precipitation shock. The red line shows the corporate credit growth response when the monetary policy shock coincides with a precipitation shock ($\hat{\beta}_2 + \hat{\beta}_3$). Rows correspond to corporate unsecured, secured, and mortgage credit.}
 
 \newpage
 
@@ -1180,10 +1236,12 @@ policy shock x precipitation shock}
 
 }
 
-\caption{\label{fig-household_temp}Local projections for monetary policy
-shock x temperature shock}
+\caption{\label{fig-household_temp}Impulse responses of household credit
+growth to monetary policy shocks: temperature shock interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-corporate_temp} but for household credit growth (unsecured, secured, and mortgage). The gap between the blue and red lines at each horizon represents the marginal effect of the temperature shock on the transmission of monetary policy to household credit volumes.}
 
 \begin{figure}[H]
 
@@ -1193,10 +1251,13 @@ shock x temperature shock}
 
 }
 
-\caption{\label{fig-household_precip}Local projections for monetary
-policy shock x temperature shock}
+\caption{\label{fig-household_precip}Impulse responses of household
+credit growth to monetary policy shocks: precipitation shock
+interaction}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-household_temp} but for the population-weighted precipitation shock. Rows correspond to household unsecured, secured, and mortgage credit growth.}
 
 \subsection{Asymmetric local
 projections}\label{asymmetric-local-projections}
@@ -1209,10 +1270,12 @@ projections}\label{asymmetric-local-projections}
 
 }
 
-\caption{\label{fig-asym_corporate_temp}Local projections for monetary
-policy shock x asymmetric temperature shock}
+\caption{\label{fig-asym_corporate_temp}Asymmetric impulse responses of
+corporate credit growth under extreme temperature states}
 
 \end{figure}%
+
+\fignote{Impulse response functions from asymmetric panel local projections. The blue line shows the cumulative response of log corporate credit growth to the monetary policy shock in the absence of a climate shock; the red line shows the response evaluated at an extreme positive temperature state ($+3$ SD). The gap between the two paths is the marginal climate amplification or dampening effect at that climate intensity. Shaded bands are 68\% and 90\% Driscoll-Kraay confidence intervals. Rows correspond to corporate unsecured, secured, and mortgage credit growth.}
 
 \begin{figure}[H]
 
@@ -1222,10 +1285,12 @@ policy shock x asymmetric temperature shock}
 
 }
 
-\caption{\label{fig-asym_corporate_precip}Local projections for monetary
-policy shock x asymmetric precipitation shock}
+\caption{\label{fig-asym_corporate_precip}Asymmetric impulse responses
+of corporate credit growth under extreme precipitation states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_corporate_temp} but evaluated at an extreme negative precipitation state ($-3$ SD, i.e.\ drought conditions). A divergence between the red and blue lines indicates that drought conditions amplify or dampen the transmission of monetary policy to corporate credit volumes relative to the no-climate-shock baseline. Rows correspond to corporate unsecured, secured, and mortgage credit growth.}
 
 \newpage
 
@@ -1237,10 +1302,12 @@ policy shock x asymmetric precipitation shock}
 
 }
 
-\caption{\label{fig-asym_household_temp}Local projections for monetary
-policy shock x asymmetric temperature shock}
+\caption{\label{fig-asym_household_temp}Asymmetric impulse responses of
+household credit growth under extreme temperature states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_corporate_temp} but for household credit growth (unsecured, secured, and mortgage). Compares the monetary policy transmission response in the absence of a climate shock against the response under an extreme positive temperature state ($+3$ SD).}
 
 \begin{figure}[H]
 
@@ -1250,10 +1317,12 @@ policy shock x asymmetric temperature shock}
 
 }
 
-\caption{\label{fig-asym_household_precip}Local projections for monetary
-policy shock x asymmetric temperature shock}
+\caption{\label{fig-asym_household_precip}Asymmetric impulse responses
+of household credit growth under extreme precipitation states}
 
 \end{figure}%
+
+\fignote{As Figure~\ref{fig-asym_household_temp} but evaluated at an extreme negative precipitation state ($-3$ SD). Rows correspond to household unsecured, secured, and mortgage credit growth.}
 
 \newpage
 

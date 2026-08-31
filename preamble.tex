@@ -14,6 +14,11 @@
 % \usepackage{booktabs,caption}
 % \usepackage[flushleft]{threeparttable}
 % \usepackage{tabularx}
+% Figure note command: compact font + tighter leading, prefixes "Note:"
+\newcommand{\fignote}[1]{%
+  \vspace{-0.5em}%
+  {\scriptsize\linespread{1.1}\selectfont\noindent\textit{Note:}~#1\par}%
+}
 \usepackage{sfmath}
 \usepackage{fontspec}
 \usepackage[utf8]{inputenc}
