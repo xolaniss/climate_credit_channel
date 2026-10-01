@@ -25,7 +25,7 @@ timing_stats <-
   summarise(
     peak_horizon  = h[which.max(abs(irf))],
     n_sig         = sum(sig68),
-    direction     = if_else(mean(irf[sig68]) > 0, "Amplifies", "Dampens"),
+    direction     = if_else(median(irf[sig68]) > 0, "Amplifies", "Dampens"),
     .groups = "drop"
   )
 
@@ -127,34 +127,62 @@ mp_type_map <- c(
 mp_label_map <- c(
   romer_surprise           = "Romer",
   miyajima_surprise        = "Miyajima",
-  target                   = "Target",
-  forward_guidance         = "Fwd. guidance"
+  target                   = "Target"
+  # forward_guidance         = "Fwd. guidance"
 )
 
-direction_tbl <- irf_standard |>
-  filter(!mp_shock %in% c("central_bank_information", "country_risk")) |> 
-  filter(component == "Interaction (climate amplification)") |>
-  mutate(sig68 = lo68 > 0 | hi68 < 0) |>
+# Extract the three IRF series and join them by horizon
+irf_base <- irf_standard |>
+  filter(
+    !mp_shock %in% c("central_bank_information", "country_risk", "forward_guidance"),
+    component == "MP shock alone"
+  ) |>
+  select(dep, mp_shock, climate_shock, h, irf_base = irf)
+
+irf_climate_path <- irf_standard |>
+  filter(
+    !mp_shock %in% c("central_bank_information", "country_risk", "forward_guidance"),
+    component == "MP shock with climate shock"
+  ) |>
+  select(dep, mp_shock, climate_shock, h, irf_climate = irf)
+
+irf_interaction <- irf_standard |>
+  filter(
+    !mp_shock %in% c("central_bank_information", "country_risk", "forward_guidance"),
+    component == "Interaction (climate amplification)"
+  ) |>
+  select(dep, mp_shock, climate_shock, h, irf_interaction = irf, lo68, hi68)
+
+# Amplification: |β₂ + β₃| > |β₂| at significant horizons
+direction_tbl <- irf_interaction |>
+  left_join(irf_base,         by = c("dep", "mp_shock", "climate_shock", "h")) |>
+  left_join(irf_climate_path, by = c("dep", "mp_shock", "climate_shock", "h")) |>
+  mutate(
+    sig68      = lo68 > 0 | hi68 < 0,
+    amplifies_h = abs(irf_climate) > abs(irf_base)  # horizon-level flag
+  ) |> 
   group_by(dep, mp_shock, climate_shock) |>
   summarise(
-    median_irf = median(irf[sig68], na.rm = TRUE),
-    n_sig      = sum(sig68),
-    .groups    = "drop"
+    prop_amplify = mean(amplifies_h, na.rm = TRUE),
+    n_sig        = sum(sig68),
+    .groups      = "drop"
   ) |>
   mutate(
     direction = case_when(
-      is.nan(median_irf) ~ "Insignificant",
-      median_irf >  0    ~ "Amplifies",
-      median_irf <= 0    ~ "Dampens"
+      n_sig == 0            ~ "Insignificant",
+      prop_amplify >= 0.5   ~ "Amplifies",
+      TRUE                  ~ "Dampens"
     ),
-    borrower      = if_else(str_detect(dep, "household"), "Household", "Corporate"),
-    credit_type   = if_else(str_detect(dep, "_rate"), "Rate", "Volume"),
-    credit_label  = dep |>
+    # Score: +1 = always amplifies, -1 = always dampens, 0 = equal split
+    amp_score    = 2 * prop_amplify - 1,
+    borrower     = if_else(str_detect(dep, "household"), "Household", "Corporate"),
+    credit_type  = if_else(str_detect(dep, "_rate"), "Rate", "Volume"),
+    credit_label = dep |>
       str_remove("corporate_|household_") |>
       str_remove("_rate") |>
       str_replace_all("_", " ") |>
       str_to_title(),
-    dep_label    = paste0(borrower, " ", credit_label),
+    dep_label     = paste0(borrower, " ", credit_label),
     climate_label = if_else(climate_shock == "pop_temp_shock",
                             "Temperature", "Precipitation"),
     mp_label = factor(mp_label_map[mp_shock], levels = mp_label_map),
@@ -182,29 +210,25 @@ rate_order   <- c("Corp. mortgage", "Corp. secured", "Corp. unsecured",
 
 direction_gg <- 
   direction_tbl |>
-  mutate(
-    dep_label     = factor(short_dep_labels[dep], levels = rev(rate_order)),
-    median_capped = pmax(pmin(median_irf, 0.5), -0.5)
-  ) |>
-  ggplot(aes(x = mp_label, y = dep_label, fill = median_capped)) +
+  mutate(dep_label = factor(short_dep_labels[dep], levels = rev(rate_order))) |>
+  ggplot(aes(x = mp_label, y = dep_label, fill = amp_score)) +
   geom_tile(colour = "white", linewidth = 0.6) +
-  geom_text(aes(label = if_else(direction == "Amplifies", "+", "−")),
+  geom_text(aes(label = if_else(direction == "Amplifies", "+", "-")),
             size = 4.5, fontface = "bold", colour = "black") +
   facet_grid(credit_type ~ climate_label) +
   scale_fill_distiller(
     palette   = "RdBu",
-    direction = -1,
-    limits    = c(-0.5, 0.5),
+    direction =  1,
+    limits    = c(-1, 1),
     oob       = scales::squish,
-    name      = "← dampens | amplifies →",
-    breaks    = c(-0.5, -0.25, 0, 0.25, 0.5),
-    labels    = c("≤ −0.5", "−0.25", "0", "+0.25", "≥ +0.5")
+    name      = "",
+    breaks    = c(-1, -0.5, 0, 0.5, 1),
+    labels    = c("All\ndampens", "-0.5", "Equal\nsplit", "+0.5", "All\namplifies")
   ) +
-  scale_x_discrete(limits = c("Romer", "Miyajima", "Target",
-                               "Fwd. guidance")) +
+  scale_x_discrete(limits = c("Romer", "Miyajima", "Target")) +
   labs(
-    title    = "Direction of climate–MP interaction on credit",
-    subtitle = "+ amplifies MP transmission  |  − dampens  |  colour intensity = magnitude",
+    title    = "Direction of climate-MP interaction on credit",
+    subtitle = "+ amplifies  |  - dampens  |  fill = share of all horizons amplifying",
     x = NULL, y = NULL
   ) +
   theme_minimal(base_size = 10) +

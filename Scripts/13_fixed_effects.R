@@ -195,8 +195,13 @@ climate_labels <- c(
 mp_labels2 <- c(
   miyajima_surprise        = "Miyajima",
   romer_surprise           = "Romer",
-  target                   = "Target",
-  forward_guidance         = "Fwd. guidance"
+  target                   = "Target"
+  # forward_guidance         = "Fwd. guidance"
+)
+
+term_labels <- c(
+  "mp_shock_value"                     = "MP shock",
+  "mp_shock_value:climate_shock_value" = "Interaction"
 )
 
 shock_model_data <-
@@ -207,13 +212,14 @@ shock_model_data <-
   unnest(cols = models_coef, names_repair = "universal") |>
   select(credit, mp_shock, climate_shock, term, estimate, conf.low, conf.high, p.value) |>
   ungroup() |>
-  filter(term == "mp_shock_value:climate_shock_value") |>
+  filter(term %in% c("mp_shock_value", "mp_shock_value:climate_shock_value")) |>
   mutate(
     group         = if_else(str_ends(credit, "credit|mortgages"), "Log of credit", "Lending rates"),
     credit        = factor(credit_labels[credit], levels = rev(credit_labels)),
     mp_shock      = factor(mp_labels2[mp_shock], levels = mp_labels2),
     climate_shock = factor(climate_labels[climate_shock], levels = climate_labels),
-    sig           = if_else(p.value < 0.05, "p < 0.05", "p ≥ 0.05")
+    term_label    = factor(term_labels[term], levels = term_labels),
+    sig           = if_else(p.value < 0.05, "p < 0.05", "p \u2265 0.05")
   )
 
 fe_coef_plot <- function(data, title) {
@@ -223,14 +229,14 @@ fe_coef_plot <- function(data, title) {
     geom_errorbar(aes(xmin = conf.low, xmax = conf.high),
                   orientation = "y", width = 0.35) +
     geom_point(size = 1.8) +
-    facet_grid(climate_shock ~ mp_shock, scales = "free_x") +
+    facet_grid(climate_shock + term_label ~ mp_shock, scales = "free_x") +
     scale_x_continuous(breaks = scales::breaks_width(1)) +
     scale_color_manual(values = pnw_palette("Bay", 2),
                        labels = scales::label_wrap(20)) +
     labs(
       title    = title,
       subtitle = "Fixed effects regression (bank FE + year FE) | 95% CI, clustered SEs",
-      x = "Coefficient (MP shock × Climate shock interaction)",
+      x = "Coefficient",
       y = NULL, color = NULL
     ) +
     theme_bw(base_size = 11) +
