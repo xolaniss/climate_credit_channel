@@ -1,0 +1,66 @@
+---
+title: "The Climate Credit Channel: Physical Shocks and Monetary Policy Transmission in South Africa"
+format: 
+  beamer:
+    aspectration: 141
+    slide-level: 2
+    section-titles: false
+    number-sections: false
+    theme: "CambridgeUS"
+    fonttheme: "structurebold"
+    colortheme: "dolphin"
+    header-includes:
+      - \setbeamertemplate{items}[circle]
+      # - \setbeamertemplate{footline}[frame number]
+      - \usepackage{setspace}
+      - \usepackage{booktabs}
+      - \setbeamerfont{title}{size=\Large}
+      - \setbeamerfont{author}{size=\large}
+      - \setbeamerfont{subtitle}{size=\large}
+      - \setbeamerfont{institute}{size=\small}
+      - \setbeamerfont{date}{size=\small}
+      - \useoutertheme[footline=authorinstitute]{miniframes}
+      - \definecolor{UBCblue}{rgb}{0.04706, 0.13725, 0.26667}
+      - \usecolortheme[named=UBCblue]{structure}
+      - \setbeamertemplate{frametitle}[default][center]
+      - \setbeamertemplate{frame numbering}{}
+    # frame-options: [fragile]
+    institute: "South Africa Reserve Bank"
+authors:
+
+  - name: Tichinashe Mabugu
+    affiliation: 
+    - name: South Africa Reserve Bank
+      department: Economic Research Department
+      country: South Africa
+    roles: writing
+    corresponding: true
+    email: Tichinashe.Mabugu@resbank.co.za
+  - name: Xolani Sibande
+    affiliation: 
+    - name: South Africa Reserve Bank
+      department: Economic Research Department
+      country: South Africa
+    roles: writing
+    corresponding: true
+    email: xolani.sibande@resbank.co.za
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+- Content authored with markdown
+- Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```

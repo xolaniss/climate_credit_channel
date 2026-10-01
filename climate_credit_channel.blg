@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: climate_credit_channel.aux
+The style file: apalike.bst
+Database file #1: references.bib
+Warning--entry type for "GovernmentSouthAfrica2024WaterSanitation" isn't style-file defined
+--line 1 of file references.bib
+Warning--empty institution in Bean2002Financial
+You've used 29 entries,
+            1935 wiz_defined-function locations,
+            673 strings with 9350 characters,
+and the built_in function-call counts, 11404 in all, are:
+= -- 1136
+> -- 427
+< -- 21
++ -- 144
+- -- 138
+* -- 1000
+:= -- 1987
+add.period$ -- 89
+call.type$ -- 29
+change.case$ -- 213
+chr.to.int$ -- 29
+cite$ -- 30
+duplicate$ -- 411
+empty$ -- 807
+format.name$ -- 193
+if$ -- 2211
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 27
+newline$ -- 150
+num.names$ -- 87
+pop$ -- 146
+preamble$ -- 1
+purify$ -- 214
+quote$ -- 0
+skip$ -- 319
+stack$ -- 0
+substring$ -- 899
+swap$ -- 41
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 172
+warning$ -- 1
+while$ -- 97
+width$ -- 0
+write$ -- 381
+(There were 2 warnings)
