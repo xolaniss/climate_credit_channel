@@ -573,8 +573,6 @@ extensions |> pluck("combined_product_gg")
 - Surprise measures are standard; measures that capture the SARB's climate-related communication, or that separate physical from financial-stability news, may reveal further dimensions
 
 
-# {unnumbered}
-
 ## 
 
 \vfill
