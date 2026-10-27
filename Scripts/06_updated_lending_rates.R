@@ -92,12 +92,12 @@ lending_rate_tbl <- bind_rows(lending_rate_2008_2021_tbl, lending_rate_2022_2026
 lending_rate_gg <- 
   lending_rate_tbl |> 
   mutate(
-    banks = replace_values(
+    banks = dplyr::recode(
       banks,
-      "ABSA BANK" ~ "BANK A",
-      "FIRSTRAND BANK" ~ "BANK B",
-      "NEDBANK" ~ "BANK C",
-      "STANDARD BANK" ~ "BANK D"
+      "ABSA BANK" = "BANK A",
+      "FIRSTRAND BANK" = "BANK B",
+      "NEDBANK" = "BANK C",
+      "STANDARD BANK" = "BANK D"
     )
   ) |> 
   pivot_longer(cols = - c(date, banks), values_to = "rate", names_to = "credit_category") |> 

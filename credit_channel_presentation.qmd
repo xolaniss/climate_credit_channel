@@ -30,6 +30,9 @@ format:
       - \setbeamertemplate{frametitle}[default][center]
       - \setbeamerfont{frametitle}{size=\large}
       - \setbeamertemplate{frame numbering}{}
+      - \usepackage{appendixnumberbeamer}
+      - \let\oldsection\section
+      - \renewcommand{\section}{\ifnum\value{section}=5 \appendix\fi\oldsection}
     institute: "South Africa Reserve Bank"
 authors:
 
@@ -82,44 +85,41 @@ plots         <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> plu
 asym_plots    <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> pluck(4)
 extensions    <- read_rds(here("Outputs", "artifacts_extensions.rds"))
 
+# ---- Lagged-state (t-1) versions of the local projections ----
+lagged_plots      <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_lagged.rds")) |> pluck(4)
+lagged_asym_plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym_lagged.rds")) |> pluck(4)
+
 # Helper functions (identical indexing to the paper)
 plot_function      <- function(n) (plots[[n]] + plots[[n + 1]] + plots[[n + 2]])
 odd_plot_function  <- function(n) (plots[[n]] + plots[[n + 2]] + plots[[n + 4]])
 asym_plot_function <- function(n) (asym_plots[[n]] + asym_plots[[n + 1]] + asym_plots[[n + 2]])
 asym_odd_function  <- function(n) (asym_plots[[n]] + asym_plots[[n + 2]] + asym_plots[[n + 4]])
+
+# Lagged-state helpers (same indexing as above, applied to the lagged artifacts)
+lagged_odd_function      <- function(n) (lagged_plots[[n]] + lagged_plots[[n + 2]] + lagged_plots[[n + 4]])
+lagged_asym_odd_function <- function(n) (lagged_asym_plots[[n]] + lagged_asym_plots[[n + 2]] + lagged_asym_plots[[n + 4]])
 ```
-
-## Roadmap
-
-1. Credit channel
-2. Climate channel
-3. Monetary policy surprises: structural and high frequency
-4. Climate shocks
-5. Empirical specification
-6. Results
-7. Conclusion
 
 # Credit Channel
 
 ## Monetary policy transmission: beyond the interest rate channel
 
-- Traditional interest rate mechanism: policy rate $\rightarrow$ real rate $\rightarrow$ cost of capital [@mishkin1995]
+- Traditional interest rate mechanism: policy rate $\rightarrow$ real rate $\rightarrow$ cost of capital $\rightarrow$ investment [@mishkin1995]
 - Empirical puzzles that this mechanism struggles with [@bernanke1995]:
   - Spending responses are too large and too fast relative to estimated cost-of-capital elasticities
   - Heterogeneity: firms respond differently to the same policy shock, particularly depending on their financial position and access to credit.
 
-- The credit channel is not a separate channel: it is an **amplification and propagation mechanism** for the conventional interest rate effect
-- The object that does the amplifying is the **external finance premium**
+- The credit channel is not a separate channel: it interacts with the conventional interest rate effect through the **external finance premium**
 
 ## The external finance premium (EFP)
 
 \small
-**Definition.** The wedge between the cost of funds raised externally (debt or equity) and the opportunity cost of internal funds:
+**Definition.** The wedge between the cost of funds raised externally (debt) and the opportunity cost of internal funds:
 $$
 \text{EFP}_t \;\equiv\; r^{ext}_t - r^{int}_t \;>\; 0
 $$
 
-- Why is it positive? Asymmetric information, agency costs, costly state verification and monitoring [@bernanke1989; @hubbard1998]
+- Why is it positive? Asymmetric information, agency costs, costly verification and monitoring [@bernanke1989; @hubbard1998]
 - The external finance premium falls when borrowers have stronger balance sheets and more collateral relative to their assets, because lenders see them as less risky [@bernanke1996]
 
 ## Lending rates: the price of credit
@@ -136,8 +136,8 @@ $$
 ## The Credit Channel
 
 \small
-- Financial frictions amplify monetary policy transmission through two channels:
- - **Balance sheet channel:** policy affects borrowers' net worth, cash flow and collateral.
+- Financial frictions interact with monetary policy transmission through two channels:
+ - **(Borrower) Balance sheet channel:** policy affects borrowers' net worth, cash flow and collateral.
    - A policy tightening weakens borrower balance sheets through three routes [@bernanke1995; @kiyotaki1997]:
        - **Cash-flow effect:** higher debt service burden
        - **Collateral effect:** lower asset prices reduce the value of collateral
@@ -151,19 +151,34 @@ $$
 
 ## The credit channel is not fully understood
 
-- The **magnitude** of the EFP response to policy varies across time, borrowers and products; even its originators flagged that the quantitative importance is unsettled [@bernanke1995]
-- **Who responds?** Leverage [@ottonello2020] versus other firm characteristics eg. age and dividend status [@cloyne2023] give different answers about which balance sheets matter
+- The **magnitude** of the EFP response to policy varies across time, borrowers and products; even its originators flagged that its quantitative importance is unsettled [@bernanke1995]
+- **Who responds?** Borrowers' Leverage [@ottonello2020] versus other firm characteristics eg. age and dividend status [@cloyne2023] give different answers about which balance sheets matter
 - **When?** Transmission is weaker in recessions [@tenreyro2016]; low rates induce bank risk-taking [@jimenez2014]
-- **Pass-through heterogeneity:** bank balance sheets shape how much of a policy move reaches borrowers [@altavilla2020]
+- **Pass-through heterogeneity:** Lenders balance sheets shape how much of a policy move reaches borrowers [@altavilla2020]
+- **Geography**
+The bulk of the evidence is from the United States and the euro area. Transmission in emerging and low-income economies is weaker and less reliable, reflecting shallower financial markets and bank concentration [@mishra2012]
 - **Identification:** policy announcements convey information about the outlook, contaminating measured responses [@nakamura2018; @jarocinski2020]
 
-## The credit channel is not fully understood cont'd
+## Why surprises rather than the policy rate
 
-- **Geography**
-The bulk of the evidence is from the United States and the euro area
-- Transmission in emerging and low-income economies is weaker and less reliable, reflecting shallower financial markets and bank concentration [@mishra2012]
-- South Africa: the bank lending channel operates but is heterogeneous [@pirozhkova2025]; policy has distributional effects through labour and credit markets [@merrino2022; @miyajima2024]; and regulation also shapes bank lending [@sibande2025; @sibande2025a]
-- Physical climate exposure is larger and agriculture is more rainfall dependent in these economies [@schlenker2010], so the interaction between climate and policy is likely to be first order
+- The repo rate $r_t$ is **endogenous**: it responds to inflation, output and, in a climate-exposed economy, potentially to food prices and the weather
+- Regressing credit on $r_t$ confounds policy with the conditions that prompted policy
+- We need variation in policy that is orthogonal to the policymaker's and the market's information sets [@romer2004]
+- Two families of surprise measures:
+  - **Structural / forecast based:** residual of the rate change on forecasts (Romer and Romer; Miyajima)
+  - **High frequency / market based:** asset price moves in a narrow window around announcements [@kuttner2001; @gurkaynak2005]
+
+## Surprises do not transmit like textbook policy
+
+\small
+- @kuttner2001: the **unanticipated** component of a rate change moves market rates
+$$
+\Delta i_t = \alpha + \beta_e\, \Delta r^{e}_t + \beta_u\, \Delta r^{u}_t + \eta_t, \qquad \hat\beta_e \approx 0, \;\; \hat\beta_u \gg 0
+$$
+- Credit costs respond far more to surprises than a pure expectations model predicts [@gertler2015]
+- Announcements also carry information about the outlook, so some "tightening" surprises can actually lower spreads [@nakamura2018; @jarocinski2020]
+- Lending-rate pass-through is slower when a move is **unexpected** [@kleimeier2006]
+- An unanticipated move is exactly where EFP frictions have the most room to bite, which is part of why we focus on surprises
 
 # Climate Channel
 
@@ -193,24 +208,46 @@ The bulk of the evidence is from the United States and the euro area
 
 - **Literature A:** monetary policy $\rightarrow$ credit through the EFP, identified with policy surprises
 - **Literature B:** climate shocks $\rightarrow$ balance sheets, loan pricing, inflation
-- **Gap:** does the climate state change the **strength** of the credit channel?
+- **Gap:** do weather shocks change the **strength** of the credit channel?
 
 
 - Our contribution:
   - Bank-level, product-level lending rates and volumes for South Africa, 2011 to 2025
   - Three identified policy surprises $\times$ two population-weighted climate shocks
   - Fixed effects, panel local projections and asymmetric (extreme-state) local projections
+  
+## Conceptual framework (i): corporates
 
-# MP Surprises
+Following the external finance premium logic [@bernanke1996; @laumer2025]:
+$$
+R^{c}_{it} = R_t + f\!\left(D_t / E_t\right), \qquad f' > 0
+$$
 
-## Why surprises rather than the policy rate
+- A climate shock disrupts supply chains, damages capital and destroys output: revenues and profits fall
+- Collateral values fall; debt $D_t$ rises; equity $E_t$ falls $\Rightarrow$ $f(D_t/E_t)$ rises
+- **Amplification:** the climate shock raises the premium at the same time as a tightening raises $R_t$
+- **Dampening:** firms with cash buffers or insurance see no change in $D_t/E_t$ [@sharpe2020]
+- Another, related transmission avenue, is firms that must rebuild or adapt borrow even at higher rates [@xu2025]
 
-- The repo rate $r_t$ is **endogenous**: it responds to inflation, output and, in a climate-exposed economy, potentially to food prices and the weather
-- Regressing credit on $r_t$ confounds policy with the conditions that prompted policy
-- We need variation in policy that is orthogonal to the policymaker's and the market's information sets [@romer2004]
-- Two families of surprise measures:
-  - **Structural / forecast based:** residual of the rate change on forecasts (Romer and Romer; Miyajima)
-  - **High frequency / market based:** asset price moves in a narrow window around announcements [@kuttner2001; @gurkaynak2005]
+## Conceptual framework (ii): households
+
+$$
+R^{h}_{it} = R_t + \phi_t, \qquad \phi_t > 0
+$$
+
+- $\phi_t$: household-specific spread reflecting creditworthiness, indebtedness, income and collateral; transmission differs across households by income exposure [@slacalek2020]
+- **Amplification:** lower income and wealth and damaged collateral raise $\phi_t$; affected households pay more for a given policy rate
+- **Dampening:** liquid assets and insurance absorb losses without widening $\phi_t$; insured households use payouts to repay rather than borrow [@gallagher2017]
+
+
+## Conceptual framework (iii): banks
+
+- Banks connect the two: climate episodes raise the weight lenders put on balance sheet strength due to increased arrears and financial distress [@ho2023; @duanmu2022; @correa2026]
+- Weaker loan demand after a shock can instead leave banks with less scope to reprice, dampening the rate response
+- Whether the net effect is amplification or dampening is therefore an empirical question
+- We test the net effect without attributing it to a single mechanism
+
+# Data and Empirics
 
 ## Structural surprises (i): the Romer and Romer measure
 
@@ -247,46 +284,32 @@ $$
 - For South Africa, @pirozhkova2025 extract target, forward guidance, central bank information and country risk factors from market prices around MPC dates
 - We use the **target factor** as our third surprise measure. The target factor is the component of financial-market movements around MPC announcements that captures unexpected changes in the current policy stance.
 
-## Surprises do not transmit like textbook policy
-
-\small
-- @kuttner2001: the **unanticipated** component of a rate change moves market rates
-$$
-\Delta i_t = \alpha + \beta_e\, \Delta r^{e}_t + \beta_u\, \Delta r^{u}_t + \eta_t, \qquad \hat\beta_e \approx 0, \;\; \hat\beta_u \gg 0
-$$
-- Credit costs respond far more to surprises than a pure expectations model predicts [@gertler2015]
-- Announcements also carry information about the outlook, so some "tightening" surprises can actually lower spreads [@nakamura2018; @jarocinski2020]
-- Lending-rate pass-through is slower when a move is **unexpected** [@kleimeier2006]
-- Takeaway: an unanticipated move is exactly where EFP frictions have the most room to bite, which is part of why we focus on surprises
 
 ## The three surprise series
 
 ```{r}
 #| label: fig-surprises
-#| fig-height: 2.2
-#| out-height: "38%"
+#| fig-height: 1.5
+#| out-height: "29%"
 read_rds(here("Outputs", "artifacts_surprises.rds")) |> pluck(3, 3)
 ```
 
 ```{r}
 #| label: fig-market-surprises
-#| fig-height: 2.2
-#| out-height: "38%"
+#| fig-height: 1.5
+#| out-height: "29%"
 read_rds(here("Outputs", "artifacts_market_based_surprises.rds")) |> pluck(2)
 ```
-
-
-# Climate Shocks
 
 ## Climate shocks as exogenous variation
 
 - We use deviations of population-weighted temperature and precipitation from their calendar-month norms, in standard deviation units:
 $$
-\text{ClimateShock}_t = \frac{T_t - \overline{T}_t}{\sigma(T_t)}
+\text{ClimateShock}_{t} = \frac{x_{t} - \bar{x}_{t}}{\sigma_{t}}
 $$
-- $\overline{T}_t$ and $\sigma(T_t)$ are the calendar-month mean and standard deviation over 2011 to 2025, so seasonality is removed by construction
+- where $x_{t}$ is climate variable in month $t$, and $\bar{x}_{t}$ and $\sigma_{t}$ are the mean and standard deviation of $x_t$ across observations in the same calendar month.
 - Weather realisations are plausibly exogenous to credit conditions and to policy within the quarter [@dell2014; @hsiang2016]
-- Source: ERA5 reanalysis, aggregated over South Africa with population weights [@auffhammer2013]
+- Source: ERA5 reanalysis, aggregated over South Africa with population weights
 
 ## The climate shocks series
 
@@ -299,39 +322,6 @@ read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> pluck(2)
 
 \tiny Positive values indicate warmer or wetter than the historical monthly norm; negative values cooler or drier. The 2015/16 El Niño drought and the 2022 flooding episodes are visible as tail observations.
 
-## Conceptual framework (i): corporates
-
-Following the external finance premium logic [@bernanke1996; @laumer2025]:
-$$
-R^{c}_{it} = R_t + f\!\left(D_t / E_t\right), \qquad f' > 0
-$$
-
-- A climate shock disrupts supply chains, damages capital and destroys output: revenues and profits fall
-- Collateral values fall; debt $D_t$ rises; equity $E_t$ falls $\Rightarrow$ $f(D_t/E_t)$ rises
-- **Amplification:** the climate shock raises the premium at the same time as a tightening raises $R_t$
-- **Dampening:** firms with cash buffers or insurance see no change in $D_t/E_t$ [@sharpe2020]
-- Another, related transmission avenue, is firms that must rebuild or adapt borrow even at higher rates [@xu2025]
-
-## Conceptual framework (ii): households
-
-$$
-R^{h}_{it} = R_t + \phi_t, \qquad \phi_t > 0
-$$
-
-- $\phi_t$: household-specific spread reflecting creditworthiness, indebtedness, income and collateral; transmission differs across households by income exposure [@slacalek2020]
-- **Amplification:** lower income and wealth and damaged collateral raise $\phi_t$; affected households pay more for a given policy rate
-- **Dampening:** liquid assets and insurance absorb losses without widening $\phi_t$; insured households use payouts to repay rather than borrow [@gallagher2017]
-
-
-## Conceptual framework (iii): banks
-
-- Banks connect the two: climate episodes raise the weight lenders put on balance sheet strength due to increased arrears and financial distress [@ho2023; @duanmu2022; @correa2026]
-- Weaker loan demand after a shock can instead leave banks with less scope to reprice, dampening the rate response
-- Whether the net effect is amplification or dampening is therefore an empirical question
-- We test the net effect without attributing it to a single mechanism
-
-# Empirics
-
 ## Data
 
 \small
@@ -340,14 +330,6 @@ $$
 - **Monetary policy surprises:** Romer and Romer (SARB forecasts), Miyajima (Bloomberg consensus forecast errors), Target factor [@pirozhkova2025]; all aggregated to quarters
 - **Climate shocks:** ERA5 population-weighted temperature and precipitation deviations from calendar-month norms
 - **Controls (robustness):** GDP growth, USD/ZAR, unemployment rate
-
-## Bank-level lending rates by borrower and product
-
-```{r}
-#| label: fig-lending-rates
-#| fig-height: 6
-read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> pluck(2)
-```
 
 ## Contemporaneous specification: panel fixed effects
 
@@ -395,18 +377,6 @@ $$
 $$
   - $c = +3$: extreme heat
   - $c = -3$: extreme lack of precipitation
-
-## What we mean by amplification and dampening
-
-- **Policy alone:** a one unit surprise tightening moves the lending rate by $\beta_2$ 
-- **Policy during a climate shock:** the same tightening moves it by $\beta_2 + \beta_3$
-
-| Case | What happens to the policy effect | Rule |
-|:--|:---------|:----|
-| **Amplification** | Same direction, **bigger**: e.g. up 70 bp instead of 50 bp. The climate shock pushes on the same lever (a higher premium), so policy gets more traction | $\lvert\beta_2+\beta_3\rvert > \lvert\beta_2\rvert$ |
-| **Dampening** | Same direction, **smaller**: e.g. up 30 bp instead of 50 bp. Buffers, insurance or weak loan demand mean the premium does not widen, so policy loses traction | $\lvert\beta_2+\beta_3\rvert < \lvert\beta_2\rvert$ |
-
-- Note what this is **not**: it is not the direct effect of the weather on credit ($\beta_1$). 
 
 # Results
 
@@ -457,14 +427,6 @@ odd_plot_function(19) / odd_plot_function(43) / odd_plot_function(67)
 odd_plot_function(20) / odd_plot_function(44) / odd_plot_function(68)
 ```
 
-## Reading the responses: rates are held higher for longer
-
-- Policy alone: lending rates rise after a surprise tightening and typically **revert** within 6 to 10 quarters (blue paths)
-- With a temperature shock: there is some evidence that the lending rate path stays **elevated** beyond the point at which the policy-only response has faded (red paths)
-- Interpretation through the framework: the tightening raises $R_t$, the heat shock raises $f(D_t/E_t)$ and $\phi_t$, and the premium decays more slowly than the policy impulse itself
-- The **price** of credit is what adjusts. Volume responses (appendix) show little systematic interaction, consistent with banks repricing risk rather than rationing quantities [@correa2026; @altavilla2020]
-- The most compelling evidence exists for the case of temperature shocks warranting further investigation into hot/dry extreme cases
-
 ## A real-world episode: the 2015/16 El Niño drought in South Africa
 
 \small
@@ -477,20 +439,6 @@ odd_plot_function(20) / odd_plot_function(44) / odd_plot_function(68)
 
 - This episode shows the mechanism through the policy rate; our estimates show it continues at the **lending rate**, through the premium
 - Prime lending rates moved one for one to 10.5% and stayed there for the whole period: the price of credit was held higher for longer in the presence of a severe climate shock
-
-## Direction of the interaction across products and surprises
-
-```{r}
-#| label: fig-direction
-#| fig-height: 5.8
-extensions |> pluck("direction_gg")
-```
-
-## Precipitation: a threshold story
-
-- The heatmap shows **mixed signs** for precipitation but mostly **amplification** for temperature in lending rates
-- Consistent with the framework: a one standard deviation precipitation shock in a rainfed economy is often **beneficial** for agricultural and downstream income, which lowers the premium and **dampens** the rate response
-- Temperature shocks are almost uniformly adverse in a warm climate (the economy is beyond the optimum of @burke2015), so they amplify lending rates
 
 ## Extreme heat: corporate lending rates
 
@@ -520,13 +468,6 @@ asym_odd_function(19) / asym_odd_function(43) / asym_odd_function(67)
 asym_odd_function(20) / asym_odd_function(44) / asym_odd_function(68)
 ```
 
-## What the extreme-state estimates show
-
-- Under extreme heat, the lending rate paths **diverge sharply** from the no-climate baseline: for most corporate and household products the red path rises and stays positive through 12 quarters while the blue path reverts or turns negative
-- Under an extreme lack of precipitation, the same pattern appears, now with precipitation unambiguously adverse: the threshold story is confirmed at the tail
-- The gap between the paths is the marginal climate effect at that intensity: economically large, and generally significant
-- Tail risk interpretation: moderate seasonal variability does little to transmission; **severe and unusual** episodes create the frictions that keep the price of credit high
-
 ## Persistence and timing of the interaction
 
 ```{r}
@@ -535,27 +476,13 @@ asym_odd_function(20) / asym_odd_function(44) / asym_odd_function(68)
 extensions |> pluck("combined_gg")
 ```
 
-## Persistence by credit product
-
-```{r}
-#| label: fig-persistence-product
-#| fig-height: 6
-extensions |> pluck("combined_product_gg")
-```
-
-## How long does the climate effect last?
-
-- The **peak** of the absolute interaction effect occurs at a median of roughly **8 quarters** after the shock, with a mode between 8 and 10 quarters for lending rates
-- Persistence of two years is consistent with: (i) the slow repair of net worth and collateral after physical damage, (ii) persistent inflationary effects of heat [@kotz2024], and (iii) sluggish and asymmetric lending-rate adjustment [@altavilla2020; @kleimeier2006]
-
-
 # Conclusion
 
 ## Summary of findings
 
 1. **Transmission is augmented by climate shocks.** The interaction between policy surprises and climate shocks is significant across a large share of product-horizon combinations
 2. **The evidence is in prices, not quantities.** Significant interactions concentrate in lending rates; log volumes show little consistent interaction. This is risk repricing through the external finance premium, not rationing
-3. **Temperature amplifies; precipitation depends on the threshold.** Heat keeps lending rates higher for longer; moderate rain can dampen, drought amplifies
+3. **Temperature amplifies; precipitation depends on the threshold.** Heat keeps lending rates higher for longer; moderate rain can dampen, drought-like conditions amplifies
 4. **The effect is a tail phenomenon.** Extreme-state responses diverge sharply and durably from the baseline
 5. **It is persistent.** Interaction peaks around 8 quarters and remains significant for roughly two years
 
@@ -566,17 +493,78 @@ extensions |> pluck("combined_product_gg")
 - **Room for a more targeted response.** 
 - **Climate-vulnerable central banks** would benefit from incorporating physical climate risk into their transmission models, consistent with the financial-stability view of climate [@dafermos2018; @giglio2021]
 
-## Limitations
-
-- No bank-level **sectoral** credit data: cannot trace the interaction to agriculture, energy or construction lending
-- **Quarterly** frequency limits the precision of impact timing; monthly rates would sharpen the impact horizon
-- Surprise measures are standard; measures that capture the SARB's climate-related communication, or that separate physical from financial-stability news, may reveal further dimensions
-
-
-## 
+## The End
 
 \vfill
 \begin{center}
 \Huge Thank you
 \end{center}
 \vfill
+
+# Appendix
+
+## Corporate lending rates: lagged temperature shock interaction
+
+```{r}
+#| label: fig-rate-corp-temp-lagged
+lagged_odd_function(7) / lagged_odd_function(31) / lagged_odd_function(55)
+```
+
+
+
+## Household lending rates: lagged temperature shock interaction
+
+```{r}
+#| label: fig-rate-hh-temp-lagged
+lagged_odd_function(8) / lagged_odd_function(32) / lagged_odd_function(56)
+```
+
+## Corporate lending rates: lagged precipitation shock interaction
+
+```{r}
+#| label: fig-rate-corp-precip-lagged
+lagged_odd_function(19) / lagged_odd_function(43) / lagged_odd_function(67)
+```
+
+## Household lending rates: lagged precipitation shock interaction
+
+```{r}
+#| label: fig-rate-hh-precip-lagged
+lagged_odd_function(20) / lagged_odd_function(44) / lagged_odd_function(68)
+```
+
+## Extreme lagged heat: corporate lending rates
+
+```{r}
+#| label: fig-asym-corp-temp-lagged
+lagged_asym_odd_function(7) / lagged_asym_odd_function(31) / lagged_asym_odd_function(55)
+```
+
+## Extreme lagged heat: household lending rates
+
+```{r}
+#| label: fig-asym-hh-temp-lagged
+lagged_asym_odd_function(8) / lagged_asym_odd_function(32) / lagged_asym_odd_function(56)
+```
+
+## Extreme lagged lack of precipitation: corporate lending rates
+
+```{r}
+#| label: fig-asym-corp-precip-lagged
+lagged_asym_odd_function(19) / lagged_asym_odd_function(43) / lagged_asym_odd_function(67)
+```
+
+## Extreme lagged lack of precipitation: household lending rates
+
+```{r}
+#| label: fig-asym-hh-precip-lagged
+lagged_asym_odd_function(20) / lagged_asym_odd_function(44) / lagged_asym_odd_function(68)
+```
+
+## Persistence by credit product
+
+```{r}
+#| label: fig-persistence-product
+#| fig-height: 6
+extensions |> pluck("combined_product_gg")
+```
