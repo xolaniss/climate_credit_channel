@@ -185,7 +185,6 @@ $$
 ## Climate and the macroeconomy
 
 - Temperature shocks lower growth, mainly in poorer countries [@dell2012]
-- Weather deviations from seasonal norms are a credible source of exogenous variation [@dell2014; @hsiang2016; @auffhammer2013]
 - Disasters depress output and recovery is slow in disaster-prone economies [@noy2009; @felbermayr2014; @cantelmo2023]
 - Mechanisms map directly onto the EFP: production losses, capital damage, lower collateral values, lower net worth [@dafermos2018]
 
@@ -194,27 +193,17 @@ $$
 - Extreme weather raises consumer prices, especially food, in developing countries [@heinen2019]; disasters are inflationary in the short run [@parker2018]
 - Temperature shocks raise inflation [@mukherjee2021], with asymmetric and seasonal effects [@ciccarelli2024] and persistence of about 12 months [@kotz2024]
 - Central bank dilemma: a climate shock is a supply shock but can generate second-round effects and expectations risk.
+- Sector specific inflation pressure from climate shocks in SA [@merrino2026climate]
   - Optimal policy under relative price shocks [@aoki2001]; EM central banks may need to react to food inflation [@anand2015]
 
 ## Climate shocks, banks and credit
 
 - After disasters, banks reallocate credit toward affected areas [@cortes2017], engage in recovery lending [@koetter2020], and adjust risk exposure [@schuwer2019]
 - Firms hit by adverse weather draw on bank credit lines within a quarter [@brown2021]
-- Banks **reprice risk**: loan spreads rise even for borrowers at risk but not directly affected [@correa2026]
+- Banks reprice risk: loan spreads rise even for borrowers at risk but not directly affected [@correa2026]
 - Households: insurance payouts are used to repay mortgages [@gallagher2017]; disasters raise financial distress [@ho2023]; mortgage standards tighten in disaster-prone areas [@duanmu2022]
 - Climate risk is a financial stability issue [@dafermos2018; @giglio2021; @hong2020]
 
-## The gap this paper addresses
-
-- **Literature A:** monetary policy $\rightarrow$ credit through the EFP, identified with policy surprises
-- **Literature B:** climate shocks $\rightarrow$ balance sheets, loan pricing, inflation
-- **Gap:** do weather shocks change the **strength** of the credit channel?
-
-
-- Our contribution:
-  - Bank-level, product-level lending rates and volumes for South Africa, 2011 to 2025
-  - Three identified policy surprises $\times$ two population-weighted climate shocks
-  - Fixed effects, panel local projections and asymmetric (extreme-state) local projections
   
 ## Conceptual framework (i): corporates
 
@@ -225,9 +214,9 @@ $$
 
 - A climate shock disrupts supply chains, damages capital and destroys output: revenues and profits fall
 - Collateral values fall; debt $D_t$ rises; equity $E_t$ falls $\Rightarrow$ $f(D_t/E_t)$ rises
-- **Amplification:** the climate shock raises the premium at the same time as a tightening raises $R_t$
-- **Dampening:** firms with cash buffers or insurance see no change in $D_t/E_t$ [@sharpe2020]
-- Another, related transmission avenue, is firms that must rebuild or adapt borrow even at higher rates [@xu2025]
+- **Higher Rate:** the climate shock raises the premium at the same time as a tightening raises $R_t$
+- **Same Rate:** firms with cash buffers or insurance see no change in $D_t/E_t$ [@sharpe2020]
+- **Adaptation-Driven Borrowing:** Another, related transmission avenue, is firms that must rebuild or adapt borrow even at higher rates [@xu2025]
 
 ## Conceptual framework (ii): households
 
@@ -236,16 +225,29 @@ R^{h}_{it} = R_t + \phi_t, \qquad \phi_t > 0
 $$
 
 - $\phi_t$: household-specific spread reflecting creditworthiness, indebtedness, income and collateral; transmission differs across households by income exposure [@slacalek2020]
-- **Amplification:** lower income and wealth and damaged collateral raise $\phi_t$; affected households pay more for a given policy rate
-- **Dampening:** liquid assets and insurance absorb losses without widening $\phi_t$; insured households use payouts to repay rather than borrow [@gallagher2017]
+- **Higher Rate:** lower income and wealth and damaged collateral raise $\phi_t$; affected households pay more for a given policy rate
+- **Same Rate:** liquid assets and insurance absorb losses without widening $\phi_t$; insured households use payouts to repay rather than borrow [@gallagher2017]
 
 
 ## Conceptual framework (iii): banks
 
-- Banks connect the two: climate episodes raise the weight lenders put on balance sheet strength due to increased arrears and financial distress [@ho2023; @duanmu2022; @correa2026]
+- Banks connect the two: climate episodes raise the weight lenders put on borrower balance sheet strength due to increased arrears and financial distress [@ho2023; @duanmu2022; @correa2026]
 - Weaker loan demand after a shock can instead leave banks with less scope to reprice, dampening the rate response
-- Whether the net effect is amplification or dampening is therefore an empirical question
+- The net effect is an empirical question
 - We test the net effect without attributing it to a single mechanism
+
+## The gap this paper addresses
+
+- **Literature A:** monetary policy $\rightarrow$ credit through the EFP, identified with policy surprises
+- **Literature B:** climate shocks $\rightarrow$ balance sheets, loan pricing, inflation
+- **Gap:** The interaction between physical climate shocks and monetary policy transmission to credit markets remains underexplored, particularly in emerging economies.
+
+
+- Our contribution:
+   - Does climate change the transmission of monetary policy to credit markets in South Africa, and how do physical climate shocks affect the strength and persistence of this transmission across credit products and borrowers?
+     - Bank-level, product-level lending rates and volumes for South Africa, 2013 to 2025
+     - Three identified policy surprises $\times$ two population-weighted climate shocks
+     - Fixed effects, panel local projections and asymmetric (extreme-state) local projections
 
 # Data and Empirics
 
@@ -259,15 +261,14 @@ $$
 $$
 \normalsize
 
-- $\Delta r_t$: change in the repo rate forecast; $\tilde{r}_t$, $\tilde{y}_t$, $\tilde{\pi}_t$: forecasts of the repo rate, real GDP growth and inflation
-- Forecasts up to two quarters ahead capture the common assumption of unchanged policy in the near term
+- $\Delta r_t$: change in the repo rate; $\tilde{r}_t$, $\tilde{y}_t$, $\tilde{\pi}_t$: forecasts of the repo rate, real GDP growth and inflation
 - The residual $\varepsilon_t$ is the component of the policy change not explained by what policymakers already expected: $\text{MPShock}^{Romer}_t$
 
 ## Structural surprises (ii): the Miyajima measure
 
-Following @miyajima2024, built from Bloomberg consensus forecast errors:
+Following @miyajima2024:
 $$
-FE^{i}_t = EXP^{i}_t - ACT^{i}_t, \qquad i \in \{\text{policy rate}, \pi, y\}
+FE^{i}_t =  ACT^{i}_t - EXP^{i}_t, \qquad i \in \{\text{policy rate}, \pi, y\}
 $$
 $$
 FE^{r}_t = \alpha + \beta\, FE^{\pi}_t + \gamma\, FE^{y}_t + \epsilon_t
@@ -275,7 +276,7 @@ $$
 
 - The policy rate forecast error is purged of inflation and growth news
 - The residual $\epsilon_t$ is the part of the policy miss that markets could not have anticipated from macro news: $\text{MPShock}^{Miyajima}_t$
-- Advantage: uses market participants' expectations rather than the central bank's own projections
+
 
 ## High-frequency surprises
 
@@ -325,7 +326,7 @@ read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> pluck(2)
 ## Data
 
 \small
-- **Sample:** South Africa, 2011Q1 to 2025Q1, quarterly; bank-quarter panel of the major banking groups
+- **Sample:** South Africa, 2013Q1 to 2025Q1, quarterly; bank-quarter panel of the 4 major banking groups
 - **Credit (SARB BA900 and BA930 returns, bank level):** lending rates (percentage points) and log credit volumes for corporate and household borrowers, each split into unsecured, secured and mortgage credit, constructed following @sibande2025 and @sibande2025a
 - **Monetary policy surprises:** Romer and Romer (SARB forecasts), Miyajima (Bloomberg consensus forecast errors), Target factor [@pirozhkova2025]; all aggregated to quarters
 - **Climate shocks:** ERA5 population-weighted temperature and precipitation deviations from calendar-month norms
@@ -345,7 +346,7 @@ $$
 \small
 - $\text{CS}^{k}_t$: climate shock $k$ (temperature or precipitation); $\text{MP}_t$: monetary policy surprise
 - $\text{Credit}_{s,t}$: lending rate or log volume for bank $s$ and a given product
-- $\gamma_s$: bank fixed effects; $\tau t$: linear trend; quarter-of-year effects absorb seasonality
+- $\gamma_s$: bank fixed effects; $\tau t$: linear trend
 - $\beta_2$: effect of a surprise tightening without a climate shock
 - $\beta_3$: **the coefficient of interest.** $\beta_3 \neq 0$ means the climate state changes the strength of transmission; the sign relative to $\beta_2$ tells us amplification versus dampening
 - Standard errors clustered at the bank level
@@ -373,7 +374,7 @@ $$
 - Average interactions can mask what happens in the tails, which is where the conceptual framework predicts the largest balance sheet damage
 - We evaluate the dynamic response at **extreme climate states**:
 $$
-\text{IRF}^{h}(c) \;=\; \hat\beta^{h}_2 + \hat\beta^{h}_3 \cdot c, \qquad c \in \{+3, -3\}
+\text{LP-IRF}^{h}(c) \;=\; \hat\beta^{h}_2 + \hat\beta^{h}_3 \cdot c, \qquad c \in \{+3, -3\}
 $$
   - $c = +3$: extreme heat
   - $c = -3$: extreme lack of precipitation
@@ -429,16 +430,18 @@ odd_plot_function(20) / odd_plot_function(44) / odd_plot_function(68)
 
 ## A real-world episode: the 2015/16 El Niño drought in South Africa
 
-\small
-| MPC date | Decision | Drought-related rationale |
-|:--|:--|:-----------|
-| Nov 2015 | +25 bp to 6.25% | Lagged effect of severe drought on food prices flagged |
-| Jan 2016 | +50 bp to 6.75% | "the impact of the worsening drought on food prices is becoming increasingly evident"; food inflation seen peaking near 11% |
-| Mar 2016 | +25 bp to 7.00% | Food price pressures from the drought intensified by more than forecast; headline above the 3 to 6% target |
-| Mar 2016 to Jul 2017 | **Held at 7.00%** for 16 months | Food inflation in double digits in late 2016; first cut only in July 2017 |
-
-- This episode shows the mechanism through the policy rate; our estimates show it continues at the **lending rate**, through the premium
-- Prime lending rates moved one for one to 10.5% and stayed there for the whole period: the price of credit was held higher for longer in the presence of a severe climate shock
+\scriptsize
+| MPC date | Repo decision | Cum. repo | Household mortgage rate | Cum. change | Drought-related rationale |
+|:--|:--|:--:|:--|:--:|:--------|
+| Nov 2015 | +25 bp to 6.25% | +25 bp | 9.11% (2015Q4) | +23 bp | "worsening drought conditions and their likely impact on food prices" |
+| Jan 2016 | +50 bp to 6.75% | +75 bp | 9.72% (2016Q1) | +84 bp | "Impact of the worsening drought on food prices increasingly evident"|
+| Mar 2016 | +25 bp to 7.00% | +100 bp | 10.00% (2016Q2) | +112 bp | "Food price pressures, driven by the drought... have intensified by more than previously forecast" |
+| Mar 2016 to Jul 2017 | Held at 7.00% | +100 bp | 10.12% (2017Q2) | +124 bp | Lending rate still rising five quarters after the last hike |
+| Jul 2017 | Cut 25 bp to 6.75% | **+75 bp** | 9.92% (2017Q3) | **+104 bp** | First cut as food inflation eased; lending rate fell by less than repo |
+\vspace{-1mm}
+\begin{flushleft}
+{\tiny Source: SARB. Changes relative to 2015Q3 (8.88\%)}
+\end{flushleft}
 
 ## Extreme heat: corporate lending rates
 
@@ -482,7 +485,7 @@ extensions |> pluck("combined_gg")
 
 1. **Transmission is augmented by climate shocks.** The interaction between policy surprises and climate shocks is significant across a large share of product-horizon combinations
 2. **The evidence is in prices, not quantities.** Significant interactions concentrate in lending rates; log volumes show little consistent interaction. This is risk repricing through the external finance premium, not rationing
-3. **Temperature amplifies; precipitation depends on the threshold.** Heat keeps lending rates higher for longer; moderate rain can dampen, drought-like conditions amplifies
+3. **Temperature amplifies; precipitation depends on the threshold.** Heat keeps lending rates higher for longer; moderate rain does not, "drought-like" conditions convincingly amplify
 4. **The effect is a tail phenomenon.** Extreme-state responses diverge sharply and durably from the baseline
 5. **It is persistent.** Interaction peaks around 8 quarters and remains significant for roughly two years
 
