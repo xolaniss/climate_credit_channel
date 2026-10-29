@@ -141,5 +141,3 @@ artifacts_climate_shocks <- list (
 )
 
 write_rds(artifacts_climate_shocks, file = here("Outputs", "artifacts_climate_shocks.rds"))
-
-
