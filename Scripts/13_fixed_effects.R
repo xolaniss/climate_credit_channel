@@ -49,7 +49,7 @@ climate_vars <- c(
 
 # Monetary policy surprises --------------------------------------------
 surprise_vars <- c(
-  "miyajima_surprise",
+  # "miyajima_surprise",
   "romer_surprise",
   "target",
   "forward_guidance",
@@ -67,8 +67,8 @@ variable_labels <- c(
     "Population-weighted precipitation shock",
   
   # Surprise variables
-  "miyajima_surprise" =
-    "Miyajima surprise",
+  # "miyajima_surprise" =
+  #   "Miyajima surprise",
   "romer_surprise" =
     "Romer surprise",
   "target" =

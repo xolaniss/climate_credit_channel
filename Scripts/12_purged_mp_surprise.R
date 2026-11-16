@@ -15,7 +15,7 @@ model_data_tbl<-read_rds(here("Outputs","artifacts_model_data.rds"))|>
 # Define variables ----------------------------------------------------
 
 mp_shock_vars<-c(
-  "miyajima_surprise",
+  # "miyajima_surprise",
   "romer_surprise",
   "target",
   "forward_guidance",
@@ -58,7 +58,7 @@ for(mp_var in mp_shock_vars){
       )
       
       resid_name<-paste0(mp_var,"_",climate_var,"_resid")
-      
+    
       temp_tbl[[resid_name]]<-resid(model)
       
       residual_tbl<-temp_tbl|>

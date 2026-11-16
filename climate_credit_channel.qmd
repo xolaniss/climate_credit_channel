@@ -176,7 +176,7 @@ where $ClimateShock_{t}$ is the temperature or precipitation shock at time $t$ a
 
 **Monetary policy data:** The monetary policy shock series is constructed using high-frequency policy surprises for South Africa from @pirozhkova2025, alongside the repurchase (repo) rate from the South African Reserve Bank (SARB). The high-frequency surprises serve as an instrument to purge the endogenous component of policy rate changes, yielding a shock series that satisfies the exogeneity requirement of the regression framework described in @sec-methodology. For robustness, we consider both market-based shocks from @pirozhkova2025 (see @fig-market_based_surprises_data) and a theory-based shock derived from the policy rate, as described in @sec-methodology below (see @fig-theory_based_surprises_data). Surprises are timed to coincide with policy rate announcement dates and aggregated to a quarterly frequency. Underlying the calculation of the are the forecasts of the real GDP growth, the policy rate (repo-rate), and the inflation rate from Bloomberg Consensus.
 
-**Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. We use the log of credit volumes and make no other transformations to the other credit data. Summary charts are provided in @fig-lending_volume_growth_data and @fig-lending_rates. 
+**Credit extension data:** Private sector credit extension data — disaggregated by borrower type (households and corporates) at the bank level — are obtained from the SARB's BA900 and BA930 bank compliance reports.^[BA930 data at the bank level are not publicly available.] These series include both credit volumes and lending rates, and are constructed following @sibande2025 and @sibande2025a by sorting and aggregating individual bank records into the broad credit categories used in the study: unsecured, secured, and mortgage credit. We use the log of credit volumes and make no other transformations to the other credit data. Summary chart for lending  is provided in @fig-lending_volume_growth_data. We do not show the bank level credit rates as they are not published by the SARB. 
 
 
 ## Methodology {#sec-methodology}
@@ -286,7 +286,7 @@ odd_plot_function <- function(n){
 plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> 
   pluck(4)
 
-corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) / odd_plot_function(55) 
+corporate_rate_temp_gg <- odd_plot_function(n = 7) / odd_plot_function(31) 
 
 corporate_rate_temp_gg
 ```
@@ -301,7 +301,7 @@ corporate_rate_temp_gg
 #| fig.height: 7
 #| fig.width: 9
 
-corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43) / odd_plot_function(67)
+corporate_rate_precip_gg <- odd_plot_function(n = 19) / odd_plot_function(43)
 
 corporate_rate_precip_gg
 
@@ -319,7 +319,7 @@ corporate_rate_precip_gg
 #| fig.height: 7
 #| fig.width: 9
 
-household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) / odd_plot_function(56) 
+household_rate_temp_gg <- odd_plot_function(n = 8) / odd_plot_function(32) 
 
 household_rate_temp_gg
 ```
@@ -334,32 +334,13 @@ household_rate_temp_gg
 #| fig.height: 7
 #| fig.width: 9
 
-household_rate_precip_gg <- odd_plot_function(n = 20) / odd_plot_function(44) / odd_plot_function(68) 
+household_rate_precip_gg <- odd_plot_function(n = 20) / odd_plot_function(44) 
 
 household_rate_precip_gg
 ```
 
 ```{=latex}
 \fignote{As Figure~\ref{fig-rate_household_temp} but for the population-weighted precipitation shock. Rows correspond to household unsecured, secured, and mortgage lending rates.}
-```
-
-
-## The Direction of the Climate Credit Channel: Amplification, Dampening, and Product Heterogeneity
-
-\newpage
-
-```{r}
-#| label: "fig-direction"
-#| fig.cap: "Direction and magnitude of the climate–monetary policy interaction across credit products and shock measures"
-#| fig.height: 6
-
-extensions <- read_rds(here("Outputs", "artifacts_extensions.rds")) 
-extensions |> 
-  pluck("direction_gg")
-```
-
-```{=latex}
-\fignote{Heatmap summarising the direction and strength of climate shock effects on monetary policy transmission, derived from panel local projections estimated at horizons $h = 0, \ldots, 12$ quarters. Direction is determined by comparing the absolute magnitudes of the two IRF paths at each horizon: a horizon is classified as \textit{amplifying} when $|\hat{\beta}_2 + \hat{\beta}_3| > |\hat{\beta}_2|$ (the credit response is larger in absolute value when the climate shock coincides with the monetary policy shock) and \textit{dampening} otherwise. The symbol ``$+$'' indicates that the majority of horizons show amplification; ``$-$'' indicates the majority show dampening. Colour intensity reflects the \textit{amplification score}, defined as $2 \times \bar{p} - 1$, where $\bar{p}$ is the proportion of horizons classified as amplifying: deep blue ($\approx+1$) indicates near-universal amplification, deep red ($\approx-1$) indicates near-universal dampening, and white ($\approx 0$) indicates an approximately equal split. Rows correspond to individual credit products disaggregated by borrower type; columns correspond to three monetary policy surprise measures (Romer, Miyajima, and Target factor). Panels separate the results by credit type (rates vs.\ log volumes) and climate shock (temperature vs.\ precipitation).}
 ```
 
 
@@ -370,6 +351,8 @@ extensions |>
 ```{r}
 #| label: "fig-persistence"
 #| fig.cap: "Timing and persistence of the climate–monetary policy interaction"
+#| 
+extensions <- read_rds(here("Outputs", "artifacts_extensions.rds")) 
 extensions |> 
   pluck("combined_gg")
 
@@ -423,7 +406,7 @@ asym_plots <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |>
   pluck(4)
 
 
-asym_corporate_rate_temp_gg <- asym_odd_function(n = 7) / asym_odd_function(31) / asym_odd_function(55)
+asym_corporate_rate_temp_gg <- asym_odd_function(n = 7) / asym_odd_function(31)
 asym_corporate_rate_temp_gg
 ```
 
@@ -436,8 +419,10 @@ asym_corporate_rate_temp_gg
 #| fig.cap: "Asymmetric impulse responses of corporate lending rates under extreme precipitation states"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
-asym_corporate_rate_precip_gg <- asym_odd_function(n = 19) / asym_odd_function(43) / asym_odd_function(67)
+asym_corporate_rate_precip_gg <- asym_odd_function(n = 19) / asym_odd_function(43) 
 asym_corporate_rate_precip_gg
 
 ```
@@ -452,7 +437,7 @@ asym_corporate_rate_precip_gg
 #| fig.height: 7
 #| fig.width: 9
 
-asym_household_rate_temp_gg <- asym_odd_function(n = 8) / asym_odd_function(32) / asym_odd_function(56)  
+asym_household_rate_temp_gg <- asym_odd_function(n = 8) / asym_odd_function(32) 
 asym_household_rate_temp_gg
 ```
 
@@ -465,6 +450,8 @@ asym_household_rate_temp_gg
 #| fig.cap: "Asymmetric impulse responses of household lending rates under extreme precipitation states"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
 asym_household_rate_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
 asym_household_rate_precip_gg
@@ -537,22 +524,6 @@ lending_volume_growth_gg
 ```
 
 
-```{r}
-#| label: fig-lending_rates
-#| fig-cap: "Bank-level lending rates by borrower type and credit product, 2011--2025"
-#| fig-height: 7
-#| cache: false
-
-lending_rates_gg <- read_rds(here("Outputs", "artifacts_lending_rates.rds")) |> 
-  pluck(2)
-
-lending_rates_gg
-```
-
-```{=latex}
-\fignote{Quarterly lending rates at the bank level, disaggregated by borrower type and product (unsecured, secured, and mortgage credit for both corporates and households). Rates are expressed in percentage points and are sourced from the SARB BA930 compliance reports. Unlike credit volumes, lending rates are not log-transformed. The pronounced heterogeneity across banks and products reflects differences in risk pricing, collateral requirements, and borrower characteristics.}
-```
-
 
 ```{r}
 #| label: fig-climate_shocks_data
@@ -594,7 +565,7 @@ market_based_surprises_gg
 #| cache: false
 
 theory_based_surprises_gg <- read_rds(here("Outputs", "artifacts_surprises.rds")) |> 
-  pluck(3, 3)
+  pluck(3, 1)
 
 theory_based_surprises_gg
 ```
@@ -857,7 +828,7 @@ plot_function <- function(n){
 
 
 
-corporate_temp_gg <- plot_function(n = 1) / plot_function(25) /  plot_function(49)
+corporate_temp_gg <- plot_function(n = 1) / plot_function(25) 
 
 corporate_temp_gg
 ```
@@ -871,15 +842,18 @@ corporate_temp_gg
 #| fig.cap: "Impulse responses of corporate credit growth to monetary policy shocks: precipitation shock interaction"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
-corporate_precip_gg <- plot_function(13) / plot_function(37) /  plot_function(61) 
+
+corporate_precip_gg <- plot_function(13) / plot_function(37) 
 corporate_precip_gg
 
 ```
 
-```{=latex}
-\fignote{As Figure~\ref{fig-corporate_temp} but for the population-weighted precipitation shock. The red line shows the corporate credit growth response when the monetary policy shock coincides with a precipitation shock ($\hat{\beta}_2 + \hat{\beta}_3$). Rows correspond to corporate unsecured, secured, and mortgage credit.}
-```
+<!-- ```{=latex} -->
+<!-- \fignote{As Figure~\ref{fig-corporate_temp} but for the population-weighted precipitation shock. The red line shows the corporate credit growth response when the monetary policy shock coincides with a precipitation shock ($\hat{\beta}_2 + \hat{\beta}_3$). Rows correspond to corporate unsecured, secured, and mortgage credit.} -->
+<!-- ``` -->
 
 \newpage
 
@@ -889,7 +863,7 @@ corporate_precip_gg
 #| fig.height: 7
 #| fig.width: 9
 
-household_temp_gg <- plot_function(n = 4) / plot_function(28) / plot_function(52) 
+household_temp_gg <- plot_function(n = 4) / plot_function(28) 
 
 household_temp_gg
 ```
@@ -903,14 +877,17 @@ household_temp_gg
 #| fig.cap: "Impulse responses of household credit growth to monetary policy shocks: precipitation shock interaction"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
-household_precip_gg <- plot_function(n = 16) / plot_function(40) / plot_function(64) 
+
+household_precip_gg <- plot_function(n = 16) / plot_function(40) 
 household_precip_gg
 ```
 
-```{=latex}
-\fignote{As Figure~\ref{fig-household_temp} but for the population-weighted precipitation shock. Rows correspond to household unsecured, secured, and mortgage credit growth.}
-```
+<!-- ```{=latex} -->
+<!-- \fignote{As Figure~\ref{fig-household_temp} but for the population-weighted precipitation shock. Rows correspond to household unsecured, secured, and mortgage credit growth.} -->
+<!-- ``` -->
 
 
 ## Asymmetric local projections
@@ -922,7 +899,7 @@ household_precip_gg
 #| fig.height: 7
 #| fig.width: 9
 
-asym_corporate_temp_gg <- asym_plot_function(n = 1) / asym_plot_function(25) /  asym_plot_function(49)  
+asym_corporate_temp_gg <- asym_plot_function(n = 1) / asym_plot_function(25)  
 
 asym_corporate_temp_gg
 ```
@@ -936,15 +913,18 @@ asym_corporate_temp_gg
 #| fig.cap: "Asymmetric impulse responses of corporate credit growth under extreme precipitation states"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
-asym_corporate_precip_gg <- asym_plot_function(13) / asym_plot_function(37) /  asym_plot_function(61) 
+
+asym_corporate_precip_gg <- asym_plot_function(13) / asym_plot_function(37)
 asym_corporate_precip_gg
 
 ```
 
-```{=latex}
-\fignote{As Figure~\ref{fig-asym_corporate_temp} but evaluated at an extreme negative precipitation state ($-3$ SD, i.e.\ drought conditions). A divergence between the red and blue lines indicates that drought conditions amplify or dampen the transmission of monetary policy to corporate credit volumes relative to the no-climate-shock baseline. Rows correspond to corporate unsecured, secured, and mortgage credit growth.}
-```
+<!-- ```{=latex} -->
+<!-- \fignote{As Figure~\ref{fig-asym_corporate_temp} but evaluated at an extreme negative precipitation state ($-3$ SD, i.e.\ drought conditions). A divergence between the red and blue lines indicates that drought conditions amplify or dampen the transmission of monetary policy to corporate credit volumes relative to the no-climate-shock baseline. Rows correspond to corporate unsecured, secured, and mortgage credit growth.} -->
+<!-- ``` -->
 
 \newpage
 
@@ -954,7 +934,7 @@ asym_corporate_precip_gg
 #| fig.height: 7
 #| fig.width: 9
 
-asym_household_temp_gg <- asym_plot_function(n = 4) / asym_plot_function(28) / asym_plot_function(52)
+asym_household_temp_gg <- asym_plot_function(n = 4) / asym_plot_function(28) 
 asym_household_temp_gg
 ```
 
@@ -967,16 +947,18 @@ asym_household_temp_gg
 #| fig.cap: "Asymmetric impulse responses of household credit growth under extreme precipitation states"
 #| fig.height: 7
 #| fig.width: 9
+#| include: false
+#| eval: false
 
 
 
-asym_household_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) / asym_odd_function(68)
+asym_household_precip_gg <- asym_odd_function(n = 20) / asym_odd_function(44) 
 asym_household_precip_gg
 ```
 
-```{=latex}
-\fignote{As Figure~\ref{fig-asym_household_temp} but evaluated at an extreme negative precipitation state ($-3$ SD). Rows correspond to household unsecured, secured, and mortgage credit growth.}
-```
+<!-- ```{=latex} -->
+<!-- \fignote{As Figure~\ref{fig-asym_household_temp} but evaluated at an extreme negative precipitation state ($-3$ SD). Rows correspond to household unsecured, secured, and mortgage credit growth.} -->
+<!-- ``` -->
 
 
 \newpage

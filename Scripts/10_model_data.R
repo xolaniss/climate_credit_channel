@@ -131,7 +131,8 @@ model_data_tbl <-
   left_join(suprises_panel_tbl, by = c("banks", "date")) |> 
   left_join(market_based_surprises_panel_tbl, by = c("banks", "date")) |> 
   filter(date > "2012-12-31") |> 
-  select(-ends_with("value"), -starts_with("land"))
+  select(-ends_with("value"), -starts_with("land")) |> 
+  select(-miyajima_surprise) # removing miyajima
   
 
 

@@ -9,7 +9,13 @@ source(here("Functions", "fx_plot.R"))
 
 # Import -------------------------------------------------------------
 bloomberg_quarterly_tbl <- read_excel(here("Data", "bloomberg_quarterly_forecast.xlsx")) |> 
-  dplyr::select(-1, -2) 
+  dplyr::select(-1, -2) |> 
+  rename(
+    date = `Forecast Date`,
+    repo_forecast = `South Africa Repo Average Rate`,
+    gdp_forecast  = `South Africa GDP Forecast YoY%`,
+    cpi_forecast  = `South Africa CPI Forecast YoY%`
+  )
   # janitor::clean_names() # what is reporting date? Tina
 
 
@@ -21,8 +27,8 @@ bloomberg_quarterly_tbl |> skim()
 # Graphing ---------------------------------------------------------------
 bloomberg_quarterly_gg <-
   bloomberg_quarterly_tbl |>
-  pivot_longer(-`Forecast Date`, names_to = "Series", values_to = "Value") |>
-  ggplot(aes(x = `Forecast Date`, y = Value, , col = "Series")) +
+  pivot_longer(-date, names_to = "Series", values_to = "Value") |>
+  ggplot(aes(x = date, y = Value, , col = "Series")) +
   geom_line() +
   facet_wrap( ~ Series, scales = "free_y", ncol = 2) +
   labs(title = "", x = "Forecast Date", y = "") +

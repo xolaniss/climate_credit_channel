@@ -46,7 +46,7 @@ climate_shock_vars <- c(
 
 ## Original (unpurged) monetary policy surprises ----
 mp_base_vars <- c(
-  "miyajima_surprise",
+  # "miyajima_surprise",
   "romer_surprise",
   "target",
   "forward_guidance",
@@ -63,7 +63,7 @@ control_vars <- c(
 
 ## Display labels -----------------------------------------------------------
 mp_labels <- c(
-  miyajima_surprise = "Miyajima surprise",
+  # miyajima_surprise = "Miyajima surprise",
   romer_surprise = "Romer surprise",
   target = "Target",
   forward_guidance = "Forward guidance",

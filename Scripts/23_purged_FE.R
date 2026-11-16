@@ -56,7 +56,7 @@ climate_vars <- c(
 ## Base names are kept for grouping and labelling; the values fed into the
 ## regression are the purged residuals paired with each climate shock.
 surprise_vars <- c(
-  "miyajima_surprise",
+  # "miyajima_surprise",
   "romer_surprise",
   "target",
   "forward_guidance",
@@ -74,8 +74,8 @@ variable_labels <- c(
     "Population-weighted precipitation shock",
   
   # Surprise variables
-  "miyajima_surprise" =
-    "Miyajima surprise",
+  # "miyajima_surprise" =
+  #   "Miyajima surprise",
   "romer_surprise" =
     "Romer surprise",
   "target" =

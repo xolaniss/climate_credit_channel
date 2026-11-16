@@ -1,7 +1,7 @@
 # Makefile for climate credit channel analysis pipeline
 # Usage:
 #   make        - build all outputs
-#   make -j4    - parallel build (stages 0 and 4b run concurrently)
+#   make -j4    - parallel build (independent stages run concurrently)
 #   make clean  - remove all generated artifacts
 
 R = Rscript
@@ -9,6 +9,8 @@ R = Rscript
 # ─── Top-level target ─────────────────────────────────────────────────────────
 
 all: Outputs/artifacts_extensions.rds \
+     Outputs/artifacts_lp_unsmoothed_lagged.rds \
+     Outputs/artifacts_lp_unsmoothed_asym_lagged.rds \
      Outputs/all_fe_models.rds \
      Outputs/artifacts_descriptive_statistics.rds \
      Outputs/artifacts_sarb_forecast.rds \
@@ -111,13 +113,23 @@ Outputs/all_fe_models.rds: Scripts/13_fixed_effects.R \
 	$(R) $<
 
 # ─── Stage 5: Baseline local projections ─────────────────────────────────────
+# These read artifacts_model_data.rds (unpurged surprises). The "b" scripts use
+# the lagged (t-1) climate state.
 
-Outputs/artifacts_lp_unsmoothed.rds: Scripts/14_unsmoothed_LPs.R \
-    Outputs/artifacts_model_data_purged.rds
+Outputs/artifacts_lp_unsmoothed.rds: Scripts/14a_unsmoothed_LPs.R \
+    Outputs/artifacts_model_data.rds
 	$(R) $<
 
-Outputs/artifacts_lp_unsmoothed_asym.rds: Scripts/15_asymetric_unsmoothed_LPs.R \
-    Outputs/artifacts_model_data_purged.rds
+Outputs/artifacts_lp_unsmoothed_lagged.rds: Scripts/14b_lagged_climate_unsmoothed_LPs.R \
+    Outputs/artifacts_model_data.rds
+	$(R) $<
+
+Outputs/artifacts_lp_unsmoothed_asym.rds: Scripts/15a_asymetric_unsmoothed_LPs.R \
+    Outputs/artifacts_model_data.rds
+	$(R) $<
+
+Outputs/artifacts_lp_unsmoothed_asym_lagged.rds: Scripts/15b_lagged_climate_asym_unsmoothed_LPs.R \
+    Outputs/artifacts_model_data.rds
 	$(R) $<
 
 # ─── Stage 5b: Purged robustness (FE + LPs on purged data) ───────────────────
@@ -142,30 +154,24 @@ Outputs/artifacts_extensions.rds: Scripts/16_extensions.R \
 	$(R) $<
 
 # ─── Stage 6b: Controls merge ─────────────────────────────────────────────────
-# Script 20 augments artifacts_model_data.rds in-place (overwrites it with
-# controls appended). A stamp file ensures the baseline scripts (11, 13) finish
-# on the original model_data before augmentation, and that 12 (purging) also
-# completes so the purged data is not affected by the controls merge.
+# Script 20 writes a separate artifacts_model_data_controls.rds, so it no longer
+# overwrites artifacts_model_data.rds and needs no ordering workaround.
 
-Outputs/.controls_merged: Scripts/20_controls_merge.R \
+Outputs/artifacts_model_data_controls.rds: Scripts/20_controls_merge.R \
     Outputs/artifacts_model_data.rds \
-    Outputs/artifacts_descriptive_statistics.rds \
-    Outputs/all_fe_models.rds \
-    Outputs/artifacts_model_data_purged.rds \
     Outputs/artifacts_unemployment.rds \
     Outputs/artifacts_gdp.rds \
     Outputs/artifacts_exchange_rate.rds
 	$(R) $<
-	touch $@
 
 # ─── Stage 7: Controls local projections ─────────────────────────────────────
 
 Outputs/artifacts_lp_unsmoothed_robust.rds: Scripts/21_unsmoothed_LPs_with_controls.R \
-    Outputs/.controls_merged
+    Outputs/artifacts_model_data_controls.rds
 	$(R) $<
 
 Outputs/artifacts_lp_unsmoothed_asym_robust.rds: Scripts/22_asym_LPs_with_controls.R \
-    Outputs/.controls_merged
+    Outputs/artifacts_model_data_controls.rds
 	$(R) $<
 
 # ─── Utilities ────────────────────────────────────────────────────────────────
@@ -173,4 +179,4 @@ Outputs/artifacts_lp_unsmoothed_asym_robust.rds: Scripts/22_asym_LPs_with_contro
 .PHONY: all clean
 
 clean:
-	rm -f Outputs/artifacts_*.rds Outputs/all_fe_models*.rds Outputs/.controls_merged
+	rm -f Outputs/artifacts_*.rds Outputs/all_fe_models*.rds

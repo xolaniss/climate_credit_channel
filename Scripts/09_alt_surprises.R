@@ -13,22 +13,10 @@ source(here("Functions", "fx_plot.R"))
 
 # Import and Clean Data --------------------------------------------------------
 forecast_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_forecast.rds")) |> 
-  pluck(1) |> 
-  rename(
-    date = `Forecast Date`,
-    repo_forecast = `South Africa Repo Average Rate`,
-    gdp_forecast  = `South Africa GDP Forecast YoY%`,
-    cpi_forecast  = `South Africa CPI Forecast YoY%`
-  ) 
+  pluck(1) 
 
 actual_tbl <- read_rds(here("Outputs", "artifacts_bloomberg_actuals.rds")) |> 
-  pluck(2) |> 
-  rename(
-    date =  Date,
-    repo_actual = `South Africa Repo Average Rate`,
-    gdp_actual  = `South Africa GDP Forecast YoY%`,
-    cpi_actual  = `South Africa CPI Forecast YoY%`
-  ) 
+  pluck(2) 
 
 
 # Merge Datasets -----------------------------------------------------
@@ -41,18 +29,19 @@ combined_romer_variables_tbl <-
   combined_tbl |> 
   mutate(
     # Change in repo rate (dependent variable)
-    change_repo = repo_actual - lag(repo_actual, n = 1),
+    change_hat_repo = repo_forecast - lag(repo_forecast, n = 1),
     
     # Forecasted repo rate (level)
     repo_hat = repo_forecast,
     
     # GDP forecast: 2 quarters ahead change
-    gdp_hat_lead_two = lead(gdp_forecast, n = 2),
-    change_gdp_hat_two = gdp_hat_lead_two - lag(gdp_forecast, n = 1),
+    change_hat_gdp = gdp_forecast - lag(gdp_forecast, n = 1),
+    change_hat_gdp_lead_two = lead(change_hat_gdp, n = 2),
+    change_change_hat_gdp_lead_two = lead(change_hat_gdp - lag(change_hat_gdp, n = 1), n = 2),
     
     # CPI forecast: 2 quarters ahead change
     cpi_hat_lead_two = lead(cpi_forecast, 2),
-    change_cpi_hat_two = cpi_hat_lead_two - lag(cpi_forecast, n = 1)
+    change_cpi_hat_lead_two = lead(cpi_forecast - lag(cpi_forecast, n = 1), 2)
   ) 
     
   
@@ -60,9 +49,9 @@ combined_miyajima_variables_tbl <-
   combined_tbl |> 
   mutate(
     # Forecast Errors (FE = actual - forecast)
-    fe_repo =  repo_forecast -repo_actual,
-    fe_gdp  =   gdp_forecast - gdp_actual,
-    fe_cpi  =  cpi_forecast - cpi_actual
+    fe_repo =  repo_actual - repo_forecast,
+    fe_gdp  =  gdp_actual - gdp_forecast,
+    fe_cpi  =  cpi_actual -  cpi_forecast
   ) 
 
 
@@ -90,7 +79,7 @@ combined_miyajima_gg <-
 # Estimating surprises -------------------------------------------------------
 ## Estimate Romer & Romer Equation ------------------------------------
 romer_suprise_tbl <- lm(
-  change_repo ~ repo_hat + change_gdp_hat_two + change_cpi_hat_two,
+  change_hat_repo ~ repo_hat + change_hat_gdp_lead_two  + change_change_hat_gdp_lead_two + cpi_hat_lead_two + change_cpi_hat_lead_two,
   data = combined_romer_variables_tbl |> drop_na()) |> 
   resid() |> 
   tibble() |> 

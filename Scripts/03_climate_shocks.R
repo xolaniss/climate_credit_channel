@@ -8,34 +8,33 @@ source(here("packages.R"))
 
 # Functions ---------------------------------------------------------------
 source(here("Functions", "fx_plot.R"))
-month_based_shock <- function(data, variable_filter){
+# Shock = deviation from the rolling calendar-month mean, in rolling-sd units.
+# The window holds the latest `window_years` observations of the same calendar
+# month (including the current one), so 30 years = 360 months. Dates without a
+# full window are NA and dropped.
+month_based_shock <- function(data, variable_filter, window_years = 30){
   
   data |>
-    pivot_longer(
-      cols = -c(date),
-      names_to = "variable",
-      values_to = "value"
-    ) |>
+    dplyr::select(date, value = all_of(variable_filter)) |>
     mutate(month = month(date)) |>
-    filter(variable == variable_filter) |>
     group_by(month) |>
-    mutate(long_term_mean = mean(value, na.rm = TRUE), # This is based on the long-term mean (entire sample) for each month and country. This may change in the future
-      long_term_sd   = sd(value, na.rm = TRUE), #month specifc standard deviation
-      shock = (value - long_term_mean) / long_term_sd
+    arrange(date, .by_group = TRUE) |>
+    mutate(
+      roll_mean = rollapplyr(value, width = window_years, FUN = mean, na.rm = TRUE, fill = NA),
+      roll_sd   = rollapplyr(value, width = window_years, FUN = sd,   na.rm = TRUE, fill = NA),
+      shock     = (value - roll_mean) / roll_sd
     ) |>
     ungroup() |>
-    pivot_wider(
-      names_from = variable,
-      values_from = c(value, shock),
-      names_glue = "{variable}_{.value}"
-    ) |>
-    dplyr::select(-month, -long_term_mean, -long_term_sd) |>
+    arrange(date) |>
+    dplyr::select(date, value, roll_mean, roll_sd, shock) |>
+    rename_with(~ paste0(variable_filter, "_", .x), .cols = -date) |>
     drop_na()
 }
 
 # Import -------------------------------------------------------------
 climate_data_tbl <- read_rds(here("Outputs", "artifacts_climate_data.rds")) |>
   pluck(1)
+
 
 
 climate_data_tbl |> 
@@ -51,32 +50,35 @@ args_list <- list(
   c("pop_precip")
 )
 
+
+roll_window_years <- 30 # same-month observations per window (30 years = 360 months)
+
 climate_shocks_list <-
   args_list |>
   map(
-  ~month_based_shock(
-    data = climate_data_tbl,
-    variable_filter = .x[1]
+    ~ month_based_shock(
+      data = climate_data_tbl,
+      variable_filter = .x[1],
+      window_years = roll_window_years
     )
   )
 
 # Combine all shocks into one tbl --------------------------------------------
-climate_shocks_tbl <-
-  left_join(
-    climate_shocks_list[[1]],
-    climate_shocks_list[[2]],
-    by = "date"
-  ) |>
-  left_join(
-    climate_shocks_list[[3]],
-    by = "date"
-  ) |>
-  left_join(
-    climate_shocks_list[[4]],
-    by = "date"
-  ) |>
+climate_shocks_full_tbl <-
+  climate_shocks_list |>
+  reduce(left_join, by = "date") |>
   ungroup() |>
-  filter(date >= "2012-12-01") |>
+  filter(date >= "2012-12-01")
+
+# Kept apart from the shocks: 10_model_data.R aggregates every column whose
+# name contains "temp" or "precip", so these must not enter climate_shocks_tbl.
+climate_shocks_stats_tbl <-
+  climate_shocks_full_tbl |>
+  dplyr::select(date, ends_with("_roll_mean"), ends_with("_roll_sd"))
+
+climate_shocks_tbl <-
+  climate_shocks_full_tbl |>
+  dplyr::select(-ends_with("_roll_mean"), -ends_with("_roll_sd")) |>
   
  
 # Create positive and negative climate shock variables -----------------
@@ -137,7 +139,8 @@ climate_shocks_gg <-
 # Export ---------------------------------------------------------------
 artifacts_climate_shocks <- list (
   climate_shocks_tbl = climate_shocks_tbl,
-  climate_shocks_gg = climate_shocks_gg
+  climate_shocks_gg = climate_shocks_gg,
+  climate_shocks_stats_tbl = climate_shocks_stats_tbl
 )
 
 write_rds(artifacts_climate_shocks, file = here("Outputs", "artifacts_climate_shocks.rds"))

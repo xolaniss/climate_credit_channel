@@ -11,7 +11,13 @@ source(here("Functions", "fx_plot.R"))
 # Import -------------------------------------------------------------
 actuals_tbl <- read_excel(here("Data", "cpi_gdp_repo_actuals.xlsx")) |> 
   dplyr::select(-2) |> 
-  rename(Date = 1) 
+  rename(Date = 1) |> 
+  rename(
+    date =  Date,
+    repo_actual = `South Africa Repo Average Rate`,
+    gdp_actual  = `South Africa GDP Forecast YoY%`,
+    cpi_actual  = `South Africa CPI Forecast YoY%`
+  ) 
   
 
 # EDA ---------------------------------------------------------------
@@ -20,8 +26,8 @@ actuals_tbl  |>  skimr::skim()
 # Graphing ---------------------------------------------------------------
 actuals_gg <- 
   actuals_tbl |> 
-  pivot_longer(-Date, names_to = "variable", values_to = "value") |> 
-  ggplot(aes(x = Date, y = value, , col = variable)) +
+  pivot_longer(-date, names_to = "variable", values_to = "value") |> 
+  ggplot(aes(x = date, y = value, , col = variable)) +
   geom_line() +
   facet_wrap( ~ variable, scales = "free_y", ncol = 2) +
   labs(title = "", x = "date", y = "") +
