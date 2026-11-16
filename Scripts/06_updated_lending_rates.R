@@ -122,5 +122,6 @@ artifacts_lending_rates <-
   )
 
 write_rds(artifacts_lending_rates, file = here("Outputs", "artifacts_lending_rates.rds"))
+write.csv(lending_rate_tbl, here("Outputs", "lending_rate.csv"))
 
 

@@ -1,0 +1,230 @@
+---
+title: "The Climate Credit Channel: Physical Shocks and Monetary Policy Transmission in South Africa"
+format:
+  beamer:
+    aspectratio: 141
+    slide-level: 2
+    suppress-bibliography: true
+    section-titles: false
+    number-sections: false
+    theme: "CambridgeUS"
+    fonttheme: "structurebold"
+    colortheme: "dolphin"
+    header-includes:
+      - \setbeamertemplate{items}[circle]
+      - \usepackage{setspace}
+      - \usepackage{booktabs}
+      - \usepackage{amsmath}
+      - \setbeamerfont{title}{size=\Large}
+      - \setbeamerfont{author}{size=\large}
+      - \setbeamerfont{subtitle}{size=\large}
+      - \setbeamerfont{institute}{size=\small}
+      - \setbeamerfont{date}{size=\small}
+      - \useoutertheme[footline=authorinstitute,subsection=false]{miniframes}
+      - \setbeamerfont{section in head/foot}{size=\tiny}
+      - \setbeamersize{mini frame size=.08cm, mini frame offset=.02cm}
+      - \setbeamersize{text margin left=0.6cm, text margin right=0.6cm}
+      - \definecolor{UBCblue}{rgb}{0.04706, 0.13725, 0.26667}
+      - \usecolortheme[named=UBCblue]{structure}
+      - \setbeamertemplate{frametitle}[default][center]
+      - \setbeamerfont{frametitle}{size=\large}
+      - \setbeamertemplate{frame numbering}{}
+    institute: "South Africa Reserve Bank"
+authors:
+  - name: Tichinashe Mabugu
+    affiliation:
+    - name: South Africa Reserve Bank
+      department: Economic Research Department
+      country: South Africa
+    roles: writing
+    corresponding: true
+    email: Tichinashe.Mabugu@resbank.co.za
+  - name: Xolani Sibande
+    affiliation:
+    - name: South Africa Reserve Bank
+      department: Economic Research Department
+      country: South Africa
+    roles: writing
+    corresponding: true
+    email: xolani.sibande@resbank.co.za
+bibliography: slides_references.bib
+link-citations: false
+---
+
+```{r setup}
+#| include: false
+options(scipen = 999)
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dpi = 300,
+  fig.width = 11,
+  fig.height = 6.2,
+  out.width = "100%",
+  out.height = "78%",
+  fig.align = "center"
+)
+
+library(tidyverse)
+library(patchwork)
+library(here)
+
+fixed_effects <- read_rds(here("Outputs", "all_fe_models.rds"))
+plots         <- read_rds(here("Outputs", "artifacts_lp_unsmoothed.rds")) |> pluck(4)
+asym_plots    <- read_rds(here("Outputs", "artifacts_lp_unsmoothed_asym.rds")) |> pluck(4)
+extensions    <- read_rds(here("Outputs", "artifacts_extensions.rds"))
+
+odd_plot_function  <- function(n) (plots[[n]] + plots[[n + 2]] + plots[[n + 4]])
+asym_odd_function  <- function(n) (asym_plots[[n]] + asym_plots[[n + 2]] + asym_plots[[n + 4]])
+```
+
+# Motivation
+
+## The credit channel and the external finance premium
+
+\small
+- Monetary policy works partly through the **external finance premium (EFP)**: the wedge between the cost of external and internal funds [@bernanke1995]
+$$
+\text{EFP}_t \equiv r^{ext}_t - r^{int}_t > 0
+$$
+- A tightening weakens borrower balance sheets through **cash-flow**, **collateral** and **demand** effects, raising the EFP and lowering spending [@bernanke1996; @kiyotaki1997]
+- Lending rates embed the premium: $r^{L} = r^{p} + \text{EFP}$
+- But the channel is not fully understood: its strength varies across borrowers, products and time, and evidence for emerging economies is thin [@altavilla2020; @mishra2012]
+
+## The gap and our question
+
+- **Literature A:** monetary policy $\rightarrow$ credit through the EFP, identified with policy surprises
+- **Literature B:** climate shocks $\rightarrow$ balance sheets, loan pricing and inflation [@dafermos2018; @correa2026]
+- **Gap:** the interaction between physical climate shocks and monetary policy transmission to credit remains underexplored, especially in emerging economies
+
+\vspace{2mm}
+
+**Research question:** Does climate change the transmission of monetary policy to credit markets in South Africa, and how do physical climate shocks affect the strength and persistence of that transmission across credit products and borrowers?
+
+## Conceptual framework
+
+\small
+$$
+R^{c}_{it} = R_t + f\!\left(D_t / E_t\right), \quad f' > 0
+\qquad\qquad
+R^{h}_{it} = R_t + \phi_t, \quad \phi_t > 0
+$$
+
+- **Corporates:** a climate shock damages capital and collateral, raising debt $D_t$ and lowering equity $E_t$, so the premium rises on top of the policy move [@laumer2025]
+- **Households:** lost income, wealth and collateral widen the household spread $\phi_t$
+- **Dampening is also possible:** cash buffers, insurance [@gallagher2017; @sharpe2020] or adaptation-driven borrowing [@xu2025]; weaker loan demand can leave banks less scope to reprice
+- **Amplification** means a larger response than policy alone; **dampening** a smaller one. The net effect is empirical
+
+# Data and Empirics
+
+## Policy surprises and climate shocks
+
+\small
+- **Why surprises?** The repo rate responds to inflation, output and potentially the weather. We need policy variation orthogonal to the information sets of policymakers and markets [@romer2004]
+- **Three surprise measures:**
+  - Romer and Romer: rate change purged of SARB forecasts [@romer2004; @merrino2022]
+  - Miyajima: policy-rate forecast error purged of inflation and growth news [@miyajima2024]
+  - Target factor: high-frequency market moves around MPC announcements [@gurkaynak2005; @pirozhkova2025]
+- **Climate shocks:** population-weighted ERA5 temperature and precipitation, in standard deviations from calendar-month norms
+$$
+\text{ClimateShock}_{t} = \frac{x_{t} - \bar{x}_{t}}{\sigma_{t}}
+$$
+
+## Data
+
+\small
+- **Sample:** South Africa, 2013Q1 to 2025Q1, quarterly; bank-quarter panel of the 4 major banking groups
+- **Credit (SARB BA900 and BA930):** lending rates and log volumes for corporate and household borrowers, each split into unsecured, secured and mortgage credit [@sibande2025]
+- **Policy surprises:** Romer and Romer, Miyajima, Target factor; aggregated to quarters
+- **Climate shocks:** ERA5 temperature and precipitation deviations
+- **Controls (robustness):** GDP growth, USD/ZAR, unemployment rate
+
+```{r}
+#| label: fig-climate-shocks
+#| fig-height: 2.6
+#| out-height: "42%"
+read_rds(here("Outputs", "artifacts_climate_shocks.rds")) |> pluck(2)
+```
+
+## Empirical strategy
+
+\footnotesize
+$$
+\text{Credit}_{s,t+h} - \text{Credit}_{s,t-1} = \beta^{h}_0 + \beta^{h}_1\, \text{CS}^{k}_t + \beta^{h}_2\, \text{MP}_t + \beta^{h}_3\, \big(\text{CS}^{k}_t \times \text{MP}_t\big) + \Gamma X_t + \gamma_s + \tau t + \varepsilon^{h}_{s,t}
+$$
+\normalsize
+
+\small
+- **Fixed effects:** contemporaneous version of the same model, with bank-clustered standard errors
+- **Local projections** for $h = 0, \ldots, 12$ quarters [@jorda2005]; Driscoll-Kraay standard errors [@driscoll1998]
+- $\hat\beta^{h}_2$ is the policy-only response; $\hat\beta^{h}_2 + \hat\beta^{h}_3$ is the response with a climate shock. **The gap is the amplification or dampening**
+- **Extreme states:** evaluate $\hat\beta^{h}_2 + \hat\beta^{h}_3 \cdot c$ at $c \in \{+3, -3\}$ (extreme heat, extreme lack of rain)
+
+# Results
+
+## Contemporaneous evidence: the effect is in prices
+
+```{r}
+#| label: fig-fe-rates
+#| fig-height: 5.4
+#| out-height: "70%"
+fixed_effects |> pluck(2)
+```
+
+\tiny Interaction coefficients with 95% confidence intervals; teal denotes significance at 5%. Log credit volumes show little consistent interaction: the effect is risk repricing, not rationing.
+
+## Dynamic evidence: corporate lending rates and temperature
+
+```{r}
+#| label: fig-rate-corp-temp
+odd_plot_function(7) / odd_plot_function(31) / odd_plot_function(55)
+```
+
+## Extreme heat: corporate lending rates
+
+```{r}
+#| label: fig-asym-corp-temp
+asym_odd_function(7) / asym_odd_function(31) / asym_odd_function(55)
+```
+
+## Persistence and timing of the interaction
+
+```{r}
+#| label: fig-persistence
+#| fig-height: 5.5
+extensions |> pluck("combined_gg")
+```
+
+## A real-world episode: the 2015/16 El Niño drought
+
+\scriptsize
+| MPC date | Repo decision | Cum. repo | Household mortgage rate | Cum. change |
+|:--|:--|:--:|:--|:--:|
+| Nov 2015 | +25 bp to 6.25% | +25 bp | 9.11% (2015Q4) | +23 bp |
+| Jan 2016 | +50 bp to 6.75% | +75 bp | 9.72% (2016Q1) | +84 bp |
+| Mar 2016 | +25 bp to 7.00% | +100 bp | 10.00% (2016Q2) | +112 bp |
+| Mar 2016 to Jul 2017 | Held at 7.00% | +100 bp | 10.12% (2017Q2) | +124 bp |
+| Jul 2017 | Cut 25 bp to 6.75% | **+75 bp** | 9.92% (2017Q3) | **+104 bp** |
+
+\normalsize
+- The lending rate kept rising five quarters after the last hike and fell by less than the repo rate when policy eased
+\vspace{-1mm}
+\begin{flushleft}
+{\tiny Source: SARB. Changes relative to 2015Q3 (8.88\%)}
+\end{flushleft}
+
+# Conclusion
+
+## Findings and policy implications
+
+\small
+1. **Climate shocks alter transmission.** Significant interactions appear across a large share of product-horizon combinations
+2. **Prices, not quantities.** Effects concentrate in lending rates, consistent with risk repricing through the EFP
+3. **Temperature amplifies; precipitation depends on the threshold.** Drought-like conditions amplify, moderate rain does not
+4. **A tail phenomenon.** Extreme-state responses diverge sharply and durably from the baseline
+5. **Persistent.** The interaction peaks around 8 quarters and stays significant for roughly two years
+
+\vspace{2mm}
+
+**Implication:** a tightening that coincides with severe heat or drought transmits more strongly and for longer than the policy-rate path implies. Models that ignore the climate state overstate the room for tightening. Climate-vulnerable central banks should incorporate physical climate risk into transmission models [@dafermos2018; @giglio2021].
