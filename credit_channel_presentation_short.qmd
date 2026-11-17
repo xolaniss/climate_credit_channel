@@ -1,5 +1,7 @@
 ---
 title: "The Climate Credit Channel: Physical Shocks and Monetary Policy Transmission in South Africa"
+subtitle: "Public Sector Economist's Forum, Durban"
+date: "1 December 2026"
 format:
   beamer:
     aspectratio: 141
@@ -29,11 +31,11 @@ format:
       - \setbeamertemplate{frametitle}[default][center]
       - \setbeamerfont{frametitle}{size=\large}
       - \setbeamertemplate{frame numbering}{}
-    institute: "South Africa Reserve Bank"
+    institute: "South African Reserve Bank"
 authors:
   - name: Tichinashe Mabugu
     affiliation:
-    - name: South Africa Reserve Bank
+    - name: South African Reserve Bank
       department: Economic Research Department
       country: South Africa
     roles: writing
@@ -41,7 +43,7 @@ authors:
     email: Tichinashe.Mabugu@resbank.co.za
   - name: Xolani Sibande
     affiliation:
-    - name: South Africa Reserve Bank
+    - name: South African Reserve Bank
       department: Economic Research Department
       country: South Africa
     roles: writing
@@ -178,14 +180,14 @@ fixed_effects |> pluck(2)
 
 ```{r}
 #| label: fig-rate-corp-temp
-odd_plot_function(7) / odd_plot_function(31) / odd_plot_function(55)
+odd_plot_function(7) / odd_plot_function(31) 
 ```
 
 ## Extreme heat: corporate lending rates
 
 ```{r}
 #| label: fig-asym-corp-temp
-asym_odd_function(7) / asym_odd_function(31) / asym_odd_function(55)
+asym_odd_function(7) / asym_odd_function(31) 
 ```
 
 ## Persistence and timing of the interaction
