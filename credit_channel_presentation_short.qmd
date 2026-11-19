@@ -257,6 +257,10 @@ extensions |> pluck("combined_gg")
 4. **A tail phenomenon.** Extreme-state responses diverge sharply and durably from the baseline
 5. **Persistent.** The interaction peaks around 8 quarters and stays significant for roughly two years
 
-\vspace{2mm}
+## The End
 
-**Implication:** a tightening that coincides with severe heat or drought transmits more strongly and for longer than the policy-rate path implies. Models that ignore the climate state overstate the room for tightening. Climate-vulnerable central banks should incorporate physical climate risk into transmission models [@dafermos2018; @giglio2021].
+\vfill
+\begin{center}
+\Huge Thank you
+\end{center}
+\vfill
