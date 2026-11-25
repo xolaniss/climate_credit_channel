@@ -11,11 +11,10 @@ source(here("Functions", "fx_plot.R"))
 
 # Import -------------------------------------------------------------
 announcement_dates_tbl <- 
-  read_excel(here("Data", "monetary_policy_announcement_dates.xlsx")) |> 
+  read_excel(here("Data", "IRFs", "real_mpc_dates.xlsx")) |> 
   rename(Date = 1) |> 
   mutate(Date = parse_date_time(Date, "dmy")) |> 
-  mutate(Date = as.Date(Date)) |> 
-  filter(Date >= "2002-06-01" & Date <= "2025-02-01" )
+  mutate(Date = as.Date(Date))
 
 market_based_surprises_tbl <- 
   R.matlab::readMat(here("Data", "IRFs", "IRFs.mat")) |> 
@@ -29,10 +28,7 @@ market_based_surprises_tbl <-
          "Forward Guidance" = 3, 
          "Central Bank Information" = 4, 
          "Country Risk" = 5) |> 
-  filter(Date >= "2008-01-01" ) |> 
   mutate(across(-Date, ~ .x /100))
-  
-
   
 # Graph -------------------------------------------------------------------
 market_based_surprises_gg <- 
